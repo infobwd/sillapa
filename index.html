@@ -1505,12 +1505,12 @@ function renderPlan(){const ks=Object.keys(PLAN.items);$('#ppCnt').textContent=k
   else $('#ppPlan').innerHTML=NXI.filter(it=>inPlan(it.t)).map(it=>`<div class="pc"><div class="pc-h"><div class="main"><b>${esc(it.t)}</b><small>${esc(NX.groups[it.g].g)}${distN(it.t)?` · ${distN(it.t)} โรงเรียนในเขตวางแผนส่ง`:''}</small></div><button class="addb" type="button" data-add="${esc(it.t)}" aria-pressed="true">นำออก</button></div>
     <div class="lvpick" role="group" aria-label="ระดับชั้นที่จะส่ง">${PLV.map(l=>`<button class="chip" type="button" data-lv="${l}" data-t="${esc(it.t)}" aria-pressed="${PLAN.items[it.t].includes(l)}">${l}</button>`).join('')}</div></div>`).join('');
   $('#ppSync').className='sync'+(planRef?' ok':'');
-  $('#ppSync').textContent=planRef?(PLAN.school?'บันทึกแผนเข้าภาพรวมเขตอัตโนมัติ (แสดงเฉพาะชื่อโรงเรียนและกิจกรรม)':'เลือกโรงเรียนก่อน แผนจึงจะถูกนับในภาพรวมเขต'):'บันทึกไว้ในเครื่องนี้เท่านั้น (ต้องลงชื่อเข้าใช้ claude.ai จึงจะส่งเข้าภาพรวมเขตได้)';
+  $('#ppSync').textContent=planRef?(PLAN.school?'บันทึกแผนเข้าภาพรวมเขตอัตโนมัติ (แสดงเฉพาะชื่อโรงเรียนและกิจกรรม)':'เลือกโรงเรียนก่อน แผนจึงจะถูกนับในภาพรวมเขต'):'บันทึกไว้ในเบราว์เซอร์เครื่องนี้เท่านั้น (ยังไม่เชื่อมระบบรวมแผนของเขต)';
   renderDist()}
 function distMap(){const M={};PLANS.forEach(p=>{if(!p.school)return;Object.keys(p.items).forEach(t=>{(M[t]??=new Set()).add(p.school)})});return M}
 let DM={};const distN=t=>DM[t]?DM[t].size:0;
 function renderDist(){DM=distMap();const sch=new Set(PLANS.filter(p=>p.school&&Object.keys(p.items).length).map(p=>p.school));
-  if(!planDB){$('#ppDistHint').textContent='ภาพรวมเขตใช้ได้เมื่อเปิดผ่าน claude.ai และลงชื่อเข้าใช้';$('#ppDist').innerHTML='<div class="pl-empty">ยังไม่มีข้อมูล</div>';$('#ppZero').innerHTML='';return}
+  if(!planDB){$('#ppDistHint').textContent='ภาพรวมเขตยังไม่เปิดใช้งานบน GitHub Pages (ต้องเชื่อมฐานข้อมูลส่วนกลาง)';$('#ppDist').innerHTML='<div class="pl-empty">ยังไม่มีข้อมูล</div>';$('#ppZero').innerHTML='';return}
   $('#ppDistHint').textContent=`${sch.size} โรงเรียนวางแผนแล้ว · จำนวนโรงเรียนที่วางแผนส่งแต่ละกิจกรรม`;
   const r=NXI.filter(it=>distN(it.t)).sort((a,b)=>distN(b.t)-distN(a.t)),mx=r.length?distN(r[0].t):1;
   $('#ppDist').innerHTML=r.length?r.map(it=>`<div class="row"><b>${esc(it.t)}</b><small>${esc(NX.groups[it.g].g)}</small><span class="trk" style="width:100%"><i class="r" style="width:${distN(it.t)/mx*100}%;background:var(--rep)"></i></span><span class="n">${distN(it.t)}</span></div>`).join(''):'<div class="pl-empty">ยังไม่มีโรงเรียนวางแผนส่ง</div>';
@@ -1598,7 +1598,7 @@ async function doExport(kind){const msg=$('#exMsg'),sn=fsafe(PLAN.school||'โ�
   const F={plan:[`แผนส่งแข่ง74_${sn}.csv`,csvPlan],all:['รายการครั้งที่74_พร้อมเกณฑ์73.csv',csvAll],dist:['แผนส่งแข่ง74_ทั้งเขต.csv',csvDist],report:[`รายงานเตรียมแข่ง74_${sn}.html`,htmlReport]}[kind];
   const data=F[1]();
   if(!DL){try{const bl=new Blob([(F[0].endsWith('.csv')?'\ufeff':'')+data],{type:F[0].endsWith('.csv')?'text/csv;charset=utf-8':'text/html;charset=utf-8'});const u=URL.createObjectURL(bl);const a=document.createElement('a');a.href=u;a.download=F[0];document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);msg.className='ex-msg ok';msg.textContent='ดาวน์โหลดไฟล์แล้ว';return}catch(e){}
-  try{await navigator.clipboard.writeText(kind==='report'?planText():data);msg.className='ex-msg ok';msg.textContent='บันทึกไฟล์ไม่ได้ในหน้านี้ จึงคัดลอกข้อมูลไว้ให้แทน วางในเอกสารหรือ Excel ได้'}catch(e){msg.className='ex-msg err';msg.textContent='บันทึกไฟล์ได้เฉพาะเมื่อเปิดผ่าน claude.ai'}return}
+  try{await navigator.clipboard.writeText(kind==='report'?planText():data);msg.className='ex-msg ok';msg.textContent='บันทึกไฟล์ไม่ได้ในหน้านี้ จึงคัดลอกข้อมูลไว้ให้แทน วางในเอกสารหรือ Excel ได้'}catch(e){msg.className='ex-msg err';msg.textContent='ดาวน์โหลดไฟล์ไม่สำเร็จ กรุณาลองเปิดด้วยเบราว์เซอร์ที่รองรับการดาวน์โหลด'}return}
   msg.className='ex-msg';msg.textContent='กำลังเตรียมไฟล์…';
   try{await DL.save({filename:F[0],data});msg.className='ex-msg ok';msg.textContent='บันทึกไฟล์แล้ว'}
   catch(e){const c=e&&e.code;msg.className='ex-msg'+(c==='declined'?'':' err');msg.textContent=c==='declined'?'ยกเลิกการบันทึก':c==='rate_limited'?'มีหน้าต่างบันทึกเปิดอยู่ ลองอีกครั้งสักครู่':'บันทึกไฟล์ไม่สำเร็จ ('+(c||'unknown')+')'}}
