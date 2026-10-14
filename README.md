@@ -7,7 +7,7 @@
 - ไฟล์เริ่มต้น: [index.html](index.html) (หน้าเว็บแบบ Static HTML/CSS/JavaScript)
 - หน้าเว็บ GitHub Pages *หลังจากเปิดใช้งาน Pages*: https://infobwd.github.io/sillapa/
 - ตั้งค่าการเผยแพร่: [Settings → Pages](https://github.com/infobwd/sillapa/settings/pages)
-
+ด
 ### เปิด GitHub Pages ครั้งแรก (เจ้าของ Repo ดำเนินการ)
 
 1. เปิด **Settings → Pages** ของ Repository นี้
