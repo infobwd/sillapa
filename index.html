@@ -2,11 +2,11 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#EEF1F5" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0B1220" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="ผลแข่งขัน 73">
+<meta name="apple-mobile-web-app-title" content="ศิลปหัตถกรรม 74">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>ผลการแข่งขันครั้งที่ 73 สพป.กาญจนบุรี เขต 4</title>
@@ -652,9 +652,107 @@ body{overscroll-behavior-y:auto}
 .s74-cal .s74-foot{font-size:12px;color:var(--ink-3);line-height:1.6;margin:12px 0 0}
 @media (min-width:900px){.s74-events{grid-template-columns:1fr 1fr;gap:18px}.s74-event{grid-template-columns:96px minmax(0,1fr)}}
 
+/* MOBILE APP: disable content pinch zoom while preserving normal page scroll. */
+@media(max-width:767px){
+  html{touch-action:pan-x pan-y}
+  button,a,.chip,.nav{touch-action:manipulation}
+  input,select,textarea{font-size:16px!important}
+}
+/* Startup splash: never hide app content permanently after a startup failure. */
+.app-splash{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;text-align:center;
+  padding:calc(22px + env(safe-area-inset-top,0px)) 22px calc(22px + env(safe-area-inset-bottom,0px));
+  color:#fff;background:linear-gradient(150deg,#0b182c 0%,#1b3555 65%,#234c60 100%);
+  transition:opacity .3s ease,visibility .3s ease}
+.app-splash.is-done{opacity:0;visibility:hidden;pointer-events:none}
+.splash-content{width:min(360px,100%);display:flex;flex-direction:column;align-items:center;gap:12px}
+.splash-emblem{display:grid;place-items:center;width:96px;height:96px;border-radius:28px;font-size:48px;
+  background:linear-gradient(135deg,rgba(255,223,152,.23),rgba(255,255,255,.08));
+  border:1px solid rgba(255,255,255,.24);box-shadow:0 16px 44px rgba(0,0,0,.16)}
+.splash-content h2{font-family:var(--serif);font-size:25px;line-height:1.35;margin:8px 0 0}
+.splash-content p{margin:0;color:#cbd5e1;font-size:14px;line-height:1.65}
+.splash-status{font-size:13px!important;margin-top:18px!important}
+.splash-progress{width:min(180px,65%);height:4px;border-radius:5px;overflow:hidden;background:rgba(255,255,255,.18)}
+.splash-progress[hidden]{display:none}
+.splash-progress i{display:block;height:100%;width:40%;border-radius:5px;background:#e2b462;
+  animation:splash-progress 1.3s ease-in-out infinite alternate}
+.splash-retry{min-height:44px;border:1px solid #e9c681;border-radius:22px;background:#e9c681;
+  color:#17233b;padding:0 18px;font-size:15px;font-weight:700}
+.splash-retry[hidden]{display:none}
+@keyframes splash-progress{from{transform:translateX(-100%)}to{transform:translateX(350%)}}
+/* Skeletons are only shown while a specific view is actually being populated. */
+.view-skeleton{display:none}
+.view[data-loading="true"] > :not(.view-skeleton){display:none!important}
+.view[data-loading="true"] > .view-skeleton{display:block}
+.sk-line,.sk-tile,.sk-row,.sk-chart,.sk-chip{position:relative;overflow:hidden;
+  border:1px solid var(--line);background:var(--surface-2)}
+.sk-line::after,.sk-tile::after,.sk-row::after,.sk-chart::after,.sk-chip::after{
+  content:"";position:absolute;inset:0;transform:translateX(-100%);
+  background:linear-gradient(100deg,transparent 10%,color-mix(in srgb,var(--surface) 70%,transparent) 48%,transparent 85%);
+  animation:sk-shimmer 1.4s ease-in-out infinite}
+@keyframes sk-shimmer{to{transform:translateX(100%)}}
+.sk-line{height:16px;width:65%;border-radius:9px;margin:0 0 12px}
+.sk-line.short{width:38%}
+.sk-tile{height:105px;border-radius:16px}
+.sk-tile.hero{height:64px;margin-bottom:14px}
+.sk-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0 18px}
+.sk-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.sk-cards .sk-tile{height:150px}
+.sk-chart{height:190px;border-radius:18px;margin-top:14px}
+.sk-rows{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--surface)}
+.sk-row{height:70px;border:0;border-bottom:1px solid var(--line)}
+.sk-row:last-child{border-bottom:0}
+.sk-chips{display:flex;gap:8px;overflow:hidden;margin:12px 0}
+.sk-chip{flex:none;width:92px;height:34px;border-radius:18px}
+@media(min-width:768px){.sk-stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+.sk-cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){
+  .app-splash{transition:none}
+  .splash-progress i,.sk-line::after,.sk-tile::after,.sk-row::after,.sk-chart::after,.sk-chip::after{animation:none}
+}
+
 </style>
 </head>
 <body>
+
+<div class="app-splash" id="appSplash" role="status" aria-live="polite" aria-label="กำลังเปิดเว็บไซต์ศิลปหัตถกรรม">
+  <div class="splash-content">
+    <div class="splash-emblem" aria-hidden="true">🏅</div>
+    <h2>งานศิลปหัตถกรรมนักเรียน<br>ครั้งที่ 74</h2>
+    <p>สพป.กาญจนบุรี เขต 4<br>ข้อมูลการแข่งขันและการเตรียมความพร้อม</p>
+    <p class="splash-status" id="splashStatus">กำลังเตรียมข้อมูล...</p>
+    <div class="splash-progress" id="splashProgress" aria-hidden="true"><i></i></div>
+    <button class="splash-retry" id="splashRetry" type="button" hidden onclick="location.reload()">โหลดหน้าเว็บอีกครั้ง</button>
+  </div>
+</div>
+<noscript><style>#appSplash{display:none!important}</style><p class="empty">เว็บไซต์นี้ต้องเปิดใช้งาน JavaScript</p></noscript>
+<script>
+(function(){
+  const splash=document.getElementById('appSplash'),started=performance.now();
+  let complete=false;
+  const watchdog=setTimeout(()=>{
+    if(complete)return;
+    document.getElementById('splashStatus').textContent='เตรียมข้อมูลไม่สำเร็จ กรุณาลองอีกครั้ง';
+    document.getElementById('splashProgress').hidden=true;
+    document.getElementById('splashRetry').hidden=false;
+  },7000);
+  window.__sillapaBootReady=function(){
+    if(complete)return;
+    complete=true;clearTimeout(watchdog);
+    const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
+    setTimeout(()=>requestAnimationFrame(()=>{
+      splash.classList.add('is-done');
+      splash.setAttribute('aria-hidden','true');
+      setTimeout(()=>splash.remove(),reduced?0:350);
+    }),reduced?0:Math.max(0,400-(performance.now()-started)));
+  };
+  window.__sillapaSetLoading=function(name,loading){
+    const view=document.getElementById('v-'+name);
+    if(!view)return;
+    view.dataset.loading=String(Boolean(loading));
+    view.setAttribute('aria-busy',String(Boolean(loading)));
+  };
+})();
+</script>
 
 <!-- Single source for the publicly displayed 74 planning timeline; clone into three views. -->
 <template id="s74-calendar-template">
@@ -699,7 +797,8 @@ body{overscroll-behavior-y:auto}
 <main class="shell">
   <div class="ltitle" id="lTitle"><small>ครั้งที่ 73 · สพป.กาญจนบุรี เขต 4</small><h1 id="lTitleT">ภาพรวม</h1></div>
   <!-- Overview -->
-  <section class="view" id="v-overview" aria-label="ภาพรวม">
+  <section class="view" id="v-overview" aria-label="ภาพรวม" data-loading="true" aria-busy="true">
+<div class="view-skeleton" aria-hidden="true"><div class="sk-line short"></div><div class="sk-tile hero"></div><div class="sk-stats"><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div></div><div class="sk-chart"></div></div>
     <div class="tiles" id="tiles"></div>
     <div data-s74-calendar></div>
     <button hidden class="card nx-promo" type="button" data-go="prep" id="ppPromo"><span class="ic" aria-hidden="true" style="background:var(--rep-soft);color:var(--rep)">✏️</span><span class="main"><b>สำหรับครู: เตรียมสมัครครั้งที่ 74</b><small>ดูผลเดิมของโรงเรียน เกณฑ์คะแนน และวางแผนกิจกรรมที่จะส่ง</small></span><svg class="i chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></button>
@@ -731,7 +830,8 @@ body{overscroll-behavior-y:auto}
   </section>
 
   <!-- Representatives -->
-  <section class="view" id="v-reps" aria-label="ตัวแทนเขต">
+  <section class="view" id="v-reps" aria-label="ตัวแทนเขต" data-loading="true" aria-busy="true">
+<div class="view-skeleton" aria-hidden="true"><div class="sk-line short"></div><div class="sk-tile hero"></div><div class="sk-chips"><div class="sk-chip"></div><div class="sk-chip"></div><div class="sk-chip"></div></div><div class="sk-rows"><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div></div></div>
     <div class="toolbar">
       <label class="search"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="qRep" type="search" placeholder="ค้นหารายการหรือโรงเรียน" aria-label="ค้นหาตัวแทนเขต"></label>
     </div>
@@ -740,7 +840,8 @@ body{overscroll-behavior-y:auto}
   </section>
 
   <!-- Groups -->
-  <section class="view" id="v-groups" aria-label="รายกลุ่ม">
+  <section class="view" id="v-groups" aria-label="รายกลุ่ม" data-loading="true" aria-busy="true">
+<div class="view-skeleton" aria-hidden="true"><div class="sk-line short"></div><div class="sk-tile hero"></div><div class="sk-cards"><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div></div><div class="sk-chips"><div class="sk-chip"></div><div class="sk-chip"></div><div class="sk-chip"></div></div></div>
     <div class="toolbar">
       <div class="seg-chips" style="padding-top:0" role="group" aria-label="มุมมอง">
         <button class="chip" type="button" data-by="cat" aria-pressed="true">กลุ่มกิจกรรม</button>
@@ -752,7 +853,8 @@ body{overscroll-behavior-y:auto}
   </section>
 
   <!-- Schools -->
-  <section class="view" id="v-schools" aria-label="โรงเรียน">
+  <section class="view" id="v-schools" aria-label="โรงเรียน" data-loading="true" aria-busy="true">
+<div class="view-skeleton" aria-hidden="true"><div class="sk-line short"></div><div class="sk-tile hero"></div><div class="sk-chips"><div class="sk-chip"></div><div class="sk-chip"></div><div class="sk-chip"></div></div><div class="sk-rows"><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div></div></div>
     <div class="toolbar">
       <label class="search"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="qSch" type="search" placeholder="ค้นหาโรงเรียน" aria-label="ค้นหาโรงเรียน"></label>
       <div class="seg-chips" role="group" aria-label="เรียงตาม" id="sortChips">
@@ -767,7 +869,8 @@ body{overscroll-behavior-y:auto}
   </section>
 
   <!-- Activities -->
-  <section class="view" id="v-acts" aria-label="รายการแข่งขัน">
+  <section class="view" id="v-acts" aria-label="รายการแข่งขัน" data-loading="true" aria-busy="true">
+<div class="view-skeleton" aria-hidden="true"><div class="sk-line short"></div><div class="sk-tile hero"></div><div class="sk-chips"><div class="sk-chip"></div><div class="sk-chip"></div><div class="sk-chip"></div></div><div class="sk-rows"><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div></div></div>
     <div class="toolbar">
       <label class="search"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="qAct" type="search" placeholder="ค้นหารายการ หรือชื่อกรรมการ" aria-label="ค้นหารายการแข่งขันหรือชื่อกรรมการตัดสิน"></label>
       <div class="seg-chips" id="actSort" role="group" aria-label="เรียงตาม" hidden>
@@ -781,7 +884,8 @@ body{overscroll-behavior-y:auto}
   </section>
 
   <!-- Judges -->
-  <section class="view" id="v-judges" aria-label="กรรมการตัดสิน">
+  <section class="view" id="v-judges" aria-label="กรรมการตัดสิน" data-loading="true" aria-busy="true">
+<div class="view-skeleton" aria-hidden="true"><div class="sk-line short"></div><div class="sk-tile hero"></div><div class="sk-stats"><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div></div><div class="sk-chips"><div class="sk-chip"></div><div class="sk-chip"></div><div class="sk-chip"></div></div><div class="sk-rows"><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div></div></div>
     <div class="card"><div class="sfig jfig" id="jKpi"></div></div>
     <div class="card jdist"><h2 style="font-size:16px;margin:0;padding:14px 16px 8px">จำนวนกิจกรรมที่กรรมการแต่ละท่านตัดสิน</h2><div id="jDist"></div></div>
     <div class="segc" role="tablist" aria-label="มุมมองกรรมการ" id="jSeg">
@@ -807,7 +911,8 @@ body{overscroll-behavior-y:auto}
   </section>
 
   <!-- Next round (74) draft -->
-  <section class="view" id="v-next" aria-label="เทียบครั้งที่ 73 กับ 74">
+  <section class="view" id="v-next" aria-label="เทียบครั้งที่ 73 กับ 74" data-loading="true" aria-busy="true">
+<div class="view-skeleton" aria-hidden="true"><div class="sk-line short"></div><div class="sk-tile hero"></div><div class="sk-stats"><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div></div><div class="sk-cards"><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div></div><div class="sk-chart"></div></div>
     <div class="card nx-hero">
       <span class="badge">ร่าง</span>
       <h2>ครั้งที่ 73 เทียบกับครั้งที่ 74 ปีการศึกษา 2569</h2>
@@ -868,7 +973,8 @@ body{overscroll-behavior-y:auto}
   </section>
 
   <!-- Teacher prep (74) -->
-  <section class="view" id="v-prep" aria-label="เตรียมแข่งครั้งที่ 74">
+  <section class="view" id="v-prep" aria-label="เตรียมแข่งครั้งที่ 74" data-loading="true" aria-busy="true">
+<div class="view-skeleton" aria-hidden="true"><div class="sk-line short"></div><div class="sk-tile hero"></div><div class="sk-stats"><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div></div><div class="sk-chips"><div class="sk-chip"></div><div class="sk-chip"></div><div class="sk-chip"></div></div><div class="sk-rows"><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div></div></div>
     <div class="card pp-hero">
       <p>เลือกโรงเรียนของคุณ เพื่อดูผลเดิม เกณฑ์คะแนนที่ต้องทำให้ได้ และวางแผนกิจกรรมที่จะส่ง</p>
       <button class="pickbtn" type="button" id="ppPick"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span id="ppPickT">แตะเพื่อค้นหาโรงเรียน</span><em>เลือก</em></button>
@@ -1663,6 +1769,11 @@ function openExport(){const np=Object.keys(PLAN.items).length,nd=new Set(PLANS.f
 window.__tiles=true;drawTiles();
 
 render();go(location.hash.slice(1)||'overview',false);_markMore();
+/* Embedded data: release each section only after the full first render succeeds. */
+document.querySelectorAll('.view[data-loading="true"]').forEach(view=>{
+  window.__sillapaSetLoading(view.id.slice(2),false);
+});
+window.__sillapaBootReady();
 </script>
 </body>
 </html>
