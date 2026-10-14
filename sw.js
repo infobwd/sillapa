@@ -1,7 +1,7 @@
 /* Sillapa standalone public dashboard cache (no private API, names, or school plans separately stored). */
 const CACHE_NAME = 'sillapa-public-v1-20261014';
 const CACHE_PREFIX = 'sillapa-public-';
-const SHELL = ['./', './index.html', './manifest.webmanifest',
+const SHELL = ['./', './index.html', './manifest.webmanifest', './pwa.css', './pwa.js',
   './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 const INDEX = new URL('./index.html', self.registration.scope).href;
 const SCOPE = new URL(self.registration.scope);
@@ -37,7 +37,8 @@ self.addEventListener('fetch', event => {
         const response = await fetch(request, {cache: 'no-store'});
         if (response.ok) {
           const cache = await caches.open(CACHE_NAME);
-          await cache.put(INDEX, response.clone());
+          try { await cache.put(INDEX, response.clone()); }
+          catch (_) { /* quota error does not invalidate the fresh response */ }
         }
         return response;
       } catch (_) {
