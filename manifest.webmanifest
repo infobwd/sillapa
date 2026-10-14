@@ -1,0 +1,32 @@
+{
+  "name": "Sillapa — งานศิลปหัตถกรรมนักเรียน สพป.กาญจนบุรี เขต 4",
+  "short_name": "Sillapa 74",
+  "description": "ผลการแข่งขันครั้งที่ 73 และข้อมูลเตรียมการแข่งขันครั้งที่ 74 สพป.กาญจนบุรี เขต 4",
+  "lang": "th-TH",
+  "dir": "ltr",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b182c",
+  "theme_color": "#0b1220",
+  "orientation": "any",
+  "categories": [
+    "education",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ]
+}
