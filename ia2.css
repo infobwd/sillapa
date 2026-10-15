@@ -1,0 +1,95 @@
+/* IA-2: public preparatory registry. Never style historical level references as approved 74. */
+.ia2-registry{margin:2px 0 20px}
+.ia2-intro{padding:20px 18px;border:1px solid var(--line);background:
+  linear-gradient(135deg,var(--surface),var(--surface-2));border-radius:19px;margin-bottom:13px}
+.ia2-eyebrow{color:var(--rep);background:var(--rep-soft);display:inline-flex;
+  padding:5px 11px;border-radius:20px;font-size:11.5px;font-weight:800;line-height:1.5}
+.ia2-intro h2{font:800 clamp(21px,3.8vw,28px)/1.35 var(--serif);color:var(--ink);margin:10px 0 7px}
+.ia2-intro p{color:var(--ink-2);font-size:13.5px;line-height:1.7;margin:5px 0}
+.ia2-intro strong{color:var(--ink)}
+.ia2-context{border:1px solid var(--line);border-radius:13px;background:var(--surface);
+  padding:13px 15px;font-size:12.5px;line-height:1.7;color:var(--ink-2);margin-bottom:13px}
+.ia2-context b{color:var(--ink)}
+.ia2-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:13px}
+.ia2-stats div{padding:12px 11px;background:var(--surface);border:1px solid var(--line);
+  border-radius:13px;min-width:0}
+.ia2-stats b{color:var(--rep);display:block;font-size:24px;line-height:1.25;font-weight:800;font-variant-numeric:tabular-nums}
+.ia2-stats small{display:block;font-size:11.3px;color:var(--ink-2);line-height:1.5;margin-top:4px}
+.ia2-tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;
+  border:1px solid var(--line);background:var(--surface);padding:14px;border-radius:16px}
+.ia2-filter{min-width:0;display:block;color:var(--ink);font-size:11.5px;font-weight:700;line-height:1.6}
+.ia2-filter input,.ia2-filter select{display:block;width:100%;min-width:0;height:43px;
+  margin-top:4px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);
+  border-radius:11px;padding:0 11px;font:inherit;font-size:14px;font-weight:500;outline-offset:2px}
+.ia2-filter input:focus-visible,.ia2-filter select:focus-visible{outline:2px solid var(--rep)}
+.ia2-filter.ia2-search{grid-column:1 / -1}
+.ia2-controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0 10px}
+.ia2-controls p{flex:1 0 100%;margin:0;font-size:12.5px;font-weight:600;color:var(--ink-2)}
+.ia2-btn{padding:8px 12px;min-height:38px;border:1px solid var(--line);
+  border-radius:11px;background:var(--surface);color:var(--ink);font:inherit;font-size:12px;font-weight:700}
+.ia2-btn.primary{background:var(--rep);border-color:var(--rep);color:#fff}
+.ia2-btn:disabled{opacity:.45;cursor:not-allowed}
+.ia2-family{border:1px solid var(--line);border-radius:15px;overflow:hidden;
+  background:var(--surface);margin-bottom:9px}
+.ia2-family[open]{border-color:color-mix(in srgb,var(--rep) 35%,var(--line))}
+.ia2-family summary{position:relative;cursor:pointer;list-style:none;
+  padding:14px 34px 14px 14px;color:var(--ink)}
+.ia2-family summary::-webkit-details-marker{display:none}
+.ia2-family summary::after{content:"⌄";font-size:25px;line-height:1;position:absolute;right:13px;top:15px;color:var(--rep)}
+.ia2-family[open] summary::after{transform:rotate(180deg)}
+.ia2-family summary:focus-visible{outline:2px solid var(--rep);outline-offset:-3px}
+.ia2-family-top{display:flex;align-items:flex-start;gap:8px;justify-content:space-between}
+.ia2-family-name{font-size:14.5px;font-weight:800;line-height:1.5;overflow-wrap:anywhere}
+.ia2-status{flex:none;background:var(--new-soft);color:var(--new);
+  border-radius:8px;padding:3px 8px;font-size:11px;font-weight:800;white-space:nowrap}
+.ia2-family-meta{font-size:11.5px;color:var(--ink-2);display:block;margin:4px 0;line-height:1.55}
+.ia2-grades{display:flex;gap:4px;flex-wrap:wrap;margin-top:9px}
+.ia2-grade{border-radius:7px;padding:3px 8px;font-size:11px;font-weight:600;
+  background:var(--surface-2);color:var(--ink-2)}
+.ia2-grade.pending{color:var(--new);background:var(--new-soft)}
+.ia2-hint{display:block;font-size:11px;color:var(--rep);margin-top:9px;font-weight:700}
+.ia2-family-detail{padding:13px 15px 16px;border-top:1px solid var(--line)}
+.ia2-warning{font-size:12.5px;color:var(--ink-2);line-height:1.7;border-radius:11px;
+  padding:11px 12px;background:var(--surface-2);margin-bottom:12px}
+.ia2-warning b{color:var(--ink)}
+.ia2-family-ref{font-size:12px;color:var(--ink-2);line-height:1.6}
+.ia2-family-ref b{color:var(--ink)}
+.ia2-child-list{list-style:none;margin:10px 0 5px;padding:0}
+.ia2-child{display:flex;align-items:flex-start;gap:9px;padding:11px 1px;border-top:1px solid var(--line)}
+.ia2-child-grade{flex:none;min-width:76px;max-width:130px;border-radius:8px;
+  padding:5px 6px;background:var(--rep-soft);color:var(--rep);font-size:11px;
+  line-height:1.35;font-weight:700;text-align:center}
+.ia2-child-main{flex:1;min-width:0}
+.ia2-child-main b{display:block;font-size:12.5px;line-height:1.55;font-weight:700;overflow-wrap:anywhere}
+.ia2-child-main small{display:block;font-size:11px;line-height:1.5;color:var(--ink-3);margin-top:2px}
+.ia2-child-none{font-size:13px;color:var(--ink-2);line-height:1.65;padding:15px 10px}
+.ia2-bottom-ref{padding-top:12px;line-height:1.55}
+.ia2-ref-link{font-size:12px;color:var(--rep);font-weight:700;overflow-wrap:anywhere}
+.ia2-unknown{color:var(--ink-2);font-size:12px}
+.ia2-empty{font-size:13px;color:var(--ink-2);line-height:1.7;text-align:center;
+  margin-top:10px;padding:22px 15px;border:1px dashed var(--line);border-radius:14px}
+.ia2-data-source{margin:15px 0;border:1px solid var(--line);border-radius:13px;
+  padding:13px 15px;font-size:12px;line-height:1.7;color:var(--ink-2)}
+.ia2-data-source b{color:var(--ink)}
+.ia2-data-source a{color:var(--rep);overflow-wrap:anywhere}
+.ia2-compare{margin:20px 0 12px;border-top:1px solid var(--line);
+  border-radius:15px;background:var(--surface);border:1px solid var(--line)}
+.ia2-compare>summary{cursor:pointer;list-style:none;padding:17px 16px;font-size:14px;
+  line-height:1.5;font-weight:800;color:var(--ink)}
+.ia2-compare>summary::-webkit-details-marker{display:none}
+.ia2-compare>summary:after{content:" ▾";color:var(--rep)}
+.ia2-compare[open]>summary{border-bottom:1px solid var(--line)}
+.ia2-compare>div{padding:14px 10px}
+.ia2-compare>div .nx-hero{margin-top:0}
+@media(min-width:720px){
+  .ia2-stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .ia2-tools{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .ia2-filter.ia2-search{grid-column:1 / 3}
+  .ia2-controls p{flex:1 1 auto}
+}
+@media(max-width:400px){
+  .ia2-filter input,.ia2-filter select{font-size:16px}
+  .ia2-child{display:block}
+  .ia2-child-grade{display:inline-block;margin-bottom:6px}
+}
+@media(prefers-reduced-motion:reduce){.ia2-family summary::after{transition:none}}
