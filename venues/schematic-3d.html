@@ -7,7 +7,7 @@ function dispose(){walkers.length=0;buses.length=0;for(const o of objects){scene
 function makeBuildingLabel(name,y){const canvas=document.createElement('canvas');canvas.width=512;canvas.height=128;const ctx=canvas.getContext('2d');ctx.fillStyle='rgba(22,44,68,.92)';ctx.beginPath();ctx.roundRect(4,5,504,114,22);ctx.fill();ctx.strokeStyle='#ffffff';ctx.lineWidth=4;ctx.stroke();ctx.font='bold 45px system-ui, sans-serif';ctx.fillStyle='white';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(name,256,64,460);const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,transparent:true,depthTest:false}));sprite.scale.set(6.6,1.65,1);sprite.position.set(0,y,0);sprite.renderOrder=5;return sprite}
 function building(label,i,total,isDistrict){const key=label.normalize('NFKC').replace(/\s+/g,'').toLowerCase();let x,z;const districtLayout={'อาคาร1':[0,8],'อาคาร2':[0,-11.5],'อาคารโดม':[0,-4]};if(isDistrict&&districtLayout[key]){[x,z]=districtLayout[key]}else{const cols=Math.ceil(Math.sqrt(total));x=(i%cols-(cols-1)/2)*6;z=(Math.floor(i/cols)-(Math.ceil(total/cols)-1)/2)*7}const group=new THREE.Group();group.position.set(x,0,z);if(isDistrict&&['อาคาร1','อาคาร2','อาคารโดม'].includes(key)){group.rotation.y=Math.PI/2;group.scale.z=.78}const office=isDistrict&&(key==='อาคาร1'||key==='อาคาร2'),dome=isDistrict&&key==='อาคารโดม';const color=['#e7d5b4','#d7e3ef','#d2b6bd','#a8d2c4'][i%4];function add(geo,mat,px,py,pz,clickable=true){const mesh=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:mat,side:THREE.DoubleSide,roughness:.82}));mesh.position.set(px,py,pz);group.add(mesh);if(clickable){mesh.userData.label=label;meshes.push(mesh)}return mesh}if(office){add(new THREE.BoxGeometry(5,4.8,14),color,0,2.4,0);const roof=add(new THREE.CylinderGeometry(3.65,3.65,14.5,4,1,false),'#344e6a',0,5.15,0);roof.rotation.y=Math.PI/4;roof.rotation.x=Math.PI/2;for(const side of [-1,1])for(const floor of [1.3,3.55])for(let j=-6;j<=6;j+=2){add(new THREE.BoxGeometry(.09,1.05,1.25),'#8db6ca',side*2.55,floor,j)}for(const side of [-1,1])add(new THREE.BoxGeometry(.18,.2,14),'#e7edf2',side*2.6,2.5,0)}else if(dome){add(new THREE.BoxGeometry(8.5,.25,14),'#b6b8a9',0,.14,0);const roof=add(new THREE.CylinderGeometry(4.3,4.3,14.2,40,1,true,0,Math.PI),'#d9e3e9',0,3.35,0);roof.rotation.z=Math.PI/2;roof.rotation.y=Math.PI/2;for(const side of [-1,1])for(const zz of [-6,-3,0,3,6])add(new THREE.BoxGeometry(.18,3.25,.18),'#637d88',side*4.15,1.65,zz)}else{add(new THREE.BoxGeometry(4,2.3,3.6),color,0,1.15,0);const roof=add(new THREE.ConeGeometry(3.5,1.1,4),'#8b6965',0,2.8,0);roof.rotation.y=Math.PI/4}if(isDistrict&&[ 'อาคาร1','อาคาร2','อาคารโดม'].includes(key))group.add(makeBuildingLabel(key==='อาคารโดม'?'อาคารโดม':key==='อาคาร1'?'อาคาร 1':'อาคาร 2',office?7.5:8));scene.add(group);objects.push(group)}
 // D3D-1: provisional scene coordinates only; +Z = frontage, -Z = rear.
-const DISTRICT_LAYOUT=Object.freeze({verified:false,parcel:{width:42,length:116},rearPond:{x:0,z:-46,rx:9,rz:6},buildingCenters:{'อาคาร1':[0,8],'อาคารโดม':[0,-4],'อาคาร2':[0,-16]},rearCarport:{x:0,z:-19.5,width:12,length:9},sideRoadsX:[-17,17],frontRoadsZ:[15],gate:{x:0,z:43},road3342:{z:52,width:9}});
+const DISTRICT_LAYOUT=Object.freeze({verified:false,parcel:{width:42,length:116},rearPond:{x:0,z:-46,rx:9,rz:6},buildingCenters:{'อาคาร1':[0,8],'อาคารโดม':[0,-4],'อาคาร2':[0,-16]},rearCarport:{x:0,z:-35,width:12,length:7},sideRoadsX:[-17,17],frontRoadsZ:[31],gate:{entryX:-13,exitX:13,z:43},road3342:{z:52,width:9}});
 function decorateDistrict(){
  const d=DISTRICT_LAYOUT,g=new THREE.Group();
  const mat=c=>new THREE.MeshStandardMaterial({color:c,roughness:.93});
@@ -15,24 +15,24 @@ function decorateDistrict(){
  // Long narrow site: three parallel-to-frontage buildings in a rearward row.
  slab(d.parcel.width,d.parcel.length,0,0,'#b6ad94',.02);
  slab(36,17,0,32,'#c3c1ba',.11); // front arrival yard
- slab(8,11,0,43,'#929799',.15); // entrance connector to road 3342
+ for(const x of [d.gate.entryX,d.gate.exitX])slab(5,17,x,43,'#777f83',.18); // separate entry/exit
  slab(94,d.road3342.width,0,d.road3342.z,'#515962',.16);
  for(let x=-43;x<=43;x+=8)slab(3,.14,x,d.road3342.z,'#f0d982',.25);
  // Two continuous side roads; ONLY one transverse road in front of อาคาร 1.
- for(const x of d.sideRoadsX)slab(4,75,x,-1.5,'#777f83',.19);
+ for(const x of d.sideRoadsX)slab(4,83,x,-1.5,'#777f83',.19);
  for(const z of d.frontRoadsZ)slab(38,4,0,z,'#81888a',.2);
- slab(38,4,0,25,'#c3c1ba',.13); // open arrival yard, not another transverse road
+ slab(38,4,0,-27,'#81888a',.2); // road between rear extension and parking
  // Gate joins the internal network through the front arrival yard.
- slab(8,19,0,34,'#81888a',.22);
- // District office name sign and front lawn: on the arrival-yard side of the
- // ONLY cross road (z=15), keeping vehicle lanes and side roads unobstructed.
+ for(const x of [d.gate.entryX,d.gate.exitX])slab(5,16,x,35,'#81888a',.22);
+ // Front-to-rear order: front cross-road z=31, lawn z=26, name sign z=20, อาคาร 1 z=8.
  for(const x of [-9.5,9.5]){
-  slab(10,5.2,x,21,'#5b9453',.2);
-  for(const px of [x-3.8,x+3.8]){
+  slab(9,6,x,26,'#5b9453',.2);
+  for(const px of [x-3,x+3]){
    const shrub=new THREE.Mesh(new THREE.IcosahedronGeometry(.45,1),mat('#3e7541'));
-   shrub.position.set(px,.63,22.8);g.add(shrub);
+   shrub.position.set(px,.63,26);g.add(shrub);
   }
  }
+ slab(7,6,0,26,'#5b9453',.2);
  // Low masonry monument and readable Thai sign, facing the road/front approach.
  slab(10,.85,0,20.2,'#e9e1cd',.65);
  const signBase=new THREE.Mesh(new THREE.BoxGeometry(10,1.7,.48),mat('#eee9df'));
@@ -47,6 +47,12 @@ function decorateDistrict(){
  const signTex=new THREE.CanvasTexture(signCanvas);signTex.colorSpace=THREE.SRGBColorSpace;
  const signFace=new THREE.Mesh(new THREE.PlaneGeometry(9.6,1.55),new THREE.MeshBasicMaterial({map:signTex,side:THREE.DoubleSide}));
  signFace.position.set(0,1.55,20.48);g.add(signFace);
+ // Decorative curved frontage sign in central island, with LEFT entry and RIGHT exit.
+ const arch=new THREE.Group();
+ for(const x of [-5.5,5.5]){const pillar=new THREE.Mesh(new THREE.BoxGeometry(.65,2.6,.65),mat('#eee5d4'));pillar.position.set(x,1.35,44);arch.add(pillar)}
+ const curve=new THREE.CatmullRomCurve3([new THREE.Vector3(-5.5,2.7,44),new THREE.Vector3(-2.8,3.8,44),new THREE.Vector3(0,4.15,44),new THREE.Vector3(2.8,3.8,44),new THREE.Vector3(5.5,2.7,44)]);
+ const archMesh=new THREE.Mesh(new THREE.TubeGeometry(curve,28,.33,8,false),mat('#c6a66e'));arch.add(archMesh);
+ const archLabel=makeBuildingLabel('สพป.กาญจนบุรี เขต 4',3.4);archLabel.position.set(0,3.4,44);archLabel.scale.set(7,1.15,1);arch.add(archLabel);g.add(arch);
  // Pedestrian bands are separate from the vehicle corridors.
  for(const x of [-11,11])slab(1,63,x,-8,'#d9d6c9',.2);
  // Full-width single-storey office annex directly behind อาคาร 1, adjoining the dome.
@@ -61,6 +67,11 @@ function decorateDistrict(){
   window.position.set(x,1.45,5.54);annex.add(window);
  }
  g.add(annex);
+ // One-storey rear extension to อาคาร 2, before the rear cross-road.
+ const rearOffice=new THREE.Mesh(new THREE.BoxGeometry(10.8,2.4,5),mat('#e7d5b4'));
+ rearOffice.position.set(0,1.2,-21);g.add(rearOffice);
+ const rearOfficeRoof=new THREE.Mesh(new THREE.BoxGeometry(11.4,.28,5.5),mat('#526a77'));
+ rearOfficeRoof.position.set(0,2.58,-21);g.add(rearOfficeRoof);
  // Open-sided parking canopy BEHIND อาคาร 2, before the rear pond.
  const cp=d.rearCarport;
  slab(cp.width+2,cp.length+1,cp.x,cp.z,'#9da09b',.12);
@@ -77,7 +88,7 @@ function decorateDistrict(){
  const water=new THREE.Mesh(new THREE.ShapeGeometry(shape),mat('#73a79e'));water.rotation.x=-Math.PI/2;water.position.set(d.rearPond.x,.17,d.rearPond.z);g.add(water);
  // Site perimeter, with a clear opening at the frontage gate.
  for(const x of [-21,21])slab(.35,112,x,-1,'#a4a7a0',.23);
- for(const x of [-13,13])slab(16,.35,x,44,'#a4a7a0',.23);
+ for(const x of [-7,7])slab(14,.35,x,44,'#a4a7a0',.23);
  for(let i=0;i<20;i++){const x=(i%2?17:-17)+(i%3-1)*2,z=-52+Math.floor(i/2)*9;if(z>-27&&z<28)continue;const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.14,.19,1.2,6),mat('#6d6350'));trunk.position.set(x,.7,z);const crown=new THREE.Mesh(new THREE.IcosahedronGeometry(.9,0),mat('#5e8959'));crown.position.set(x,1.7,z);g.add(trunk,crown)}
  // Surrounding fields are contextual, schematic only.
  for(const x of [-39,39])for(let z=-45;z<=36;z+=8)slab(20,.25,x,z,'#b5ad83',.025);
