@@ -2022,7 +2022,7 @@ try {
  * and independent temporary IA-2 draft families. Never treat them as 74 appointments. */
 try {
   const ia5Families=window.SILLAPA_IA2.buildRegistry(NX.groups,window.SILLAPA70_CATALOG);
-  const ia5History=window.SILLAPA_IA5.historyGroups(JG,AGRP);
+  const ia5History=window.SILLAPA_IA5.historyGroups(JG,AGRP,JCON);
   window.SILLAPA_IA5.mount({rootId:'ia5Root',families:ia5Families,historical:ia5History,snapshot:null});
 } catch (error) {
   console.error('IA-5 judge/venue planning initialization failed:',error);
