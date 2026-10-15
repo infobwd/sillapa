@@ -27,6 +27,18 @@ function building(label,i,total,isDistrict){const key=label.normalize('NFKC').re
   add(new THREE.BoxGeometry(.16,.13,1.24),'#e6e3d8',-1.94,4.43,zz,false);
   add(new THREE.BoxGeometry(.08,.09,.12),'#e9c87e',-1.98,3.38,zz-.38,false);
  }
+ // Make second-floor rooms legible from the open corridor: deep dark door recesses,
+ // framed windows, wall returns and numbered lintels for each upper room bay.
+ for(let bay=0;bay<7;bay++){
+  const zz=-6+bay*2;
+  add(new THREE.BoxGeometry(.035,1.86,1.68),'#b4a58e',-1.965,3.58,zz,false);
+  add(new THREE.BoxGeometry(.04,1.72,1.12),'#35424a',-2.0,3.55,zz,false);
+  add(new THREE.BoxGeometry(.05,1.45,.77),'#79583f',-2.055,3.46,zz-.13,false);
+  add(new THREE.BoxGeometry(.06,.65,.46),'#9bc8df',-2.105,3.91,zz+.15,false);
+  add(new THREE.BoxGeometry(.07,.14,1.68),'#f5efe1',-2.11,4.52,zz,false);
+  add(new THREE.BoxGeometry(.32,2.0,.12),'#eee5d5',-2.12,3.5,zz-1,false);
+  add(new THREE.BoxGeometry(.065,.18,.52),'#e7c680',-2.16,4.43,zz,false);
+ }
  // Stair flights are INSIDE the building envelope at both corridor ends.
  // Both flights occupy the open front-corridor strip, not the outdoor yard.
  for(const end of [-1,1]){
@@ -140,6 +152,19 @@ function decorateDistrict(){
   window.position.set(x,1.45,5.54);annex.add(window);
  }
  g.add(annex);
+ // Open-sided parking shelter across the RIGHT internal road, staggered beside Building 1.
+ // Right-hand road: x=13, edge=15.5; shelter sits between road and east boundary x=21.
+ const sideCarport=new THREE.Group(),scX=18.15,scZ=3.3;
+ slab(4.8,7.8,scX,scZ,'#c8c6c0',.19);
+ for(const xx of [-2.05,2.05])for(const zz of [-3.3,3.3]){
+  const post=new THREE.Mesh(new THREE.BoxGeometry(.15,2.8,.15),mat('#657983'));
+  post.position.set(scX+xx,1.55,scZ+zz);sideCarport.add(post);
+ }
+ const carportRoof=new THREE.Mesh(new THREE.BoxGeometry(4.8,.24,7.8),mat('#607b89'));
+ carportRoof.position.set(scX,3.04,scZ);sideCarport.add(carportRoof);
+ const fascia=new THREE.Mesh(new THREE.BoxGeometry(4.8,.35,.16),mat('#466270'));
+ fascia.position.set(scX,2.94,scZ+3.87);sideCarport.add(fascia);
+ g.add(sideCarport);
  // Right-hand restroom wing of Building 1, perpendicular to its long axis (X).
  // Keep the east internal road clear: restroom reaches only x=10.4, road starts x=10.5.
  const restroom=new THREE.Mesh(new THREE.BoxGeometry(3.2,2.45,5.6),mat('#e5d5bc'));
