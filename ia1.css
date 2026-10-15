@@ -157,3 +157,21 @@
   html{scroll-padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px) + 24px)}
 }
 @media(prefers-reduced-motion:reduce){.ia-history-details>summary span{transition:none}}
+
+/* Fix: original KPI hero used full-width flex sizing inside a nested disclosure. */
+#v-overview .ia-history-details,
+#v-overview .ia-history-body,
+#v-overview .ia-history-body .kpis{box-sizing:border-box;min-width:0;max-width:100%;width:100%}
+#v-overview .ia-history-body{overflow-x:clip}
+#v-overview .ia-history-body .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+#v-overview .ia-history-body .kpi{box-sizing:border-box;min-width:0;max-width:100%;overflow-wrap:anywhere}
+#v-overview .ia-history-body .kpi.hero{grid-column:1/-1;width:100%;max-width:100%;min-width:0}
+#v-overview .ia-history-body .kpi.hero span{min-width:0;overflow-wrap:anywhere}
+#v-overview .ia-history-body .kpi.hero svg{flex-shrink:0}
+#v-overview .ia-history-body .wall-card,
+#v-overview .ia-history-body .grid-2,
+#v-overview .ia-history-body .grid-2>div{min-width:0;max-width:100%}
+@media(min-width:1000px){
+ #v-overview .ia-history-body .kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
+ #v-overview .ia-history-body .kpi.hero{grid-column:1/-1;flex-direction:row;align-items:center}
+}
