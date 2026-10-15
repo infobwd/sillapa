@@ -83,32 +83,32 @@
     );
   }
   function exportRows(families, filter = {}) {
-    const header = ['รหัสอ้างอิงรายการในร่าง (ชั่วคราว ไม่ใช่รหัสทางการ)','กลุ่มกิจกรรม','ชื่อกิจกรรมในร่าง 74',
+    const header = ['รหัสในแผน (ไม่ใช่รหัสรายการแข่งขันทางการ)','กลุ่มกิจกรรม','ชื่อกิจกรรมที่กำลังวางแผนสำหรับครั้งที่ 74',
       'สถานะครั้งที่ 74','รหัสรายการครั้งที่ 74','ระดับการแข่งขัน 74','โหมดรับสมัคร 74',
-      'ชุดข้อมูลอ้างอิง','รหัสการแข่งขันต้นทาง','ชื่อรายการย่อยจากต้นทาง','ระดับชั้นต้นทาง',
-      'ประเภทรายการย่อย (ตามชื่อเดิม)','สถานะการจับคู่','แหล่งข้อมูล','หมายเหตุ'];
+      'อ้างอิงการแข่งขันครั้งที่','รหัสรายการจากครั้งก่อน','ชื่อรายการย่อยจากต้นทาง','ระดับชั้นต้นทาง',
+      'ประเภทรายการย่อย (ตามชื่อเดิม)','สถานะการเทียบรายการ','แหล่งข้อมูล','หมายเหตุ'];
     const out = [header];
     for (const family of families) {
       const source = family.historyCycle === '70' ? '70' : family.historyCycle === '73' ? '73' : 'ไม่พบรายการตรงตัว';
       const srcName = source === '70' ? 'ฐานรายการครั้งที่ 70 สพป.ร้อยเอ็ด เขต 3' :
-        source === '73' ? 'ข้อมูลย้อนหลังการแข่งขันครั้งที่ 73 ใน Sillapa' : 'รอตรวจสอบรายการต้นทาง';
+        source === '73' ? 'ข้อมูลย้อนหลังการแข่งขันครั้งที่ 73 ใน Sillapa' : 'รอตรวจสอบรายการเดิม';
       const notes = family.historyCycle === 'unresolved'
         ? 'ไม่มีข้อมูลรายการย่อย/ระดับชั้นที่จับคู่ได้; ห้ามสมมติจากชื่อกลุ่ม'
-        : 'จับคู่เพื่ออ้างอิงตามร่างเท่านั้น; ระดับชั้นและสิทธิ์แข่งขันครั้งที่ 74 รอประกาศ';
+        : 'ใช้ข้อมูลการแข่งขันครั้งก่อนเพื่อช่วยวางแผนเท่านั้น; ระดับชั้นและสิทธิ์แข่งขันครั้งที่ 74 รอประกาศ';
       const matched=visibleEvents(family,filter);
       const matches = matched.length ? matched : [{sourceId:null,title:'',grade:null}];
       matches.forEach(ev => out.push([
         family.key, family.groupName,family.draftTitle,'ร่าง — ยังไม่ยืนยัน',
         '', 'ยังไม่ประกาศ', 'ยังไม่ประกาศ',
         source,ev.sourceId || '',ev.title || '',ev.grade || '',
-        ev.title || '',family.sourceState === 'unmatched' ? 'รอตรวจสอบ' : 'อ้างอิงย้อนหลัง (ยังไม่รับรอง 74)',
+        ev.title || '',family.sourceState === 'unmatched' ? 'รอตรวจสอบ' : 'เทียบกับการแข่งขันครั้งก่อน (ยังไม่ยืนยันครั้งที่ 74)',
         srcName,notes
       ]));
     }
     return out;
   }
   const sourceLabel = family => family.historyCycle === '70' ? 'อ้างอิงครั้งที่ 70'
-    : family.historyCycle === '73' ? 'อ้างอิงครั้งที่ 73' : 'รอตรวจสอบรายการต้นทาง';
+    : family.historyCycle === '73' ? 'อ้างอิงครั้งที่ 73' : 'รอตรวจสอบรายการเดิม';
   function familyHTML(family, expand, round70URL, filter = {}) {
     const title = escapeHTML(family.draftTitle), group = escapeHTML(family.groupName);
     const total = family.events.length,shown=visibleEvents(family,filter);
@@ -124,7 +124,7 @@
       '<span class="ia2-child-grade">' + escapeHTML(e.grade || 'ไม่ระบุ') + '</span>' +
       '<span class="ia2-child-main"><b>' + escapeHTML(e.title) + '</b>' +
       '<small>' + (e.sourceId ? 'รหัสรายการครั้งที่ ' + escapeHTML(e.historyCycle) + ': ' + escapeHTML(e.sourceId)
-      : 'ไม่มีรหัสกิจกรรมต้นทางในชุดข้อมูลที่เผยแพร่') + '</small></span></li>').join('');
+      : 'ไม่มีรหัสรายการเดิมในข้อมูลนี้') + '</small></span></li>').join('');
     const records = shown.length ? '<ol class="ia2-child-list">' + rows + '</ol>'
       : '<div class="ia2-child-none">ยังไม่มีรายการย่อยที่ตรวจสอบได้ — อย่าตีความว่าไม่มีการแข่งขันหรือว่ามีทุกระดับชั้น</div>';
     return '<details class="ia2-family" data-key="' + escapeHTML(family.key) + '"' + (expand ? ' open' : '') + '>' +
@@ -136,7 +136,7 @@
       '<span class="ia2-hint">ดูข้อมูลรายการย่อยและที่มา <span aria-hidden="true">▾</span></span></summary>' +
       '<div class="ia2-family-detail"><div class="ia2-warning"><b>สถานะ: ร่างการแข่งขันครั้งที่ 74</b>' +
       ' ยังไม่มีรหัสกิจกรรม ระดับแข่งขัน เกณฑ์ หรือโควตาตัวแทนครั้งที่ 74 ที่ได้รับการยืนยัน</div>' +
-      '<div class="ia2-family-ref"><b>ข้อมูลอ้างอิงในอดีต:</b> ' + sourceLabel(family) +
+      '<div class="ia2-family-ref"><b>รายการจากการแข่งขันครั้งก่อน:</b> ' + sourceLabel(family) +
       (family.draftSubtypes.length ? '<div>ชื่อประเภทย่อยในร่าง: ' + family.draftSubtypes.map(escapeHTML).join(' / ') + '</div>' : '') + '</div>' +
       records + '<div class="ia2-bottom-ref">' + link + '</div></div></details>';
   }
@@ -188,8 +188,8 @@
       elEmpty.hidden=visible.length!==0;
       if(!visible.length){
         elEmpty.textContent=(f.stage==='district'||f.stage==='cluster'||f.status==='confirmed')
-          ? 'ยังไม่มีรายการครั้งที่ 74 ที่ได้รับการประกาศยืนยันระดับแข่งขันหรือสถานะอย่างเป็นทางการ จึงไม่แสดงรายการสมมติ'
-          : 'ไม่พบรายการตรงกับตัวกรอง ลองล้างตัวกรองหรือค้นหาด้วยชื่อรายการย่อย/ระดับชั้น';
+          ? 'ยังไม่มีประกาศยืนยันรายการแข่งขันครั้งที่ 74 จึงยังแสดงรายการในเงื่อนไขนี้ไม่ได้'
+          : 'ไม่พบรายการตามที่เลือก ลองล้างตัวกรองหรือค้นหาด้วยชื่อกิจกรรมและระดับชั้น';
       }
       elExport.disabled=visible.length===0;
       elExpand.disabled=visible.length===0;
