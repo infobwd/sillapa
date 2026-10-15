@@ -94,7 +94,7 @@
     }
     return {get,set,info:()=>({lastSaved,blocked,key:KEY,scope:'this device only'})};
   }
-  function historyGroups(archivedJudges,groupForAct){
+  function historyGroups(archivedJudges,groupForAct,conflictsByAct={}){
     // Accept only index references for aggregate computation; do not return names.
     const out=new Map();
     if(!isObject(archivedJudges)||!Array.isArray(archivedJudges.p)||!isObject(archivedJudges.a))return [];
@@ -102,14 +102,15 @@
       const group=groupForAct(act);
       if(typeof group!=='string'||!group||!Array.isArray(assignments))continue;
       let r=out.get(group);
-      if(!r){r={group,events:new Set(),judges:new Set(),positions:0};out.set(group,r)}
+      if(!r){r={group,events:new Set(),judges:new Set(),positions:0,schoolFlags:0};out.set(group,r)}
       r.events.add(act);
+      if(Array.isArray(conflictsByAct[act]))r.schoolFlags+=conflictsByAct[act].length;
       assignments.forEach(v=>{
         if(!Array.isArray(v)||!Number.isInteger(v[0])||v[0]<0||v[0]>=archivedJudges.p.length)return;
         r.judges.add(v[0]);r.positions++;
       });
     }
-    return [...out.values()].map(r=>({group:r.group,events:r.events.size,judges:r.judges.size,positions:r.positions}))
+    return [...out.values()].map(r=>({group:r.group,events:r.events.size,judges:r.judges.size,positions:r.positions,schoolFlags:r.schoolFlags}))
       .sort((a,b)=>a.group.localeCompare(b.group,'th'));
   }
   function summary(families,store,stage,filter){
@@ -189,7 +190,7 @@
       const draft=families.filter(f=>f.groupName===g).length;
       return '<tr><th scope="row">'+e(g)+'</th><td>'+draft+' <small>ร่าง</small></td>'+
         '<td>'+(r?r.events:'—')+'</td><td>'+(r?r.judges:'—')+'</td><td>'+(r?r.positions:'—')+'</td>'+
-        '<td>—</td><td>—</td></tr>';
+        '<td>'+(r?r.schoolFlags:'—')+'</td><td>—</td><td>—</td></tr>';
     }).join('');
   }
   function mount(opts){
@@ -222,8 +223,8 @@
       '<p class="ia5-local" id="ia5Local" aria-live="polite"></p><p class="ia5-found" id="ia5Found"></p>'+
       '<div id="ia5Rows" class="ia5-list"></div><button class="ia5-more" id="ia5More" type="button" hidden>ดูเพิ่ม</button></section>'+
       '<section class="ia5-historical"><h3>ภาพรวมอ้างอิงครั้งที่ 73 เทียบรายการในร่างครั้งที่ 74</h3>'+
-      '<p>นับกรรมการไม่ซ้ำภายในกลุ่มในครั้งที่ 73 เท่านั้น คนเดียวอาจอยู่หลายกลุ่ม จึงไม่ควรรวมคอลัมน์นี้ข้ามกลุ่มเป็นจำนวนคนทั้งหมด และไม่ใช่ประมาณการผู้ต้องแต่งตั้งครั้งที่ 74</p>'+
-      '<div class="ia5-table-wrap"><table><thead><tr><th scope="col">กลุ่มกิจกรรม</th><th scope="col">กิจกรรมในร่าง 74</th><th scope="col">รายการแข่ง 73 ที่มีกรรมการ</th><th scope="col">กรรมการในกลุ่ม 73</th><th scope="col">ตำแหน่ง 73</th><th scope="col">แต่งตั้งจริง 74</th><th scope="col">สนามยืนยัน 74</th></tr></thead>'+
+      '<p>นับกรรมการไม่ซ้ำภายในกลุ่มในครั้งที่ 73 เท่านั้น คนเดียวอาจอยู่หลายกลุ่ม จึงไม่ควรรวมคอลัมน์นี้ข้ามกลุ่มเป็นจำนวนคนทั้งหมด สัญญาณโรงเรียนร่วมแข่งขันในครั้งที่ 73 เป็นเพียงเรื่องควรตรวจ ไม่ใช่คำวินิจฉัยความขัดแย้งหรือฐานการแต่งตั้งครั้งที่ 74</p>'+
+      '<div class="ia5-table-wrap"><table><thead><tr><th scope="col">กลุ่มกิจกรรม</th><th scope="col">กิจกรรมในร่าง 74</th><th scope="col">รายการแข่ง 73 ที่มีกรรมการ</th><th scope="col">กรรมการในกลุ่ม 73</th><th scope="col">ตำแหน่ง 73</th><th scope="col">สัญญาณโรงเรียนร่วมแข่ง 73</th><th scope="col">แต่งตั้งจริง 74</th><th scope="col">สนามยืนยัน 74</th></tr></thead>'+
       '<tbody id="ia5HistoricRows"></tbody></table></div></section>'+
       '<section class="ia5-next"><h3>เงื่อนไขก่อนแต่งตั้งและจัดสนามจริง</h3>'+
       '<p>ตรวจผู้ควบคุมทีม, โรงเรียนที่ส่งแข่งขัน, ภาระซ้อน/วันเวลา, ความพร้อมมาปฏิบัติงาน และความจุห้องจากผู้รับผิดชอบ ก่อนออกคำสั่ง/ประกาศ โดยต้องทำในระบบแข่งขันหลักที่กำหนดสิทธิ์ ไม่ใช้ข้อมูลในเครื่องเป็นหลักฐานยืนยัน</p>'+
@@ -246,8 +247,18 @@
         store.set(el.dataset.key,filters.stage,{[el.dataset.ia5Field]:el.value});redraw();
       }else if(el.matches('[data-ia5-risk]')){
         store.set(el.dataset.key,filters.stage,{risk:el.dataset.ia5Risk,checked:el.checked});
-        // Updating only risk counters avoids collapsing the open <details>.
-        draw(root,ctx,filters);
+        const row=el.closest('.ia5-row'),p=store.get(el.dataset.key,filters.stage);
+        if(row){
+          const n=RISKS.filter(r=>p.flags[r.key]).length;
+          row.querySelector('.ia5-risks summary span').textContent=n+' ข้อที่ทำเครื่องหมาย';
+          row.querySelector('.ia5-status').textContent=n?'มีประเด็นให้ตรวจ':'ยังไม่รับรอง';
+        }
+        const notice=id('ia5Local');
+        notice.textContent=store.info().lastSaved
+          ?'บันทึกธงประเด็นในเครื่องนี้แล้ว · ไม่ใช่การตรวจรับหรือคำวินิจฉัยทางการ'
+          :'บันทึกธงประเด็นไม่สำเร็จ · โปรดส่งออก CSV เก็บสำรอง';
+        notice.setAttribute('role',store.info().lastSaved?'note':'alert');
+        if(filters.risk==='attention')redraw();
       }
     });
     id('ia5Export').addEventListener('click',()=>{
