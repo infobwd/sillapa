@@ -61,7 +61,7 @@ const csv=exportCSV(fam,store,'district');
 assert.ok(csv.startsWith('\ufeff'));
 assert.ok(csv.includes("'=EXCEL"),'CSV formula injection sanitized');
 assert.ok(csv.includes('แผนในเครื่องนี้ ไม่ใช่แต่งตั้ง/จัดสนาม'));
-assert.ok(csv.includes('ความจุคาดการณ์ต่อห้อง'));
+assert.ok(csv.includes('จำนวนคนที่คาดว่ารองรับได้ต่อห้อง'));
 assert.ok(!csv.includes('Private Person'),'private test input rejected');
 assert.ok(!csv.includes('นายสมชาย'),'no synthetic judge roster emitted');
 assert.equal(KEY,'sillapa74:judge-venue-planning:v1');
