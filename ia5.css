@@ -129,3 +129,74 @@
  #v-venue .venue-3d-shortcut__button{transition:none}
  #v-venue .venue-3d-shortcut__button:hover{transform:none}
 }
+
+/* D-IA5-R3: desktop-first visual hierarchy. All selectors are scoped to #venue. */
+@media (min-width:1100px){
+ #v-venue.view{
+  width:calc(100% - 48px);max-width:1460px;
+  padding:28px clamp(22px,2.5vw,42px) 64px;
+ }
+ #v-venue .venue-3d-shortcut{
+  position:relative;overflow:hidden;
+  grid-template-columns:minmax(0,1fr) minmax(410px,.95fr);
+  gap:clamp(20px,3vw,48px);
+  min-height:218px;margin-bottom:24px;
+  padding:clamp(24px,2.6vw,36px);
+  border-radius:22px;
+  background:linear-gradient(118deg,var(--surface-2) 0%,var(--surface) 72%);
+  box-shadow:0 12px 32px rgba(0,0,0,.10);
+ }
+ #v-venue .venue-3d-shortcut:after{
+  content:"";position:absolute;pointer-events:none;right:-95px;top:-150px;
+  width:350px;height:350px;border-radius:50%;border:1px solid var(--line);opacity:.65;
+ }
+ #v-venue .venue-3d-shortcut__eyebrow{
+  margin-bottom:14px;font-size:12px;letter-spacing:.025em;
+ }
+ #v-venue .venue-3d-shortcut h2{
+  max-width:650px;font-size:clamp(24px,2.2vw,32px);
+  line-height:1.32;margin-bottom:12px;letter-spacing:-.02em;
+ }
+ #v-venue .venue-3d-shortcut p{max-width:650px;font-size:14px;line-height:1.75;margin-bottom:10px}
+ #v-venue .venue-3d-shortcut__actions{
+  position:relative;z-index:1;grid-template-columns:1fr;gap:12px;
+ }
+ #v-venue .venue-3d-shortcut__button{
+  min-height:76px;padding:15px 18px;border-radius:15px;
+  box-shadow:0 2px 9px rgba(0,0,0,.035);
+ }
+ #v-venue .venue-3d-shortcut__button-icon{width:46px;height:46px;font-size:22px}
+ #v-venue .venue-3d-shortcut__button-label strong{font-size:14px}
+ #v-venue .venue-3d-shortcut__button-label small{font-size:12px}
+ #v-venue .ia5-app{column-gap:18px;row-gap:20px}
+ #v-venue .ia5-app>.ia5-lead{grid-column:span 7}
+ #v-venue .ia5-app>.ia5-caution{grid-column:span 5}
+ #v-venue .ia5-lead,#v-venue .ia5-work,
+ #v-venue .ia5-historical,#v-venue .ia5-next{
+  border-radius:18px;padding:clamp(20px,2vw,28px);
+ }
+ #v-venue .ia5-lead h2{font-size:clamp(23px,2vw,28px)}
+ #v-venue .ia5-lead>p:last-child{font-size:13px;line-height:1.8}
+ #v-venue .ia5-caution{padding:22px;font-size:13px;line-height:1.85;border-radius:18px}
+ #v-venue .ia5-kpis{gap:14px}
+ #v-venue .ia5-kpi{padding:20px 22px;border-radius:16px;min-height:126px}
+ #v-venue .ia5-kpi small{font-size:12px}
+ #v-venue .ia5-kpi strong{font-size:30px;line-height:1.2;margin:10px 0 8px}
+ #v-venue .ia5-work-title h3,#v-venue .ia5-historical h3,#v-venue .ia5-next h3{font-size:19px}
+ #v-venue .ia5-controls{gap:14px;margin-top:20px}
+ #v-venue .ia5-controls select,#v-venue .ia5-controls input{min-height:48px}
+ #v-venue .ia5-list{gap:14px}
+ #v-venue .ia5-row{padding:18px;border-radius:15px}
+ #v-venue .ia5-row-head strong{font-size:14px}
+ #v-venue .ia5-table-wrap{margin-top:18px}
+ #v-venue .ia5-table-wrap th,#v-venue .ia5-table-wrap td{padding:13px 15px}
+}
+@media(min-width:1100px) and (max-width:1260px){
+ #v-venue .venue-3d-shortcut{grid-template-columns:minmax(0,1fr) minmax(350px,.95fr)}
+ #v-venue .ia5-app>.ia5-lead{grid-column:span 6}
+ #v-venue .ia5-app>.ia5-caution{grid-column:span 6}
+}
+@media(min-width:760px) and (max-width:1099px){
+ #v-venue .venue-3d-shortcut__actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #v-venue .venue-3d-shortcut{padding:22px}
+}
