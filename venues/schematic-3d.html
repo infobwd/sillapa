@@ -157,6 +157,11 @@ function decorateDistrict(){
  // Long narrow site: three parallel-to-frontage buildings in a rearward row.
  slab(d.parcel.width,d.parcel.length,0,0,'#b6ad94',.02);
  slab(36,17,0,32,'#c3c1ba',.11); // front arrival yard
+ // Mark the open forecourt parking area indicated by the user, without covering the lawn.
+ for(const x of [-8.75,-5.25,-1.75,1.75,5.25,8.75]){
+  slab(.08,5.6,x,36,'#f4efe0',.255);
+ }
+ slab(18,.09,0,39,'#f4efe0',.256);
  for(const x of [d.gate.entryX,d.gate.exitX])slab(5,17,x,43,'#777f83',.18); // separate entry/exit
  slab(94,d.road3342.width,0,d.road3342.z,'#515962',.16);
  for(let x=-43;x<=43;x+=8)slab(3,.14,x,d.road3342.z,'#f0d982',.25);
@@ -428,7 +433,7 @@ function decorateDistrict(){
 function addWalkers(isDistrict,activityCount=0){const root=new THREE.Group();const routes=isDistrict?[[[-7,28],[-7,22],[-7,15],[-7,9]],[ [7,22],[7,13],[7,0],[7,-10] ],[[-6,10],[-6,2],[-6,-10]],[[-8,-16],[-8,-22],[-8,-27]],[[8,-18],[8,-25],[8,-29]]]:[[[-8,-8],[-8,8]],[[0,-8],[0,8]],[[8,8],[8,-8]]];const skin=new THREE.MeshStandardMaterial({color:'#d4a27c'}),hair=new THREE.MeshStandardMaterial({color:'#292d35'}),legMat=new THREE.MeshStandardMaterial({color:'#283a59'}),teacherMat=new THREE.MeshStandardMaterial({color:'#b48e67'}),shirtMat=new THREE.MeshStandardMaterial({color:'#f5f6f8'});const geoHead=new THREE.SphereGeometry(.15,8,6),geoBody=new THREE.BoxGeometry(.34,.45,.2),geoLimb=new THREE.BoxGeometry(.105,.43,.12),geoHair=new THREE.SphereGeometry(.155,8,6);for(let i=0;i<Math.min(isDistrict?44:32,Math.max(isDistrict?10:8,Math.round(activityCount*.45)));i++){const teacher=i%6===0;const person=new THREE.Group();const body=new THREE.Mesh(geoBody,teacher?teacherMat:shirtMat);body.position.y=.84;person.add(body);const head=new THREE.Mesh(geoHead,skin);head.position.y=1.23;person.add(head);const cap=new THREE.Mesh(geoHair,hair);cap.scale.y=.42;cap.position.y=1.36;person.add(cap);const limbs=[];for(const x of [-.11,.11]){const pivot=new THREE.Group();pivot.position.set(x,.61,0);const limb=new THREE.Mesh(geoLimb,legMat);limb.position.y=-.2;pivot.add(limb);person.add(pivot);limbs.push(pivot)}for(const x of [-.23,.23]){const pivot=new THREE.Group();pivot.position.set(x,1.04,0);const limb=new THREE.Mesh(geoLimb,teacher?teacherMat:shirtMat);limb.position.y=-.19;pivot.add(limb);person.add(pivot);limbs.push(pivot)}root.add(person);const route=routes[i%routes.length].map(p=>new THREE.Vector3(p[0],0,p[1]));walkers.push({person,route,limbs,speed:.28+(i%5)*.055,phase:i*1.37})}root.visible=peopleVisible;root.userData.people=true;scene.add(root);objects.push(root)}
 // Illustrative vehicle flow scaled by historic activity rows, not actual team or vehicle counts.
 // D3D-R6: shared vehicle geometry for moving and parked cars.
-function makeDistrictCar(color){
+function makeDistrictCar(color,pickup=false){
  const model=new THREE.Group(),paint=new THREE.MeshStandardMaterial({color,roughness:.55,metalness:.12});
  const body=new THREE.Mesh(new THREE.BoxGeometry(1.35,.62,2.45),paint);
  body.position.y=.68;model.add(body);
@@ -438,46 +443,94 @@ function makeDistrictCar(color){
   const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.27,.27,.15,10),new THREE.MeshStandardMaterial({color:'#29353e'}));
   wheel.rotation.z=Math.PI/2;wheel.position.set(xx,.42,zz);model.add(wheel);
  }
+ if(pickup){const bed=new THREE.Mesh(new THREE.BoxGeometry(1.3,.16,1.04),new THREE.MeshStandardMaterial({color:'#424a50'}));bed.position.set(0,.83,1.37);model.add(bed);const tail=new THREE.Mesh(new THREE.BoxGeometry(1.3,.3,.12),paint);tail.position.set(0,.78,1.91);model.add(tail);body.scale.z=.73;body.position.z=-.3;cabin.position.z=-.57;}
  return model;
 }
+// D3D-R7: front open forecourt is a parking and drop-off zone, not grass.
 function addDistrictVehicles(activityCount){
- const root=new THREE.Group(),colors=['#f6f7f4','#b3c4d5','#d7c7a5','#e6e9ee','#6c91a9','#b9d1bf'];
- const total=Math.min(5,Math.max(2,Math.round(activityCount/15)));
- for(let i=0;i<total;i++){
-  const model=makeDistrictCar(colors[i%colors.length]);root.add(model);
-  buses.push({model,phase:i/total,speed:.022+(i%3)*.002,route:'district-loop'});
+ const root=new THREE.Group(),peopleRoot=new THREE.Group();
+ const colors=['#f6f7f4','#b3c4d5','#d7c7a5','#e6e9ee','#6c91a9','#b9d1bf'];
+ // Parking bays are within the open forecourt, clear of entry (-13) and exit (+13) lanes.
+ const bays=[[-7,36],[-3.5,36],[0,36],[3.5,36],[7,36]];
+ for(let i=2;i<bays.length;i++){
+  const [x,z]=bays[i],model=makeDistrictCar(colors[i%colors.length],i%3===1);
+  model.position.set(x,.24,z);model.rotation.y=Math.PI/2;root.add(model);
  }
- // Static parking: two under the carport on the right of building 1,
- // and three under the rear carport behind building 2.
- const parked=[
-  {x:18.15,z:1.45,angle:0},{x:18.15,z:4.75,angle:0},
-  {x:-3.4,z:-35,angle:Math.PI/2},{x:0,z:-35,angle:Math.PI/2},{x:3.4,z:-35,angle:Math.PI/2}
- ];
+ // Keep parked vehicles in the existing side and rear carports.
+ const parked=[{x:18.15,z:1.45,angle:0},{x:18.15,z:4.75,angle:0},
+  {x:-3.4,z:-35,angle:Math.PI/2},{x:0,z:-35,angle:Math.PI/2},{x:3.4,z:-35,angle:Math.PI/2}];
  for(let i=0;i<parked.length;i++){
-  const p=parked[i],model=makeDistrictCar(colors[(i+2)%colors.length]);
+  const p=parked[i],model=makeDistrictCar(colors[(i+2)%colors.length],i===3);
   model.position.set(p.x,.24,p.z);model.rotation.y=p.angle;root.add(model);
  }
+ // A vehicle follows the left entrance, visits a front parking bay, pauses,
+ // rejoins the transverse road, then exits on the right and returns along road 3342.
+ const arrivals=[
+  [[-13,55],[-13,44],[-13,33],[-10,31],[-7,33],[-7,36]],
+  [[-13,55],[-13,44],[-13,31],[-10,30],[-3.5,32],[-3.5,36]]
+ ];
+ const departures=[
+  [[-7,36],[-7,29],[-10,25],[-10,22],[0,22],[10,22],[13,26],[13,40],[13,52],[0,52],[-13,52],[-13,55]],
+  [[-3.5,36],[-3.5,29],[-9,25],[-10,22],[0,22],[10,22],[13,26],[13,40],[13,52],[0,52],[-13,52],[-13,55]]
+ ];
+ for(let i=0;i<2;i++){
+  const model=makeDistrictCar(colors[(i+4)%colors.length],i===0);
+  root.add(model);
+  const arrive=new THREE.CatmullRomCurve3(arrivals[i].map(p=>new THREE.Vector3(p[0],0,p[1])),false,'centripetal');
+  const depart=new THREE.CatmullRomCurve3(departures[i].map(p=>new THREE.Vector3(p[0],0,p[1])),false,'centripetal');
+  const passengers=[];
+  for(let j=0;j<4;j++){
+   const teacher=j===0,person=new THREE.Group();
+   const skin=new THREE.MeshStandardMaterial({color:'#d6a27b'});
+   const torso=new THREE.Mesh(new THREE.BoxGeometry(.3,.43,.2),new THREE.MeshStandardMaterial({color:teacher?'#b48e67':'#f5f6f8'}));
+   torso.position.y=.8;person.add(torso);
+   const head=new THREE.Mesh(new THREE.SphereGeometry(.14,8,6),skin);head.position.y=1.17;person.add(head);
+   for(const dx of [-.09,.09]){
+    const leg=new THREE.Mesh(new THREE.BoxGeometry(.1,.39,.11),new THREE.MeshStandardMaterial({color:'#293e5d'}));
+    leg.position.set(dx,.38,0);person.add(leg);
+   }
+   peopleRoot.add(person);passengers.push(person);
+  }
+  buses.push({model,route:'front-dropoff',phase:i*.5,arrive,depart,passengers,bay:bays[i]});
+ }
+ // Additional vehicle follows the rear cross-road marked by the red arrow:
+ // west entry -> west side road -> rear transverse road z=-27 -> east side road -> exit.
+ const rearRoute=new THREE.CatmullRomCurve3([
+  [-13,55],[-13,44],[-13,20],[-13,-19],[-10,-27],[0,-27],
+  [10,-27],[13,-19],[13,12],[13,43],[13,52],[0,52],[-13,52],[-13,55]
+ ].map(p=>new THREE.Vector3(p[0],0,p[1])),true,'centripetal');
+ const rearCar=makeDistrictCar('#c9d7e3',true);
+ root.add(rearCar);buses.push({model:rearCar,route:'rear-loop',curve:rearRoute,phase:.25,speed:.009});
  root.visible=trafficEnabled;root.userData.vehicles=true;
- scene.add(root);objects.push(root);
+ peopleRoot.visible=trafficEnabled&&peopleVisible;peopleRoot.userData.dropoffPeople=true;
+ scene.add(root,peopleRoot);objects.push(root,peopleRoot);
 }
 function animateDistrictVehicles(t){
- // Loop uses the modeled west entry, the transverse road at z=22,
- // the east exit, and the frontage road (3342) to re-enter.
- // Turns are rounded with a Catmull-Rom spline; no teleport at the loop boundary.
- const route=new THREE.CatmullRomCurve3([
-  new THREE.Vector3(-13,0,55),new THREE.Vector3(-13,0,44),
-  new THREE.Vector3(-13,0,27),new THREE.Vector3(-10,0,22),
-  new THREE.Vector3(0,0,22),new THREE.Vector3(10,0,22),
-  new THREE.Vector3(13,0,27),new THREE.Vector3(13,0,43),
-  new THREE.Vector3(13,0,52),new THREE.Vector3(4,0,52),
-  new THREE.Vector3(-8,0,52),new THREE.Vector3(-13,0,55)
- ],true,'centripetal',.5);
  for(const b of buses){
-  if(b.route!=='district-loop')continue;
-  const q=(t*b.speed+b.phase)%1;
-  const point=route.getPointAt(q),tangent=route.getTangentAt(q);
+  if(b.route==='rear-loop'){
+   const q=(t*b.speed+b.phase)%1,point=b.curve.getPointAt(q),dir=b.curve.getTangentAt(q);
+   b.model.position.set(point.x,.24,point.z);b.model.rotation.y=Math.atan2(dir.x,dir.z);
+   continue;
+  }
+  if(b.route!=='front-dropoff')continue;
+  const q=(t*.011+b.phase)%1;
+  const arriving=q<.28,stopped=q>=.28&&q<.47;
+  const curve=arriving?b.arrive:b.depart;
+  const u=arriving?q/.28:stopped?0:Math.min(1,(q-.47)/.53);
+  const point=stopped?b.arrive.getPointAt(1):curve.getPointAt(u);
+  const tangent=stopped?b.arrive.getTangentAt(1):curve.getTangentAt(Math.min(.999,u));
   b.model.position.set(point.x,.24,point.z);
   b.model.rotation.y=Math.atan2(tangent.x,tangent.z);
+  // Teacher exits first; pupils follow toward the building-side pedestrian route.
+  for(let j=0;j<b.passengers.length;j++){
+   const person=b.passengers[j],start=.30+j*.028,end=.47;
+   person.visible=peopleVisible&&trafficEnabled&&q>=start&&q<end;
+   if(!person.visible)continue;
+   const v=Math.min(1,(q-start)/.095);
+   const bx=b.bay[0],bz=b.bay[1];
+   person.position.set(bx+1.1+j*.37,0,bz-1.2-v*5);
+   person.rotation.y=Math.PI;
+  }
  }
 }
 function animateBuses(t){if(!trafficEnabled)return;animateDistrictVehicles(t);for(let i=0;i<buses.length;i++){const b=buses[i];if(b.route)continue;const q=(t*.36+b.phase)%48;const start=i===0?-35:35;const dir=i===0?1:-1;let x=start,z=29;if(q<17){x=start+dir*q*1.7}else if(q<23){x=start+dir*28.9;z=29+(q-17)*(-2.2)}else if(q<35){x=start+dir*28.9;z=15.8}else if(q<41){x=start+dir*28.9;z=15.8+(q-35)*2.2}else{x=start+dir*28.9+dir*(q-41)*1.4;z=29}b.model.position.set(x,.28,z);b.model.rotation.y=q>=17&&q<23?(dir===1?Math.PI/2:-Math.PI/2):q>=35&&q<41?(dir===1?-Math.PI/2:Math.PI/2):0;for(let j=0;j<b.passengers.length;j++){const person=b.passengers[j];const dt=q-(23+j*.75);person.visible=dt>=0&&dt<11;if(!person.visible)continue;const u=Math.min(1,dt/9);const a=new THREE.Vector3(x+dir*(j-1.5)*.3,0,15.2);const target=new THREE.Vector3(i===0?-6:6,0,5);person.position.copy(a).lerp(target,u);person.rotation.y=Math.atan2(target.x-a.x,target.z-a.z)}}}
@@ -485,7 +538,7 @@ function animateRoadArrows(t){for(const o of objects){const a=o.userData.roadArr
 function animateWalkers(t){for(const w of walkers){const count=w.route.length;const progress=(t*w.speed+w.phase)%(count===2?2:count);const segment=Math.floor(progress);const u=progress-segment;const a=w.route[segment%count],b=w.route[(segment+1)%count];if(count===2&&segment===1){w.person.position.copy(b).lerp(a,u);w.person.rotation.y=Math.atan2(a.x-b.x,a.z-b.z)}else{w.person.position.copy(a).lerp(b,u);w.person.rotation.y=Math.atan2(b.x-a.x,b.z-a.z)}const stride=Math.sin(t*7+w.phase)*.43;w.limbs[0].rotation.x=stride;w.limbs[1].rotation.x=-stride;w.limbs[2].rotation.x=-stride*.65;w.limbs[3].rotation.x=stride*.65}}
 function show(v){dispose();tags.replaceChildren();const district=v.id==='kanchanaburi-pesa4';const roofToggle=document.querySelector('#toggleRoofs');roofToggle.disabled=!district;roofToggle.title=district?'แสดงหรือซ่อนหลังคาอาคาร 1 และ 2':'ใช้กับผังสำนักงานเขตพื้นที่ฯ';const busToggle=document.querySelector('#toggleTraffic');busToggle.disabled=!district;busToggle.title=district?'เปิดหรือปิดรถจำลอง (ไม่ใช่จำนวนรถจริง)':'ยังไม่มีถนนสำหรับจำลองรถในสนามนี้';busToggle.textContent=district?(trafficEnabled?'🚗 เปิด':'🚗 ปิด'):'🚗 รอผังถนน';if(district){decorateDistrict();camera.position.set(59,78,90);controls.target.set(0,0,0);controls.update()}else{camera.position.set(25,29,33);controls.target.set(0,0,0);controls.update()}const activityCount=v.rows.length;addWalkers(district,activityCount);if(district)addDistrictVehicles(activityCount);panel.classList.remove('open');panel.replaceChildren();list.replaceChildren();details.replaceChildren();heading.textContent='เลือกอาคาร';info.textContent=(v.id==='kanchanaburi-pesa4'?'ผังจำลอง: อาคารเรียงแนวลึก ขนานถนน 3342 (ยังไม่ยืนยันตำแหน่งจริง)':'อาคารในฉากจัดเรียงเพื่อสาธิตเท่านั้น')+' · คนและรถเป็นภาพจำลองตามจำนวนรายการแข่งขันย้อนหลัง '+activityCount+' รายการ ไม่ใช่จำนวนทีม ผู้เข้าร่วม หรือรถจริง';const groups=new Map();for(const row of v.rows){const label=row.building||'ไม่ระบุอาคาร';const key=label.normalize('NFKC').replace(/\s+/g,'').toLowerCase();if(!groups.has(key))groups.set(key,{label,rows:[]});groups.get(key).rows.push(row)}const entries=[...groups.values()];entries.forEach((g,i)=>{building(g.label,i,entries.length,v.id==='kanchanaburi-pesa4',g.rows.length);const btn=document.createElement('button');btn.textContent=g.label+' ('+g.rows.length+' รายการ)';btn.addEventListener('click',()=>choose(g));list.append(btn);if(v.id==='kanchanaburi-pesa4'){const tag=document.createElement('button');tag.textContent=g.label+' · '+g.rows.length+' รายการ';tag.addEventListener('click',()=>choose(g));tags.append(tag)}});function choose(g){heading.textContent=g.label+' — ครั้งที่ 73';info.textContent=g.rows.length+' รายการแข่งขันย้อนหลัง';details.replaceChildren();const ul=document.createElement('ul');for(const x of g.rows){const li=document.createElement('li');li.textContent=x.activity+' · '+[x.floor,x.room].filter(Boolean).join(' / ');ul.append(li)}details.append(ul);panel.replaceChildren();const close=document.createElement('button');close.textContent='ปิด ×';close.setAttribute('aria-label','ปิดรายการแข่งขันบนโมเดล');close.addEventListener('click',()=>panel.classList.remove('open'));const head=document.createElement('h3');head.textContent=g.label+' · '+g.rows.length+' รายการ';const hint=document.createElement('p');hint.textContent='รายการย้อนหลังครั้งที่ 73 (ไม่ใช่กำหนดการครั้งที่ 74)';const modelList=ul.cloneNode(true);panel.append(close,head,hint,modelList);panel.classList.add('open')}active={groups,choose}}
 document.querySelector('#zoomIn').addEventListener('click',()=>{camera.position.multiplyScalar(.82);controls.update()});document.querySelector('#zoomOut').addEventListener('click',()=>{camera.position.multiplyScalar(1.2);controls.update()});document.querySelector('#topView').addEventListener('click',()=>{const district=select.value==='kanchanaburi-pesa4';camera.position.set(0,district?130:55,.01);controls.target.set(0,0,0);controls.update()});document.querySelector('#resetView').addEventListener('click',()=>{const district=select.value==='kanchanaburi-pesa4';camera.position.set(...(district?[59,78,90]:[25,29,33]));controls.target.set(0,0,0);controls.update()});camera.position.set(25,29,33);renderer.domElement.addEventListener('click',e=>{const rect=renderer.domElement.getBoundingClientRect();pointer.set((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);ray.setFromCamera(pointer,camera);const hit=ray.intersectObjects(meshes)[0];if(hit&&active){const label=hit.object.userData.label;const key=label.normalize('NFKC').replace(/\s+/g,'').toLowerCase();active.choose(active.groups.get(key))}});
-document.querySelector('#toggleRoofs').addEventListener('click',e=>{roofVisible=!roofVisible;for(const roof of officeRoofs)roof.visible=roofVisible;e.currentTarget.setAttribute('aria-pressed',String(roofVisible));e.currentTarget.textContent=roofVisible?'🏠 หลังคา':'🏠 ดูชั้น 2'});document.querySelector('#toggleTraffic').addEventListener('click',e=>{trafficEnabled=!trafficEnabled;e.currentTarget.setAttribute('aria-pressed',String(trafficEnabled));e.currentTarget.textContent=trafficEnabled?'🚗 เปิด':'🚗 ปิด';for(const o of objects)if(o.userData.vehicles)o.visible=trafficEnabled});document.querySelector('#togglePeople').addEventListener('click',e=>{peopleVisible=!peopleVisible;e.currentTarget.setAttribute('aria-pressed',String(peopleVisible));e.currentTarget.textContent=peopleVisible?'👥 เปิด':'👥 ปิด';for(const o of objects)if(o.userData.people)o.visible=peopleVisible});function resize(){const w=mount.clientWidth,h=mount.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(mount);resize();function loop(){const t=clock.getElapsedTime();if(peopleVisible)animateWalkers(t);animateBuses(t);animateRoadArrows(t);controls.update();updateVenueBadgeVisibility();renderer.render(scene,camera)}renderer.setAnimationLoop(loop);
+document.querySelector('#toggleRoofs').addEventListener('click',e=>{roofVisible=!roofVisible;for(const roof of officeRoofs)roof.visible=roofVisible;e.currentTarget.setAttribute('aria-pressed',String(roofVisible));e.currentTarget.textContent=roofVisible?'🏠 หลังคา':'🏠 ดูชั้น 2'});document.querySelector('#toggleTraffic').addEventListener('click',e=>{trafficEnabled=!trafficEnabled;e.currentTarget.setAttribute('aria-pressed',String(trafficEnabled));e.currentTarget.textContent=trafficEnabled?'🚗 เปิด':'🚗 ปิด';for(const o of objects)if(o.userData.vehicles||o.userData.dropoffPeople)o.visible=trafficEnabled&&(o.userData.dropoffPeople?peopleVisible:true)});document.querySelector('#togglePeople').addEventListener('click',e=>{peopleVisible=!peopleVisible;e.currentTarget.setAttribute('aria-pressed',String(peopleVisible));e.currentTarget.textContent=peopleVisible?'👥 เปิด':'👥 ปิด';for(const o of objects)if(o.userData.people||o.userData.dropoffPeople)o.visible=peopleVisible&&(o.userData.dropoffPeople?trafficEnabled:true)});function resize(){const w=mount.clientWidth,h=mount.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(mount);resize();function loop(){const t=clock.getElapsedTime();if(peopleVisible)animateWalkers(t);animateBuses(t);animateRoadArrows(t);controls.update();updateVenueBadgeVisibility();renderer.render(scene,camera)}renderer.setAnimationLoop(loop);
 // Load venue data independently of external fonts; redraw canvas labels when Kanit arrives.
 const refreshLabels=()=>{if(venues.length){const v=venues.find(x=>x.id===select.value);if(v)show(v)}};
 document.fonts.load('700 45px Kanit','อาคาร ยินดีต้อนรับ').then(()=>document.fonts.load('700 105px Kanit','ยินดีต้อนรับ').then(()=>document.fonts.load('600 49px Kanit','สนามแข่งขัน'))).then(refreshLabels).catch(()=>{});
