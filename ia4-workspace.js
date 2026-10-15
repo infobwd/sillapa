@@ -43,13 +43,17 @@
       });
       return out;
     };
-    const cleanSchool=label=>str(label).slice(0,maxName);
+    const cleanSchool=label=>{
+      const s=str(label).slice(0,maxName);
+      return ['__proto__','constructor','prototype'].includes(s)?'':s;
+    };
     const empty=()=>({items:{},checks:{}});
     function profile(raw){return {items:sanitiseItems(raw?.items),checks:sanitiseChecks(raw?.checks)};}
     let state={version:1,selectedSchool:'',schools:{},orphan:null};
     let blocked=false,lastSaved=true,migrated=false;
-    const saved=storage.getItem(KEY);
-    if(saved!==null){
+    let saved=null;
+    try{saved=storage.getItem(KEY)}catch(_){blocked=true;lastSaved=false}
+    if(saved!==null && !blocked){
       try {
         const doc=JSON.parse(saved);
         if(!obj(doc)||doc.version!==1||!obj(doc.schools)||typeof doc.selectedSchool!=='string')
@@ -60,7 +64,7 @@
         state.selectedSchool=cleanSchool(doc.selectedSchool);
         state.orphan=doc.orphan?profile(doc.orphan):null;
       }catch(_){blocked=true;lastSaved=false}
-    } else {
+    } else if (!blocked) {
       // Import once into a NEW key; do not mutate plan74 or merge across schools.
       let raw=null;try{raw=JSON.parse(storage.getItem(LEGACY)||'null')}catch(_){}
       if(obj(raw)) {
