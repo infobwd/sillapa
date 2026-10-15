@@ -1801,7 +1801,12 @@ const altFor=b=>(ALT.find(([k])=>b.includes(k))||[0,[]])[1].map(([t,why])=>({it:
 const PLV=['ปฐมวัย','ป.1-ป.3','ป.4-ป.6','ป.1-ป.6','ม.1-ม.3'];
 const SCHOOLS=[...new Set(D.map(d=>d.school))].sort((a,b)=>a.localeCompare(b,'th'));
 // IA-4: all new writes are device-local and school-specific. plan74 is a read-only legacy import.
-const IA4Store=window.SILLAPA_IA4.createStore(localStorage,NXI.map(it=>it.t),PLV);
+const IA4Storage=(()=>{
+  try{return window.localStorage}catch(_){
+    return {getItem(){throw Error('storage unavailable')},setItem(){throw Error('storage unavailable')}};
+  }
+})();
+const IA4Store=window.SILLAPA_IA4.createStore(IA4Storage,NXI.map(it=>it.t),PLV);
 let PLAN=IA4Store.current(),planRef=null,planDB=null,PLANS=[],pSave=null,PG=0;
 const OTHER='__other__';
 function bmRows(it){return it.a.map(a=>{const l=D.filter(d=>d.act===a),sc=l.filter(d=>d.score!=null);
