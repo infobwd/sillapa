@@ -38,10 +38,10 @@ A future approved immutable public snapshot can be supplied explicitly only afte
 | `publication_id` / `publication_state` / `data_version` | Unique release reference, `published`, nonempty version |
 | `source_system` / `source_reference` / `source_as_of` / `published_at` | Canonical `AcademicCompetitionManager`, reference and valid timezone-bearing timestamps |
 | `coverage` | Four explicit `complete` / `partial` flags: `catalog`, `obligations`, `teams`, `issues` |
-| `activity_catalog` | Confirmed district child activity ID, family ID, category/title, stage `district`, approved mode, source and timestamp |
+| `activity_catalog` | Confirmed child activity ID, family ID, category/title, stage `district` **or** `cluster`, stage-specific approved mode, source and timestamp. Identity is the composite `activity_id + stage_scope` |
 | `clusters` | Public canonical cluster IDs + approved labels, no personal contact/roster |
-| `public_readiness_aggregates` | Unique record and cluster–activity IDs, district scope, `obligation_state`, independent planning/submission/review states, nullable verified qualified team count and source time |
-| `public_issues` | Sanitized public issue ID, related activity/optional group, approved short title, `open`/`resolved` and reference |
+| `public_readiness_aggregates` | Unique record and `cluster_id + activity_id + stage_scope` tuple, independent planning/submission/review states and source time. `required` representative obligations are permitted **only at district stage** under representative policy; cluster-stage planning rows are non-applicable to district representative obligation |
+| `public_issues` | Sanitized public issue ID, activity ID **and stage_scope**, optional group, approved short title, `open`/`resolved` and reference |
 
 Only the documented allowlisted fields are accepted. Unexpected fields (including person-level roster data), duplicate IDs/pairs, unknown referenced IDs, wrong cycle/stage, incomplete publication metadata, missing timestamps, invalid team count or incompatible policy reject **the entire snapshot**.
 
