@@ -1,0 +1,28 @@
+/* Install suggestion and app update: separate from the original single-file dashboard. */
+.pwa-install-card{display:grid;grid-template-columns:46px minmax(0,1fr) auto;gap:8px 12px;position:relative;
+  align-items:center;padding:13px 40px 13px 14px;margin:0 0 14px;
+  border:1px solid var(--line);border-radius:18px;background:var(--surface)}
+.pwa-install-card[hidden],.pwa-update[hidden],.pwa-install-help[hidden]{display:none!important}
+.pwa-install-logo{height:46px;width:46px;border-radius:14px;display:grid;place-items:center;
+  background:#132c4c;color:#f7d68f;font-size:28px}
+.pwa-install-info{min-width:0;line-height:1.45}
+.pwa-install-info b{display:block;font-size:14px;color:var(--ink)}
+.pwa-install-info span{display:block;font-size:12px;color:var(--ink-2);margin-top:3px}
+.pwa-install-main{min-height:40px;min-width:93px;border:0;background:var(--rep);color:white;
+  padding:0 14px;border-radius:12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.pwa-install-dismiss{position:absolute;right:5px;top:5px;width:34px;height:34px;border:0;border-radius:12px;
+  background:transparent;color:var(--ink-2);font:inherit;font-size:21px;cursor:pointer}
+.pwa-install-help{grid-column:1/-1;font-size:13px;color:var(--ink-2);line-height:1.65;
+  background:var(--surface-2);border-radius:12px;padding:10px 12px;margin-top:2px}
+.pwa-update{position:fixed;z-index:200;bottom:calc(82px + env(safe-area-inset-bottom,0px));
+  left:12px;right:12px;width:auto;max-width:460px;margin:auto;display:flex;align-items:center;gap:10px;
+  background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:13px;
+  box-shadow:0 14px 35px rgba(0,0,0,.2);color:var(--ink)}
+.pwa-update span{font-size:13px;line-height:1.45;flex:1}
+.pwa-update button{border:0;border-radius:10px;font:inherit;font-size:13px;font-weight:700;
+  min-height:38px;padding:0 10px;background:var(--rep);color:white}
+.pwa-update .pwa-update-close{background:var(--surface-2);color:var(--ink-2)}
+@media(min-width:1024px){.pwa-install-card{max-width:760px;margin-bottom:18px}
+  .pwa-update{left:auto;right:20px;bottom:24px}}
+@media(max-width:390px){.pwa-install-card{grid-template-columns:44px minmax(0,1fr)}
+  .pwa-install-main{grid-column:2;width:max-content}}
