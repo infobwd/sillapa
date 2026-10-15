@@ -113,7 +113,7 @@ for(const s of ['id="ia4Summary"','ia4.css','ia4-workspace.js','IA4Store.selectS
 assert.ok(!html.includes("db.collection('plans')"),'retired unapproved shared school-plan DB');
 assert.ok(html.includes('id="v-prep"')&&html.includes('id="v-readiness"')&&html.includes('id="ia2Root"'),
   'legacy, IA-2 and IA-3 routes remain');
-assert.ok(sw.includes('sillapa-public-v6-ia4-20261015'));
+assert.match(sw,/sillapa-public-v\d+-ia\d+-\d{8}/,'PWA cache must be explicitly versioned');
 assert.ok(sw.includes('./ia4.css')&&sw.includes('./ia4-workspace.js'));
 assert.equal(/fetch\(|XMLHttpRequest|navigator\.sendBeacon|sessionStorage/i.test(code),false,
   'local helper must make no network calls');
