@@ -109,3 +109,24 @@
 .nav .ia-nav-short{display:none}
 .nav .ia-nav-long{display:inline}
 @media(max-width:1023px){.nav .ia-nav-short{display:inline}.nav .ia-nav-long{display:none}}
+
+
+/* Developer attribution: understated credits, not an official organizer endorsement. */
+.sillapa-home-credit{margin:-5px 1px 17px;padding:0 2px;
+  font-size:12.5px;line-height:1.65;color:var(--ink-3);overflow-wrap:anywhere}
+.sillapa-home-credit span{font-weight:600;color:var(--ink-2)}
+.sillapa-footer-credit{border-top:1px solid var(--line);padding-top:13px;
+  color:var(--ink-2);line-height:1.65;overflow-wrap:anywhere}
+.sillapa-footer-credit strong{font-weight:600;color:var(--ink-2)}
+.sillapa-footer-about{margin-top:5px}
+.sillapa-footer-about summary{display:list-item;width:fit-content;cursor:pointer;
+  padding:6px 0;color:var(--ink-2);font-weight:600;line-height:1.5}
+.sillapa-footer-about summary:focus-visible{outline:2px solid var(--rep);outline-offset:3px;border-radius:3px}
+.sillapa-footer-about-content{max-width:850px;padding:2px 0 5px 12px;
+  border-left:2px solid var(--line);line-height:1.7;color:var(--ink-2)}
+.sillapa-footer-about-content p{margin:5px 0}
+.sillapa-footer-sources{margin-top:12px;color:var(--ink-3)}
+.sillapa-footer-actions{display:flex;align-items:center;flex-wrap:wrap;gap:9px;
+  margin-top:10px;padding-bottom:10px}
+@media(max-width:640px){.sillapa-home-credit{font-size:12px;line-height:1.7}
+  .sillapa-footer-credit{font-size:12.5px}}

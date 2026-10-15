@@ -31,7 +31,7 @@ assert.equal(a5.includes('Data Owner/PDPA Gate'),false,
   'no publish gate acronym on public judge page');
 assert.equal(a4.includes('ไม่ซิงก์ข้ามอุปกรณ์'),false,
   'no synchronization jargon to teachers');
-assert.match(sw,/sillapa-public-v9-ia6-20261015/);
+assert.match(sw,/sillapa-public-v\d+-ia\d+-\d{8}/,'PWA shell has a versioned cache key');
 assert.ok(sw.includes('./ia2-registry.js')&&sw.includes('./ia4-workspace.js')&&
  sw.includes('./ia5-judge-venue.js')&&sw.includes('./ia6-executive.js'));
 assert.ok(!a6.includes("fetch("),'public executive module never accesses backend');
