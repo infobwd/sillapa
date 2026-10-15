@@ -165,6 +165,25 @@ function decorateDistrict(){
  const fascia=new THREE.Mesh(new THREE.BoxGeometry(4.8,.35,.16),mat('#466270'));
  fascia.position.set(scX,2.94,scZ+3.87);sideCarport.add(fascia);
  g.add(sideCarport);
+ // Additional Thai pavilion at the user-marked front-right corner of Building 1.
+ // Keep the existing pavilion by Building 2 and leave the east vehicle road clear.
+ {
+  const x=8.15,z=12.75,pavilion=new THREE.Group();
+  slab(3.35,3.25,x,z,'#a57f59',.29);
+  for(const dx of [-1.25,1.25])for(const dz of [-1.2,1.2]){
+   const post=new THREE.Mesh(new THREE.CylinderGeometry(.12,.15,2.6,8),mat('#8c5d3b'));
+   post.position.set(x+dx,1.65,z+dz);pavilion.add(post);
+  }
+  for(const side of [-1,1]){
+   const roof=new THREE.Mesh(new THREE.BoxGeometry(2.25,.2,3.65),mat('#a64b3b'));
+   roof.rotation.z=side*.54;roof.position.set(x+side*.86,3.32,z);pavilion.add(roof);
+  }
+  const ridge=new THREE.Mesh(new THREE.BoxGeometry(.18,.22,3.85),mat('#e2b66b'));
+  ridge.position.set(x,3.83,z);pavilion.add(ridge);
+  const seat=new THREE.Mesh(new THREE.BoxGeometry(2.25,.18,1.2),mat('#b68a55'));
+  seat.position.set(x,.74,z);pavilion.add(seat);
+  g.add(pavilion);
+ }
  // Right-hand restroom wing of Building 1, perpendicular to its long axis (X).
  // Keep the east internal road clear: restroom reaches only x=10.4, road starts x=10.5.
  const restroom=new THREE.Mesh(new THREE.BoxGeometry(3.2,2.45,5.6),mat('#e5d5bc'));
