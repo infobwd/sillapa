@@ -1775,12 +1775,13 @@ const today=()=>new Date().toLocaleDateString('th-TH',{year:'numeric',month:'sho
 function bmOf(it){const r=bmRows(it);const pick=k=>r.map(x=>x[k]).filter(v=>v!=null);
   return {teams:r.reduce((s,x)=>s+x.n,0),w:pick('w').length?Math.max(...pick('w')):null,rp:pick('rp').length?Math.min(...pick('rp')):null,g:pick('g').length?Math.min(...pick('g')):null}}
 function myRes(it){if(!PLAN.school)return '';return D.filter(d=>d.school===PLAN.school&&it.a.includes(d.act)).map(d=>`${d.lvl} ${MED[d.m]}${d.score!=null?' '+f2(d.score):''}${d.rep?' ตัวแทนเขต':''}`).join(' | ')}
-function csvPlan(){const H=['กลุ่ม','กิจกรรมครั้งที่ 74','สถานะ','ระดับชั้นที่จะส่ง','ผลเดิมของโรงเรียน (73)','ชนะเลิศ 73 (สูงสุด)','ตัวแทนต่ำสุด 73','ทองต่ำสุด 73','จำนวนทีม 73','โรงเรียนในเขตที่วางแผนส่ง'];
-  return toCSV([H,...NXI.filter(it=>inPlan(it.t)).map(it=>{const b=bmOf(it);return [NX.groups[it.g].g,it.t,it.a.length?'คงไว้':'ใหม่',PLAN.items[it.t].join(' / ')||'ยังไม่ระบุ',myRes(it),it.a.length?f2(b.w):'',it.a.length?f2(b.rp):'',it.a.length?f2(b.g):'',it.a.length?b.teams:'',distN(it.t)]})])}
-function csvAll(){const H=['ลำดับ','กลุ่ม','กิจกรรมครั้งที่ 74','รายการย่อย','สถานะเทียบ 73','ระดับชั้นในครั้งที่ 73','ชนะเลิศ 73 (สูงสุด)','ตัวแทนต่ำสุด 73','ทองต่ำสุด 73','จำนวนทีม 73','อยู่ในแผนของฉัน','โรงเรียนในเขตที่วางแผนส่ง'];
-  const rows=NXI.map((it,n)=>{const b=bmOf(it),lv=[...new Set(it.a.map(lvOf).filter(Boolean))].sort((p,q)=>LVLS.indexOf(p)-LVLS.indexOf(q));
-    return [n+1,NX.groups[it.g].g,it.t,it.s.join(' / '),it.a.length?'คงไว้':'ใหม่',lv.join(' / '),it.a.length?f2(b.w):'',it.a.length?f2(b.rp):'',it.a.length?f2(b.g):'',it.a.length?b.teams:'',inPlan(it.t)?'ใช่':'',distN(it.t)]});
-  CUT.forEach(c=>rows.push(['',NX.groups[c.g].g,c.b+' (ครั้งที่ 73)','','ตัดออก',c.lv.join(' / '),'','','',c.rows.length,'','']));
+function csvPlan(){const H=['กลุ่ม','กิจกรรมครั้งที่ 74 (ร่าง)','สถานะ','ระดับชั้นที่วางแผน','ระดับชั้นอ้างอิงครั้งที่ 70','รายการอ้างอิงครั้งที่ 70 (ทุกรายการ)','ผลเดิมของโรงเรียน (73)','ชนะเลิศ 73','ตัวแทนต่ำสุด 73','ทองต่ำสุด 73','จำนวนทีม 73','โรงเรียนในเขตที่วางแผนส่ง'];
+  return toCSV([H,...NXI.filter(it=>inPlan(it.t)).map(it=>{const b=bmOf(it);
+    return [NX.groups[it.g].g,it.t,it.a.length?'คงไว้':'ใหม่',PLAN.items[it.t].join(' / ')||'ยังไม่ระบุ',round70Levels(it).join(' / '),round70Rows(it).map(v=>v.id+' '+v.title).join(' | '),myRes(it),it.a.length?f2(b.w):'',it.a.length?f2(b.rp):'',it.a.length?f2(b.g):'',it.a.length?b.teams:'',distN(it.t)]})])}
+function csvAll(){const H=['ลำดับ','กลุ่ม','กิจกรรมครั้งที่ 74 (ร่าง)','รายการย่อยในร่าง','สถานะเทียบ 73','ระดับชั้นครั้งที่ 73','จำนวนรายการอ้างอิงครั้งที่ 70','ระดับชั้นอ้างอิงครั้งที่ 70','รายการแข่งขันครั้งที่ 70 ครบทุกระดับชั้น','การตรวจสอบ 70','ชนะเลิศ 73','ตัวแทนต่ำสุด 73','ทองต่ำสุด 73','จำนวนทีม 73','อยู่ในแผนของฉัน','โรงเรียนในเขตที่วางแผนส่ง'];
+  const rows=NXI.map((it,n)=>{const b=bmOf(it),lv=[...new Set(it.a.map(lvOf).filter(Boolean))].sort((p,q)=>LVLS.indexOf(p)-LVLS.indexOf(q)),ref=round70Rows(it);
+    return [n+1,NX.groups[it.g].g,it.t,it.s.join(' / '),it.a.length?'คงไว้':'ใหม่',lv.join(' / '),ref.length,round70Levels(it).join(' / '),ref.map(v=>v.id+' '+v.title).join(' | '),it.a.length?'อ้างอิงครั้งที่ 73':ref.length?'อ้างอิงรายการครั้งที่ 70 (ยังไม่ใช่ประกาศ 74)':'รอตรวจสอบรายการครั้งที่ 70',it.a.length?f2(b.w):'',it.a.length?f2(b.rp):'',it.a.length?f2(b.g):'',it.a.length?b.teams:'',inPlan(it.t)?'ใช่':'',distN(it.t)]});
+  CUT.forEach(c=>rows.push(['',NX.groups[c.g].g,c.b+' (ครั้งที่ 73)','','ตัดออก',c.lv.join(' / '),0,'','','','','','',''+c.rows.length,'','']));
   return toCSV([H,...rows])}
 function csvDist(){const H=['โรงเรียน','กลุ่ม','กิจกรรมครั้งที่ 74','ระดับชั้นที่จะส่ง','บันทึกล่าสุด'];const rows=[];
   PLANS.filter(p=>p.school).forEach(p=>NXI.filter(it=>p.items[it.t]).forEach(it=>rows.push([p.school,NX.groups[it.g].g,it.t,p.items[it.t].join(' / ')||'ยังไม่ระบุ',p.at?new Date(p.at).toLocaleString('th-TH'):''])));
