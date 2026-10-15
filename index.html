@@ -1170,17 +1170,22 @@ body{overscroll-behavior-y:auto}
   <!-- IA-5: public-safe judge and venue planning, historical aggregates + device-only forecasts. -->
   <section class="view" id="v-venue" aria-label="กรรมการและสนามแข่งขัน" data-loading="true" aria-busy="true">
     <div class="view-skeleton" aria-hidden="true"><div class="sk-line short"></div><div class="sk-tile hero"></div><div class="sk-stats"><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div></div></div>
+    <aside class="venue-3d-shortcut" aria-labelledby="venue3dTitle">
+      <div class="venue-3d-shortcut__copy">
+        <span class="venue-3d-shortcut__eyebrow">แผนผังสนามแข่งขัน · 3D</span>
+        <h2 id="venue3dTitle">สำรวจอาคารและเส้นทางภายในสนาม</h2>
+        <p>ดูฉากจำลองอาคาร ทางเดิน รถ และลานจอด เพื่อประกอบการวางแผนงานครั้งที่ 74 โดยอ้างอิงรายการแข่งขันย้อนหลังครั้งที่ 73</p>
+        <small>ภาพจำลองเพื่อการวางแผนเท่านั้น ไม่ใช่ผังนำทางหรือจำนวนผู้เข้าร่วมจริง</small>
+      </div>
+      <div class="venue-3d-shortcut__actions">
+        <a class="venue-3d-shortcut__button venue-3d-shortcut__button--primary" href="./venues/schematic-3d.html?venue=kanchanaburi-pesa4">🏢 สนาม 3D สำนักงานเขตฯ <span aria-hidden="true">↗</span></a>
+        <a class="venue-3d-shortcut__button" href="./venues/schematic-3d.html?venue=anuban-bophloi">🏫 สนาม 3D อนุบาลบ่อพลอย <span aria-hidden="true">↗</span></a>
+      </div>
+    </aside>
     <div id="ia5Root" class="ia5-app">
       <div class="ia5-lead"><h2>กรรมการและสนามแข่งขัน</h2><p>กำลังเตรียมข้อมูลสำหรับวางแผนโดยไม่แสดงรายชื่อหรือการแต่งตั้งครั้งที่ 74 ที่ยังไม่ได้รับรอง</p></div><div class="ia5-lead"><h3>สำรวจสนามแข่งขันย้อนหลัง</h3><p>ดูตำแหน่งอาคารจำลองและรายการแข่งขันครั้งที่ 73 เพื่อประกอบการวางแผนครั้งที่ 74 (ยังไม่ใช่ผังนำทางหรือสนามที่รับรอง)</p><p><a href="./venues/schematic-3d.html">เปิดแผนผังสนาม 3D ›</a> · <a href="./venues/">ดูรายการสนามย้อนหลัง ›</a></p></div>
     </div>
-    <div style="margin:16px 0 20px;padding:16px;border:1px solid var(--line,#dce5f2);border-radius:16px;background:var(--card,#fff)">
-      <strong style="display:block;margin-bottom:6px">🏫 สำรวจสนามแข่งขันแบบ 3D</strong>
-      <p style="margin:0 0 12px;font-size:13px;line-height:1.6">เลือกดูฉากจำลองอาคาร รถ และคนเดิน จากข้อมูลสนามแข่งขันย้อนหลังครั้งที่ 73 (ไม่ใช่ผังนำทางจริง)</p>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <a href="./venues/schematic-3d.html?venue=kanchanaburi-pesa4" style="display:inline-flex;align-items:center;min-height:44px;padding:10px 14px;border-radius:12px;background:#1762b5;color:white;text-decoration:none;font-weight:700">ดูสนาม 3D สำนักงานเขตฯ ↗</a>
-        <a href="./venues/schematic-3d.html?venue=anuban-bophloi" style="display:inline-flex;align-items:center;min-height:44px;padding:10px 14px;border-radius:12px;background:#eaf2ff;color:#174d86;text-decoration:none;font-weight:700">ดูสนาม 3D อนุบาลบ่อพลอย ↗</a>
-      </div>
-    </div>
+
   </section>
 
   <!-- IA-1: protect existing historical routes and drilldowns. -->
