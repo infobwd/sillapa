@@ -17,7 +17,7 @@
     pending:'รอตรวจสอบ', needs_revision:'ต้องแก้ไข',
     verified:'ตรวจสอบแล้ว', locked:'ยืนยันเรียบร้อยแล้ว',
     representative_only:'ส่งตัวแทนจากกลุ่ม',
-    open:'สมัครระดับเขตโดยตรง',
+    open:'สมัครตรงตามระดับที่เปิด',
     representative_plus_open:'ส่งตัวแทนและสมัครตรง',
     closed:'ไม่เปิดรับสมัคร'
   };
@@ -31,7 +31,7 @@
     aggregate: ['record_id','activity_id','cluster_id','stage_scope','obligation_state',
       'planning_state','submission_state','verification_state','qualified_teams',
       'verified_at','source_as_of'],
-    issue: ['issue_id','activity_id','cluster_id','title','state','source_reference']
+    issue: ['issue_id','activity_id','stage_scope','cluster_id','title','state','source_reference']
   };
   const text = x => typeof x === 'string' && x.trim().length > 0;
   const str = x => String(x == null ? '' : x);
@@ -41,6 +41,7 @@
   const only = (o,allowed) => !!o && typeof o === 'object' && !Array.isArray(o) &&
     Object.keys(o).every(k=>allowed.includes(k));
   const natural = n => Number.isSafeInteger(n) && n >= 0;
+  const activityKey = (id,stage) => id + '\u0000' + stage;
   function validateSnapshot(input) {
     const fail = reason => ({ok:false,reason});
     if (!only(input,KEYS.root)) return fail('โครงสร้างเผยแพร่มีฟิลด์ที่ไม่อนุญาต');
@@ -58,22 +59,22 @@
     const ids = new Set(), groups = new Set(), records = new Set(), issues = new Set();
     for (const a of input.activity_catalog) {
       if (!only(a,KEYS.activity) || !text(a.activity_id) || !text(a.family_id) ||
-          !text(a.title) || !text(a.category) || a.stage_scope !== 'district' ||
+          !text(a.title) || !text(a.category) || !['district','cluster'].includes(a.stage_scope) ||
           !POLICIES.includes(a.competition_mode) ||
           !['confirmed','published'].includes(a.approval_state) ||
-          !text(a.source_reference) || !isTime(a.source_as_of) || ids.has(a.activity_id))
+          !text(a.source_reference) || !isTime(a.source_as_of) || ids.has(activityKey(a.activity_id,a.stage_scope)))
         return fail('รายการแข่งขันมีข้อมูลไม่ครบหรือซ้ำ');
-      ids.add(a.activity_id);
+      ids.add(activityKey(a.activity_id,a.stage_scope));
     }
     for (const g of input.clusters) {
       if (!only(g,KEYS.cluster) || !text(g.cluster_id) || !text(g.label) || groups.has(g.cluster_id))
         return fail('ข้อมูลกลุ่มเครือข่ายไม่ครบหรือซ้ำ');
       groups.add(g.cluster_id);
     }
-    const policyOf = new Map(input.activity_catalog.map(a=>[a.activity_id,a.competition_mode]));
+    const policyOf = new Map(input.activity_catalog.map(a=>[activityKey(a.activity_id,a.stage_scope),a.competition_mode]));
     for (const r of input.public_readiness_aggregates) {
-      if (!only(r,KEYS.aggregate) || !text(r.record_id) || !ids.has(r.activity_id) ||
-          !groups.has(r.cluster_id) || r.stage_scope !== 'district' ||
+      if (!only(r,KEYS.aggregate) || !text(r.record_id) || !ids.has(activityKey(r.activity_id,r.stage_scope)) ||
+          !groups.has(r.cluster_id) || !['district','cluster'].includes(r.stage_scope) ||
           !['required','not_applicable'].includes(r.obligation_state) ||
           (r.planning_state !== null && !PLANNING.includes(r.planning_state)) ||
           (r.submission_state !== null && !SUBMISSION.includes(r.submission_state)) ||
@@ -82,8 +83,8 @@
           (r.verified_at !== null && !isTime(r.verified_at)) ||
           !isTime(r.source_as_of) || records.has(r.record_id))
         return fail('ข้อมูลการส่งตัวแทนไม่ถูกต้อง');
-      if (policyOf.get(r.activity_id) === 'closed' && r.obligation_state === 'required' ||
-          policyOf.get(r.activity_id) === 'open' && r.obligation_state === 'required')
+      if (r.obligation_state === 'required' && (r.stage_scope !== 'district' ||
+          ['closed','open'].includes(policyOf.get(activityKey(r.activity_id,r.stage_scope)))))
         return fail('ข้อมูลภาระส่งตัวแทนขัดกับนโยบายกิจกรรม');
       if ((reviewed(r) && !isTime(r.verified_at)) ||
           (r.qualified_teams !== null && (!reviewed(r) || r.obligation_state !== 'required')))
@@ -92,12 +93,12 @@
     }
     const pairs = new Set();
     for (const r of input.public_readiness_aggregates) {
-      const pair = r.cluster_id + '\u0000' + r.activity_id;
+      const pair = r.cluster_id + '\u0000' + activityKey(r.activity_id,r.stage_scope);
       if (pairs.has(pair)) return fail('มีภาระกลุ่มและกิจกรรมซ้ำกัน');
       pairs.add(pair);
     }
     for (const i of input.public_issues) {
-      if (!only(i,KEYS.issue) || !text(i.issue_id) || !ids.has(i.activity_id) ||
+      if (!only(i,KEYS.issue) || !text(i.issue_id) || !ids.has(activityKey(i.activity_id,i.stage_scope)) ||
           (i.cluster_id !== null && !groups.has(i.cluster_id)) || !text(i.title) ||
           !['open','resolved'].includes(i.state) || !text(i.source_reference) || issues.has(i.issue_id))
         return fail('ข้อมูลประเด็นติดตามไม่ครบหรือซ้ำ');
@@ -113,7 +114,7 @@
     return data.public_readiness_aggregates.filter(r=>
       (filters.cluster === 'all' || r.cluster_id === filters.cluster) &&
       (filters.activity === 'all' || r.activity_id === filters.activity) &&
-      ((!filters.category || filters.category === 'all') || data.activity_catalog.some(a=>a.activity_id===r.activity_id && a.category===filters.category)) &&
+      ((!filters.category || filters.category === 'all') || data.activity_catalog.some(a=>activityKey(a.activity_id,a.stage_scope)===activityKey(r.activity_id,r.stage_scope) && a.category===filters.category)) &&
       (filters.stage === 'all' || r.stage_scope === filters.stage) &&
       (filters.status === 'all' || r.submission_state === filters.status ||
        r.verification_state === filters.status || r.planning_state === filters.status));
@@ -133,12 +134,13 @@
     const full = k => coverage[k] === 'complete';
     const openIssues = data.public_issues.filter(i=>i.state==='open' &&
       (filters.activity==='all' || i.activity_id===filters.activity) &&
-      ((!filters.category || filters.category==='all') || activities.some(a=>a.activity_id===i.activity_id)) &&
+      (filters.stage==='all' || i.stage_scope===filters.stage) &&
+      ((!filters.category || filters.category==='all') || activities.some(a=>activityKey(a.activity_id,a.stage_scope)===activityKey(i.activity_id,i.stage_scope))) &&
       (filters.cluster==='all' || i.cluster_id===filters.cluster));
     return {
       rows, scoped, issues:openIssues, activities,
       kpis: {
-        confirmedActivities:countOrUnknown(full('catalog') && scoped,activities.length),
+        confirmedActivities:countOrUnknown(full('catalog') && scoped,activities.filter(a=>a.stage_scope==='district').length),
         requiredGroups:countOrUnknown(full('obligations') && scoped,byGroup.size),
         submittedGroups:countOrUnknown(full('obligations') && scoped,allGroupSubmitted),
         verifiedRecords:countOrUnknown(full('obligations') && scoped,requireRows.filter(reviewed).length),
@@ -204,7 +206,7 @@
         [...new Set(snap.activity_catalog.map(a=>a.category))].sort((a,b)=>a.localeCompare(b,'th'))
           .map(a=>option(a,a)).join('');
       pick('ia3Activity').innerHTML = option('all','ทุกกิจกรรม')+
-        snap.activity_catalog.map(a=>option(a.activity_id,a.title)).join('');
+        [...new Map(snap.activity_catalog.map(a=>[a.activity_id,a.title])).entries()].map(([id,title])=>option(id,title)).join('');
     }
     function draw() {
       const offline = typeof navigator !== 'undefined' && navigator.onLine === false;
@@ -234,26 +236,27 @@
         rows.innerHTML='<div class="ia3-empty"><b>ไม่มีรายการในตัวกรองนี้</b><p>ไม่ใช่หลักฐานว่ากลุ่มหรือกิจกรรมไม่มีหน้าที่ส่งตัวแทน โปรดตรวจขอบเขตชุดข้อมูล</p></div>';
       } else {
         const names=new Map(snap.clusters.map(g=>[g.cluster_id,g.label]));
-        const acts=new Map(snap.activity_catalog.map(a=>[a.activity_id,a]));
+        const acts=new Map(snap.activity_catalog.map(a=>[activityKey(a.activity_id,a.stage_scope),a]));
         const values=model.rows.map(r=>{
-          const a=acts.get(r.activity_id);
+          const a=acts.get(activityKey(r.activity_id,r.stage_scope));
           return {group:escapeHTML(names.get(r.cluster_id)),activity:escapeHTML(a.title),
+            stage:escapeHTML(r.stage_scope==='district'?'เขตพื้นที่':'กลุ่มเครือข่าย'),
             policy:escapeHTML(LABEL[a.competition_mode]),planning:escapeHTML(LABEL[r.planning_state]||'ยังไม่มีข้อมูลยืนยัน'),submission:escapeHTML(LABEL[r.submission_state]||'ยังไม่มีข้อมูลยืนยัน'),
             review:escapeHTML(LABEL[r.verification_state]||'ยังไม่มีข้อมูลยืนยัน'),
             qualification:escapeHTML(r.obligation_state==='required'?'ต้องส่งตัวแทน':'ไม่ต้องส่งตัวแทน'),
             teams:num(r.qualified_teams),date:escapeHTML(fmtDate(r.source_as_of))};
         });
         rows.innerHTML='<div class="ia3-table-wrap"><table class="ia3-table"><thead><tr>'+
-          ['กลุ่มเครือข่าย','กิจกรรม','นโยบาย','ภาระส่งตัวแทน','การเตรียม','การส่ง','การตรวจรับ','ทีมผ่านเกณฑ์','ข้อมูล ณ'].map(s=>'<th>'+s+'</th>').join('')+
-          '</tr></thead><tbody>'+values.map(v=>'<tr>'+[v.group,v.activity,v.policy,v.qualification,v.planning,v.submission,v.review,v.teams,v.date].map(s=>'<td>'+s+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>'+
+          ['กลุ่มเครือข่าย','กิจกรรม','ระดับ','นโยบาย','ภาระส่งตัวแทน','การเตรียม','การส่ง','การตรวจรับ','ทีมผ่านเกณฑ์','ข้อมูล ณ'].map(s=>'<th>'+s+'</th>').join('')+
+          '</tr></thead><tbody>'+values.map(v=>'<tr>'+[v.group,v.activity,v.stage,v.policy,v.qualification,v.planning,v.submission,v.review,v.teams,v.date].map(s=>'<td>'+s+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>'+
           '<div class="ia3-mobile-rows">'+values.map(v=>'<article class="ia3-row-card"><h4>'+v.group+'</h4>'+
-          '<p>'+v.activity+'</p><dl><div><dt>นโยบาย</dt><dd>'+v.policy+'</dd></div>'+
+          '<p>'+v.activity+'</p><dl><div><dt>ระดับ</dt><dd>'+v.stage+'</dd></div><div><dt>นโยบาย</dt><dd>'+v.policy+'</dd></div>'+
           '<div><dt>ภาระ</dt><dd>'+v.qualification+'</dd></div>'+
           '<div><dt>การเตรียม</dt><dd>'+v.planning+'</dd></div><div><dt>ส่งข้อมูล</dt><dd>'+v.submission+'</dd></div><div><dt>การตรวจรับ</dt><dd>'+v.review+'</dd></div>'+
           '<div><dt>ทีมผ่านเกณฑ์</dt><dd>'+v.teams+'</dd></div><div><dt>ข้อมูล ณ</dt><dd>'+v.date+'</dd></div></dl></article>').join('')+'</div>';
       }
       issues.innerHTML=model.issues.length?'<ul>'+model.issues.map(i=>'<li><b>'+escapeHTML(i.title)+
-        '</b><small>กิจกรรม '+escapeHTML(i.activity_id)+' · แหล่ง '+escapeHTML(i.source_reference)+'</small></li>').join('')+'</ul>':
+        '</b><small>กิจกรรม '+escapeHTML(i.activity_id)+' · ระดับ '+escapeHTML(i.stage_scope==='district'?'เขตพื้นที่':'กลุ่มเครือข่าย')+' · แหล่ง '+escapeHTML(i.source_reference)+'</small></li>').join('')+'</ul>':
         '<div class="ia3-empty"><b>ไม่มีประเด็นที่เผยแพร่ในตัวกรองนี้</b><p>'+
         (snap.coverage.issues==='complete'?'ตรวจสอบครบตามขอบเขตชุดข้อมูล':'ข้อมูลประเด็นยังไม่ครบ ไม่สามารถยืนยันว่าไม่มีประเด็น')+'</p></div>';
     }
