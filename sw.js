@@ -1,7 +1,7 @@
 /* Sillapa standalone public dashboard cache (no private API, names, or school plans separately stored). */
-const CACHE_NAME = 'sillapa-public-v5-ia3-20261015';
+const CACHE_NAME = 'sillapa-public-v6-ia4-20261015';
 const CACHE_PREFIX = 'sillapa-public-';
-const SHELL = ['./', './index.html', './manifest.webmanifest', './pwa.css', './pwa.js', './ia1.css', './ia2.css', './ia2-registry.js', './ia3.css', './ia3-readiness.js',
+const SHELL = ['./', './index.html', './manifest.webmanifest', './pwa.css', './pwa.js', './ia1.css', './ia2.css', './ia2-registry.js', './ia3.css', './ia3-readiness.js', './ia4.css', './ia4-workspace.js',
   './round70-catalog.js', './pull-refresh.js',
   './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 const INDEX = new URL('./index.html', self.registration.scope).href;
