@@ -12,9 +12,9 @@
   const SUBMISSION = ['not_started', 'drafting', 'submitted'];
   const REVIEW = ['not_reviewed', 'pending', 'needs_revision', 'verified', 'locked'];
   const LABEL = {
-    not_started:'ยังไม่เริ่มดำเนินการ', drafting:'กำลังเตรียมข้อมูล',
-    submitted:'ส่งข้อมูลแล้ว', not_reviewed:'ยังไม่ได้ส่งให้ตรวจ',
-    pending:'รอตรวจสอบ', needs_revision:'ต้องแก้ไข',
+    not_started:'ยังไม่เริ่มเตรียมงาน', drafting:'กำลังเตรียมข้อมูล',
+    submitted:'กลุ่มส่งข้อมูลแล้ว', not_reviewed:'ยังไม่ได้ส่งให้ตรวจ',
+    pending:'รอเขตตรวจสอบ', needs_revision:'ต้องแก้ไข',
     verified:'ตรวจสอบแล้ว', locked:'ยืนยันเรียบร้อยแล้ว',
     representative_only:'ส่งตัวแทนจากกลุ่ม',
     open:'สมัครตรงตามระดับที่เปิด',
@@ -186,7 +186,7 @@
       '<div class="ia3-section-head"><h3>กำหนดการสำหรับวางแผน</h3></div>'+
       '<div class="ia3-schedule"><p><b>4 ธ.ค. 2569</b> · กำหนดส่งข้อมูลตัวแทนจากกลุ่มสู่เขต ไม่ใช่วันปิดรับสมัครทุกกิจกรรม</p>'+
       '<p><b>21–24 ธ.ค. 2569</b> · ช่วงแข่งขันระดับเขตเบื้องต้น รอประกาศยืนยันจริง</p></div>'+
-      '<p class="ia3-caution">แหล่งอ้างอิง: ระบบแข่งขันหลัก AcademicCompetitionManager (ยังไม่มีชุดเผยแพร่ที่อนุมัติ) · ข้อมูลย้อนหลังครั้งที่ 73 ไม่ใช่ความพร้อมครั้งที่ 74</p>';
+      '<p class="ia3-caution">ข้อมูลอย่างเป็นทางการต้องมาจากระบบจัดการแข่งขันของเขต (ยังไม่ได้รับอนุญาตให้แสดง) · ข้อมูลย้อนหลังครั้งที่ 73 ไม่ใช่ความพร้อมครั้งที่ 74</p>';
   }
   function mount(args) {
     if (typeof document === 'undefined') return false;
