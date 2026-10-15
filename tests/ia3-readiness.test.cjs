@@ -86,6 +86,13 @@ assert.equal(selectRows(base,{cluster:'all',activity:'all',stage:'district',stat
 const subset=derive(base,{cluster:'g1',activity:'all',stage:'all',status:'all'});
 assert.equal(subset.kpis.verifiedRecords,null,'filtered KPIs cannot claim full coverage');
 assert.equal(subset.rows.length,2);
+assert.equal(selectRows(base,{cluster:'all',category:'สมมติ',activity:'all',stage:'district',status:'all'}).length,3);
+base.activity_catalog[2].category='หมวดสมมติอื่น';
+assert.equal(selectRows(base,{cluster:'all',category:'หมวดสมมติอื่น',activity:'all',stage:'district',status:'all'}).length,0,
+  'category filter must not count other category obligations');
+assert.equal(derive(base,{cluster:'all',category:'หมวดสมมติอื่น',activity:'all',stage:'all',status:'all'}).kpis.confirmedActivities,null,
+  'category subset cannot be treated as complete district KPI');
+
 const partial=fixture();partial.coverage.obligations='partial';partial.coverage.catalog='partial';
 assert.equal(derive(partial).kpis.requiredGroups,null);
 assert.equal(derive(partial).kpis.confirmedActivities,null);
