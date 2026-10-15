@@ -6,10 +6,10 @@
 <meta name="theme-color" content="#EEF1F5" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0B1220" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="ศิลปหัตถกรรม 74">
+<meta name="apple-mobile-web-app-title" content="สารสนเทศเตรียมแข่งขัน 74">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Sillapa 73–74 · สพป.กาญจนบุรี เขต 4</title>
+<title>สารสนเทศเตรียมจัดการแข่งขันศิลปหัตถกรรมครั้งที่ 74 · สพป.กาญจนบุรี เขต 4</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icons/icon-192.png" type="image/png" sizes="192x192">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" sizes="180x180">
@@ -714,15 +714,32 @@ body{overscroll-behavior-y:auto}
   .splash-progress i,.sk-line::after,.sk-tile::after,.sk-row::after,.sk-chart::after,.sk-chip::after{animation:none}
 }
 
+.s74-purpose{padding:15px 17px;margin:0 0 15px;background:var(--surface);border:1px solid var(--line);border-radius:15px}
+.s74-purpose strong{font-size:15px;color:var(--ink)}.s74-purpose p{font-size:13px;line-height:1.7;color:var(--ink-2);margin:6px 0}
+.s74-purpose-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+.s74-mini{padding:11px 14px;margin-bottom:11px}
+.s70-refs{padding:10px 11px;margin:8px 0;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;color:var(--ink)}
+.s70-refs b{display:block;font-size:12.5px;margin-bottom:6px}
+.s70-refs .s70-row{display:flex;align-items:baseline;gap:6px;padding:4px 0;font-size:12px;line-height:1.5;border-bottom:1px solid var(--line)}
+.s70-refs .s70-row:last-of-type{border-bottom:0}.s70-refs .s70-grade{color:var(--rep);font-weight:700;white-space:nowrap}
+.s70-refs .s70-id,.s70-refs .s70-note{font-size:11px;color:var(--ink-2)}.s70-refs .s70-note{display:block;margin-top:7px}
+@media(max-width:480px){.s70-refs .s70-row{display:block}.s70-refs .s70-grade{margin-right:6px}}
+.pull-refresh-indicator{position:fixed;z-index:900;top:calc(8px + env(safe-area-inset-top,0px));left:50%;transform:translate(-50%,-150%);opacity:0;pointer-events:none;display:flex;align-items:center;gap:8px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:30px;padding:9px 15px;box-shadow:0 7px 26px rgba(0,0,0,.15);font-size:13px;font-weight:700;white-space:nowrap;transition:transform .18s,opacity .18s}
+.pull-refresh-indicator.visible{transform:translate(-50%,0);opacity:1}.pull-refresh-indicator.ready{border-color:var(--rep)}
+.pull-refresh-indicator .pull-arrow{font-size:19px;transform:rotate(calc(var(--pull,0) * 180deg))}
+@media(min-width:1024px){.pull-refresh-indicator{display:none}}
+@media(prefers-reduced-motion:reduce){.pull-refresh-indicator{transition:none}}
+
 </style>
 </head>
 <body>
 
+<div class="pull-refresh-indicator" id="pullRefreshHint" role="status" aria-live="polite"><b class="pull-arrow" aria-hidden="true">↓</b><span>ดึงลงเพื่อรีเฟรช</span></div>
 <div class="app-splash" id="appSplash" role="status" aria-live="polite" aria-label="กำลังเปิดเว็บไซต์ศิลปหัตถกรรม">
   <div class="splash-content">
     <div class="splash-emblem" aria-hidden="true">🏅</div>
     <h2>งานศิลปหัตถกรรมนักเรียน<br>ครั้งที่ 74</h2>
-    <p>สพป.กาญจนบุรี เขต 4<br>ข้อมูลการแข่งขันและการเตรียมความพร้อม</p>
+    <p>ระบบสารสนเทศเพื่อเตรียมจัดการแข่งขัน<br>สพป.กาญจนบุรี เขต 4</p>
     <p class="splash-status" id="splashStatus">กำลังเตรียมข้อมูล...</p>
     <div class="splash-progress" id="splashProgress" aria-hidden="true"><i></i></div>
     <button class="splash-retry" id="splashRetry" type="button" hidden onclick="location.reload()">โหลดหน้าเว็บอีกครั้ง</button>
@@ -784,12 +801,12 @@ body{overscroll-behavior-y:auto}
 </template>
 
 <nav class="nav" aria-label="เมนูหลัก">
-  <div class="brand-mark" aria-hidden="true">🏅<span class="wide-only">ผลแข่งขัน ครั้งที่ 73</span></div>
+  <div class="brand-mark" aria-hidden="true">🏅<span class="wide-only">สารสนเทศเตรียมแข่งขัน 74</span></div>
 </nav>
 
 <header class="appbar">
   <div class="row">
-    <div class="ttl"><b id="vTitle">ภาพรวม</b><small>การแข่งขันครั้งที่ 73 สพป.กาญจนบุรี เขต 4</small></div>
+    <div class="ttl"><b id="vTitle">ภาพรวม</b><small>ข้อมูลเตรียมจัดการแข่งขันครั้งที่ 74 · สพป.กาญจนบุรี เขต 4</small></div>
     <span class="online" id="online" hidden role="status" aria-live="polite"><i></i><b id="onlineN">0</b> ออนไลน์</span>
     <button class="icon-btn" id="btnFilter" type="button" aria-label="ตัวกรอง">
       <svg class="i" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg><span class="dot" id="fDot"></span>
@@ -799,7 +816,7 @@ body{overscroll-behavior-y:auto}
 </header>
 
 <main class="shell">
-  <div class="ltitle" id="lTitle"><small>ครั้งที่ 73 · สพป.กาญจนบุรี เขต 4</small><h1 id="lTitleT">ภาพรวม</h1></div>
+  <div class="ltitle" id="lTitle"><small>ระบบสารสนเทศเพื่อเตรียมจัดการแข่งขันครั้งที่ 74</small><h1 id="lTitleT">ภาพรวม</h1></div>
 
   <section id="pwaInstallCard" class="pwa-install-card" hidden aria-label="แนะนำการติดตั้งแอป">
     <div class="pwa-install-logo" aria-hidden="true">🏅</div>
@@ -814,6 +831,7 @@ body{overscroll-behavior-y:auto}
   <!-- Overview -->
   <section class="view" id="v-overview" aria-label="ภาพรวม" data-loading="true" aria-busy="true">
 <div class="view-skeleton" aria-hidden="true"><div class="sk-line short"></div><div class="sk-tile hero"></div><div class="sk-stats"><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div></div><div class="sk-chart"></div></div>
+    <div class="card s74-purpose"><strong>ศูนย์ข้อมูลสารสนเทศเพื่อเตรียมจัดการแข่งขันครั้งที่ 74</strong><p>ใช้ผลครั้งที่ 73 และรายการอ้างอิงครั้งที่ 70 เพื่อวิเคราะห์ วางแผน และเตรียมความพร้อมของผู้จัดกับโรงเรียน <b>ไม่ใช่ระบบรายงานผลการแข่งขันครั้งที่ 74</b> และยังไม่ใช่ระบบเปิดรับสมัคร</p><div class="s74-purpose-actions"><button type="button" class="chip" data-go="next">ศึกษาร่างรายการครั้งที่ 74 ›</button><button type="button" class="chip" data-go="prep">วางแผนสำหรับโรงเรียน ›</button></div></div>
     <div class="tiles" id="tiles"></div>
     <div data-s74-calendar></div>
     <button hidden class="card nx-promo" type="button" data-go="prep" id="ppPromo"><span class="ic" aria-hidden="true" style="background:var(--rep-soft);color:var(--rep)">✏️</span><span class="main"><b>สำหรับครู: เตรียมสมัครครั้งที่ 74</b><small>ดูผลเดิมของโรงเรียน เกณฑ์คะแนน และวางแผนกิจกรรมที่จะส่ง</small></span><svg class="i chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></button>
@@ -886,6 +904,7 @@ body{overscroll-behavior-y:auto}
   <!-- Activities -->
   <section class="view" id="v-acts" aria-label="รายการแข่งขัน" data-loading="true" aria-busy="true">
 <div class="view-skeleton" aria-hidden="true"><div class="sk-line short"></div><div class="sk-tile hero"></div><div class="sk-chips"><div class="sk-chip"></div><div class="sk-chip"></div><div class="sk-chip"></div></div><div class="sk-rows"><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div></div></div>
+    <div class="s74-purpose s74-mini"><strong>รายการย้อนหลังครั้งที่ 73 เพื่อประกอบการจัดการแข่งขันครั้งที่ 74</strong><p>รายการและกรรมการในหน้านี้เป็นข้อมูลย้อนหลัง หากต้องการดูระดับชั้นจากรายการครั้งที่ 70 ให้เปิด <button type="button" class="linkbtn" data-go="next">ร่างรายการครั้งที่ 74</button></p></div>
     <div class="toolbar">
       <label class="search"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="qAct" type="search" placeholder="ค้นหารายการ หรือชื่อกรรมการ" aria-label="ค้นหารายการแข่งขันหรือชื่อกรรมการตัดสิน"></label>
       <div class="seg-chips" id="actSort" role="group" aria-label="เรียงตาม" hidden>
@@ -910,7 +929,7 @@ body{overscroll-behavior-y:auto}
     </div>
     <div class="jact"><select id="jGrp" aria-label="กรองตามกลุ่มกิจกรรมที่เคยตัดสิน"></select>
       <button type="button" class="chip" id="jCsv" aria-label="ดาวน์โหลดรายการที่แสดงอยู่เป็นไฟล์ CSV">ดาวน์โหลด CSV</button>
-      <button type="button" class="chip" id="jCert" aria-label="ดาวน์โหลดรายชื่อกรรมการทั้งหมดสำหรับทำเกียรติบัตร เป็นไฟล์ CSV">รายชื่อทำเกียรติบัตร</button></div>
+</div>
     <p class="ex-msg" id="jMsg" role="status" style="padding:0 4px"></p>
     <div class="toolbar jtb">
       <label class="search"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="qJ" type="search" placeholder="ค้นหาโรงเรียน หรือชื่อกรรมการ" aria-label="ค้นหาโรงเรียนหรือชื่อกรรมการ"></label>
@@ -931,7 +950,7 @@ body{overscroll-behavior-y:auto}
     <div class="card nx-hero">
       <span class="badge">ร่าง</span>
       <h2>ครั้งที่ 73 เทียบกับครั้งที่ 74 ปีการศึกษา 2569</h2>
-      <p>เทียบรายการที่เขตเคยแข่งในครั้งที่ 73 กับร่างรายการครั้งที่ 74 รายการไหนคงไว้ ตัดออก หรือเพิ่มใหม่</p>
+      <p>ฐานข้อมูลสำหรับเตรียมจัดการแข่งขันครั้งที่ 74: เทียบผลย้อนหลังครั้งที่ 73 กับร่างครั้งที่ 74 พร้อมทุกรายการ/ระดับชั้นของครั้งที่ 70 ที่ตรวจสอบได้ โดยยังไม่ถือเป็นประกาศรับสมัคร</p>
       <div class="cmp-k" id="cmpK"></div>
     </div>
     <div data-s74-calendar></div>
@@ -991,12 +1010,12 @@ body{overscroll-behavior-y:auto}
   <section class="view" id="v-prep" aria-label="เตรียมแข่งครั้งที่ 74" data-loading="true" aria-busy="true">
 <div class="view-skeleton" aria-hidden="true"><div class="sk-line short"></div><div class="sk-tile hero"></div><div class="sk-stats"><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div></div><div class="sk-chips"><div class="sk-chip"></div><div class="sk-chip"></div><div class="sk-chip"></div></div><div class="sk-rows"><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div></div></div>
     <div class="card pp-hero">
-      <p>เลือกโรงเรียนของคุณ เพื่อดูผลเดิม เกณฑ์คะแนนที่ต้องทำให้ได้ และวางแผนกิจกรรมที่จะส่ง</p>
+      <p>วิเคราะห์และวางแผนสำหรับโรงเรียน: ดูผลงานย้อนหลังและทุกระดับชั้นอ้างอิงจากครั้งที่ 70 เพื่อเตรียมแข่งขันครั้งที่ 74 (ไม่ใช่ระบบรายงานผลหรือรับสมัคร)</p>
       <button class="pickbtn" type="button" id="ppPick"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span id="ppPickT">แตะเพื่อค้นหาโรงเรียน</span><em>เลือก</em></button>
       <div class="pp-stat" id="ppStat" hidden></div>
     </div>
     <div data-s74-calendar></div>
-    <div class="wait"><span class="ic" aria-hidden="true">⏳</span><div><b>ร่างรายการ · รอประกาศรายละเอียด</b><p>ร่างครั้งที่ 74 ยังไม่ระบุข้อมูลด้านล่าง ระดับชั้นที่แสดงในหน้านี้เป็นของครั้งที่ 73 ใช้อ้างอิงเท่านั้น ตรวจกับประกาศของ สพป.กาญจนบุรี เขต 4 ก่อนสมัครจริง</p>
+    <div class="wait"><span class="ic" aria-hidden="true">⏳</span><div><b>ร่างรายการ · รอประกาศรายละเอียด</b><p>ร่างครั้งที่ 74 ยังไม่ยืนยันระดับชั้น/เกณฑ์ รายการเดิมอ้างอิงครั้งที่ 73 ส่วนกิจกรรมที่นำจากครั้งที่ 70 จะแสดงทุกระดับชั้นที่ตรวจสอบได้จากครั้งที่ 70 ต้องรอประกาศของ สพป.กาญจนบุรี เขต 4 ก่อนสมัครจริง</p>
       <div class="chips"><span>ระดับชั้น</span><span>เกณฑ์การแข่งขัน</span><span>จำนวนนักเรียนต่อทีม</span><span>กำหนดการรับสมัคร</span></div></div></div>
     <div class="segc" role="tablist" aria-label="มุมมอง" id="ppSeg">
       <button type="button" role="tab" data-sub="mine" aria-selected="true">โรงเรียนของฉัน</button>
@@ -1041,6 +1060,7 @@ body{overscroll-behavior-y:auto}
   <div class="sh-foot" id="shFoot" hidden></div>
 </div>
 
+<script src="./round70-catalog.js"></script>
 <script>
 /* Shared schedule: shown on Overview, comparison, and teacher planning views. */
 const scheduleTemplate=document.querySelector('#s74-calendar-template');
@@ -1463,8 +1483,6 @@ function jCSV(){const l=jRows(),g=JG2?'_'+fsafe(JG2):'';
   if(JV==='pan')return [`คณะกรรมการรายคณะ${g}.csv`,toCSV([['กลุ่ม','ประธานกรรมการ','กรรมการทั้งหมด','จำนวนรายการ','รายการที่ตัดสิน','ทีม','คะแนนเฉลี่ย','สัดส่วนเหรียญทอง','ต่างจากเฉลี่ยกลุ่ม'],...l.map(p=>[p.group,p.chair.name,p.mem.map(([i,r])=>JP[i].name+' ('+JROLE[r]+')').join(' / '),p.acts.length,p.acts.map(actShort).join(' / '),p.teams,p.avg!=null?f2(p.avg):'',pct(p.gold),sgn(p.diff)])])];
   if(JV==='sch')return [`กรรมการรายโรงเรียน${g}.csv`,toCSV([['โรงเรียน','จำนวนกรรมการ','ตำแหน่งรวม','จำนวนรายการ','ประธาน','ข้อสังเกต','กลุ่มที่ตัดสิน','รายชื่อกรรมการ'],...l.map(o=>['โรงเรียน'+o.name,o.ppl.length,o.n,o.acts,o.c,o.cf,o.groups.join(' / '),o.ppl.map(p=>p.name).join(' / ')])])];
   return [`กรรมการรายบุคคล${g}.csv`,toCSV([['ลำดับ','ชื่อ-สกุล','โรงเรียน','กลุ่มที่ตัดสิน','จำนวนรายการ','ประธาน','กรรมการ','เลขานุการ','ข้อสังเกต'],...l.map((p,n)=>[n+1,p.name,'โรงเรียน'+p.school,p.groups.join(' / '),p.n,p.c,p.n-p.c-p.s,p.s,p.cf])])]}
-function certCSV(){const l=[...JP].sort((a,b)=>(a.groups[0]||'').localeCompare(b.groups[0]||'','th')||JN(a.name).localeCompare(JN(b.name),'th'));
-  return toCSV([['ลำดับ','ชื่อ-สกุล','โรงเรียน','ตำแหน่ง','กลุ่มกิจกรรม','จำนวนรายการ','รายการที่ตัดสิน'],...l.map((p,n)=>[n+1,p.name,'โรงเรียน'+p.school,JROLEMAX(p),p.groups.join(' / '),p.n,p.acts.map(a=>actShort(a.act)).join(' / ')])])}
 function jActRow(a){return `<button class="li" type="button" data-act="${esc(a.act)}"><span class="main"><b>${esc(actShort(a.act))}</b><small>${JROLE[a.r]}${a.cf?'<span class="cf-line">โรงเรียนของกรรมการส่งทีมแข่งในรายการนี้</span>':''}</small></span>${chev}</button>`}
 function openJP(i){const p=JP[i];
   openSheet(p.name,`โรงเรียน${p.school} · ตัดสิน ${p.n} กิจกรรม`,
@@ -1487,7 +1505,7 @@ $('#jGrp').innerHTML='<option value="">ทุกกลุ่มกิจกร�
 $('#jGrp').onchange=e=>{JG2=e.target.value;judgesList()};
 if(!SHOW_PANEL_SCORES)$('#jSeg [data-js=pan]').remove();
 $('#jCsv').onclick=()=>{const [n,d]=jCSV();saveFile(n,d,'text/csv;charset=utf-8',$('#jMsg'))};
-$('#jCert').onclick=()=>saveFile('รายชื่อกรรมการ_สำหรับเกียรติบัตร.csv',certCSV(),'text/csv;charset=utf-8',$('#jMsg'));
+
 judgesKpi();judgesList();
 const CRF={"thai": ["ภาษาไทย", "https://www.sillapa.net/rule70/thai-70.pdf?141122"], "math": ["คณิตศาสตร์", "https://www.sillapa.net/rule70/math-70.pdf"], "sci": ["วิทยาศาสตร์", "https://www.sillapa.net/rule70/science-70.pdf?151122"], "soc": ["สังคมศึกษา ศาสนาและวัฒนธรรม", "https://www.sillapa.net/rule70/social-70.pdf"], "eng": ["ภาษาต่างประเทศ", "https://www.sillapa.net/rule70/english-70.pdf?251122"], "hp": ["สุขศึกษาและพลศึกษา", "https://www.sillapa.net/rule70/health-70.pdf"], "pilot": ["นักบินน้อย สพฐ.", "https://www.sillapa.net/rule70/pilot-70.pdf?231122"], "act": ["กิจกรรมพัฒนาผู้เรียน", "https://www.sillapa.net/rule70/activity-70.pdf"], "sp": ["การศึกษาพิเศษ (โรงเรียนเรียนรวม)", "https://www.sillapa.net/rule70/special-70.pdf?191122"]};const CRIT={"คัดลายมือสื่อภาษาไทย": ["thai"], "เรียงร้อยถ้อยความ": ["thai"], "ท่องอาขยานทำนองเสนาะ": ["thai"], "กวีเยาวชนคนรุ่นใหม่": ["thai"], "ต่อคำศัพท์ภาษาไทย (คำคมเดิม)": ["thai"], "การแข่งขันอัจฉริยภาพทางคณิตศาสตร์": ["math"], "โครงงานคณิตศาสตร์ประเภทบูรณาการความรู้ในคณิตศาสตร์ไปประยุกต์ใช้": ["math"], "คิดเลขเร็ว": ["math"], "ต่อสมการคณิตศาสตร์ (เอแม็ท)": ["math"], "ซูโดกุ": ["math"], "อัจฉริยภาพทางวิทยาศาสตร์": ["sci"], "โครงงานวิทยาศาสตร์ประเภททดลอง": ["sci"], "โครงงานวิทยาศาสตร์ประเภทสิ่งประดิษฐ์": ["sci"], "การแสดงทางวิทยาศาสตร์ (Science Show)": ["sci"], "เพลงคุณธรรม": ["soc"], "โครงงานคุณธรรม": ["soc"], "เล่านิทานคุณธรรม": ["soc"], "มารยาทไทย": ["soc"], "การแข่งขันพูดภาษาอังกฤษ (Impromptu Speech)": ["eng"], "การแข่งขันการเล่านิทาน (Story Telling)": ["eng"], "ตอบปัญหาสุขศึกษาและพลศึกษา": ["hp"], "เครื่องร่อนแบบเดินตาม (Walk along Glider)": ["pilot"], "เครื่องร่อน ประเภทร่อนนานยิงยาง": ["pilot"], "เครื่องร่อน ประเภทร่อนนาน ปล่อยด้วยมือ": ["pilot"], "กิจกรรมลูกเสือ เนตรนารี ยุวกาชาด ผู้บำเพ็ญประโยชน์": ["act"], "กลุ่มนาฏศิลป์": ["sp"], "กลุ่ม Soft Power": ["sp", 1]};
 const critLink=(t,short)=>{const c=CRIT[t];if(!c)return '';const [n,u]=CRF[c[0]];
@@ -1797,5 +1815,6 @@ document.querySelectorAll('.view[data-loading="true"]').forEach(view=>{
 window.__sillapaBootReady();
 </script>
 <script src="./pwa.js" defer></script>
+<script src="./pull-refresh.js" defer></script>
 </body>
 </html>
