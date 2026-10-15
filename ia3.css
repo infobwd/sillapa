@@ -13,6 +13,8 @@
 .ia3-kpi>span{display:block;color:var(--ink);font-size:12px;line-height:1.5;font-weight:700}
 .ia3-kpi strong{display:block;color:var(--rep);font-weight:800;font-size:29px;line-height:1.4;
   font-variant-numeric:tabular-nums;min-height:42px;margin:2px 0}
+.ia3-kpi-source{display:block;font-style:normal;font-size:10px;line-height:1.45;
+  color:var(--ink-3);margin-top:8px;padding-top:8px;border-top:1px solid var(--line);overflow-wrap:anywhere}
 .ia3-kpi small{display:block;font-size:11px;line-height:1.5;color:var(--ink-2);margin-top:auto}
 .ia3-section-head{display:flex;gap:8px;justify-content:space-between;align-items:baseline;
   flex-wrap:wrap;margin:22px 0 10px}
