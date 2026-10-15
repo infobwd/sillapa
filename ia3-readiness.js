@@ -170,7 +170,7 @@
       '<p>แยกข้อมูลการวางแผน การส่งตัวแทน และการตรวจรับออกจากกัน ไม่ใช่ระบบรับสมัครหรือรายงานผลการแข่งขัน</p></div>'+
       '<div class="ia3-source" id="ia3Source" role="status" aria-live="polite"></div>'+
       '<div class="ia3-kpis" id="ia3Kpis">'+tiles.map(([k,t,s])=>
-        '<article class="ia3-kpi"><span>'+t+'</span><strong data-kpi="'+k+'">—</strong><small>'+s+'</small></article>').join('')+'</div>'+
+        '<article class="ia3-kpi"><span>'+t+'</span><strong data-kpi="'+k+'">—</strong><small>'+s+'</small><em class="ia3-kpi-source" data-kpi-source="'+k+'">แหล่งข้อมูล: — · ยืนยัน: — · เวลา: —</em></article>').join('')+'</div>'+
       '<div class="ia3-section-head"><h3>ความพร้อมรายกลุ่มเครือข่าย</h3><small>แสดงข้อมูลเฉพาะที่อนุมัติเผยแพร่</small></div>'+
       '<div class="ia3-filters" id="ia3Filters">'+
       '<label>กลุ่มเครือข่าย<select id="ia3Cluster"><option value="all">ทุกกลุ่ม</option></select></label>'+
@@ -218,6 +218,7 @@
         issues.innerHTML = '<div class="ia3-empty"><b>ยังไม่มีข้อมูลประเด็นที่เผยแพร่ได้</b><p>ไม่ถือว่าปัญหาเป็นศูนย์จนกว่าจะตรวจสอบข้อมูลครบ</p></div>';
         pick('ia3Result').textContent='ยังไม่มีรายการที่ตรวจสอบได้';
         el.querySelectorAll('[data-kpi]').forEach(x=>x.textContent=UNKNOWN);
+        el.querySelectorAll('[data-kpi-source]').forEach(x=>x.textContent='แหล่งข้อมูล: — · ยืนยัน: — · เวลา: —');
         el.querySelectorAll('select').forEach(x=>x.disabled=true);
         return;
       }
@@ -230,6 +231,8 @@
       Object.entries(model.kpis).forEach(([k,v])=> {
         const element=el.querySelector('[data-kpi="'+k+'"]');
         if (element) element.textContent=num(v);
+        const foot=el.querySelector('[data-kpi-source="'+k+'"]');
+        if (foot) foot.textContent='แหล่ง: '+snap.source_system+' · สถานะ: เผยแพร่ · ณ '+fmtDate(snap.source_as_of);
       });
       pick('ia3Result').textContent = 'รายการที่ตรงตัวกรอง '+model.rows.length.toLocaleString('th-TH')+' รายการ (ข้อมูลที่เผยแพร่)';
       if (!model.rows.length) {
