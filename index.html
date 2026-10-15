@@ -842,7 +842,7 @@ body{overscroll-behavior-y:auto}
       <h2>เตรียมความพร้อม<br>งานศิลปหัตถกรรมนักเรียน ครั้งที่ 74</h2>
       <p>สพป.กาญจนบุรี เขต 4 · ศึกษารายการ วางแผนงาน และติดตามสิ่งที่ต้องเตรียม โดยใช้ผลการแข่งขันครั้งที่ 73 และรายการอ้างอิงครั้งที่ 70</p>
       <div class="ia-cta">
-        <button class="ia-link primary" type="button" data-go="executive">Dashboard สำหรับผู้บริหาร ›</button>
+        <button class="ia-link primary" type="button" data-go="executive">สรุปข้อมูลสำหรับผู้บริหาร ›</button>
         <button class="ia-link" type="button" data-go="next">ดูรายการแข่งขัน 74 ↗</button>
         <button class="ia-link" type="button" data-go="prep">เตรียมแข่งขันของโรงเรียน ›</button>
       </div>
@@ -980,12 +980,12 @@ body{overscroll-behavior-y:auto}
     <!-- IA-2: the draft registry is the primary content; comparison below remains accessible. -->
     <div class="ia2-registry" id="ia2Root" data-ready="false">
       <div class="ia2-intro">
-        <span class="ia2-eyebrow">ทะเบียนเพื่อวางแผน · ยังไม่ใช่ประกาศรับสมัคร</span>
-        <h2>ทะเบียนรายการแข่งขัน ครั้งที่ 74</h2>
-        <p>สำรวจกลุ่มกิจกรรมในร่าง แสดงรายการย่อยและระดับชั้นของการแข่งขันครั้งที่ 70/73 ที่ใช้อ้างอิงเพื่อเตรียมงาน สพป.กาญจนบุรี เขต 4</p>
+        <span class="ia2-eyebrow">รายการที่กำลังวางแผน · ยังไม่ได้เปิดรับสมัคร</span>
+        <h2>สำรวจรายการที่คาดว่าจะจัดในการแข่งขันครั้งที่ 74</h2>
+        <p>ดูชื่อกิจกรรมและระดับชั้นจากการแข่งขันครั้งที่ 70 และ 73 เพื่อช่วยเตรียมงานครั้งที่ 74 ของ สพป.กาญจนบุรี เขต 4</p>
         <p><strong>รายการและระดับชั้นที่แสดงเป็นข้อมูลย้อนหลัง</strong> ไม่ใช่รายการหรือเกณฑ์เปิดรับสมัครครั้งที่ 74 ที่ผ่านการอนุมัติแล้ว</p>
       </div>
-      <div class="ia2-context" role="note"><b>สถานะครั้งที่ 74: อยู่ระหว่างวางแผน / รอประกาศอย่างเป็นทางการ</b> · ยังไม่มีรหัสกิจกรรม ระดับแข่งขัน (กลุ่ม/เขต) โควตาตัวแทน หรือกติกาสมัครที่รับรองจากระบบหลัก การค้นหาในหน้านี้ใช้ข้อมูลร่างและประวัติเท่านั้น</div>
+      <div class="ia2-context" role="note"><b>สถานะครั้งที่ 74: อยู่ระหว่างวางแผน / รอประกาศอย่างเป็นทางการ</b> · ยังไม่มีประกาศยืนยันรหัสกิจกรรม ระดับแข่งขัน จำนวนตัวแทนที่ส่งได้ และวิธีสมัคร ข้อมูลหน้านี้ใช้สำหรับวางแผนเท่านั้น</div>
       <div class="ia2-stats" id="ia2Stats" aria-label="จำนวนรายการร่างและแหล่งอ้างอิงย้อนหลัง"></div>
       <div class="ia2-tools" aria-label="ตัวกรองรายการแข่งขัน">
         <label class="ia2-filter ia2-search" for="ia2Search">ค้นหาชื่อกิจกรรม ระดับชั้น หรือรหัสรายการเดิม
@@ -994,21 +994,21 @@ body{overscroll-behavior-y:auto}
         <label class="ia2-filter" for="ia2Group">หมวดหมู่
           <select id="ia2Group"><option value="all">ทุกกลุ่มกิจกรรม</option></select>
         </label>
-        <label class="ia2-filter" for="ia2Grade">ระดับชั้น (ข้อมูลย้อนหลัง)
+        <label class="ia2-filter" for="ia2Grade">ระดับชั้นจากการแข่งขันครั้งก่อน
           <select id="ia2Grade"><option value="all">ทุกระดับชั้น</option></select>
         </label>
-        <label class="ia2-filter" for="ia2Source">ชุดข้อมูลอ้างอิง
+        <label class="ia2-filter" for="ia2Source">ใช้รายการแข่งขันครั้งใดเทียบ
           <select id="ia2Source">
             <option value="all">ทั้งหมด</option>
             <option value="70">มีรายการอ้างอิงครั้งที่ 70</option>
             <option value="73">มีรายการอ้างอิงครั้งที่ 73</option>
-            <option value="unresolved">รอตรวจสอบรายการต้นทาง</option>
+            <option value="unresolved">ยังไม่พบรายการเดิมที่ตรงกัน</option>
           </select>
         </label>
-        <label class="ia2-filter" for="ia2Status">สถานะอนุมัติครั้งที่ 74
+        <label class="ia2-filter" for="ia2Status">มีประกาศยืนยันรายการแล้วหรือยัง
           <select id="ia2Status">
             <option value="all">ทุกสถานะที่มีข้อมูล</option>
-            <option value="draft">ร่าง / ยังไม่รับรอง</option>
+            <option value="draft">กำลังวางแผน / ยังไม่ประกาศ</option>
             <option value="confirmed">ประกาศยืนยันแล้ว (ยังไม่มีข้อมูล)</option>
           </select>
         </label>
@@ -1025,16 +1025,16 @@ body{overscroll-behavior-y:auto}
         <p id="ia2Count" role="status" aria-live="polite">กำลังเตรียมรายการอ้างอิง…</p>
         <button type="button" class="ia2-btn" id="ia2Reset">ล้างตัวกรอง</button>
         <button type="button" class="ia2-btn" id="ia2Expand">ขยายรายการย่อยทั้งหมด</button>
-        <button type="button" class="ia2-btn primary" id="ia2Export">ดาวน์โหลด CSV</button>
+        <button type="button" class="ia2-btn primary" id="ia2Export">ดาวน์โหลดรายการเป็นไฟล์ CSV</button>
       </div>
       <div id="ia2List" aria-label="รายการกิจกรรมในร่างครั้งที่ 74"></div>
       <div class="ia2-empty" id="ia2Empty" hidden></div>
       <div class="ia2-data-source">
         <b>แหล่งข้อมูล:</b> กลุ่มกิจกรรมครั้งที่ 74 มาจากร่างที่บันทึกไว้ในเว็บไซต์นี้;
         รายการย่อยครั้งที่ 70 อ้างอิงฐานรายการย้อนหลังของ <b>สพป.ร้อยเอ็ด เขต 3</b>
-        (<a href="https://sillapa65.vichakan.net/sp-ret3/?cat=7&amp;file=view_all&amp;name=category" target="_blank" rel="noopener noreferrer">เปิดรายการต้นทาง ↗</a>);
+        (<a href="https://sillapa65.vichakan.net/sp-ret3/?cat=7&amp;file=view_all&amp;name=category" target="_blank" rel="noopener noreferrer">ดูรายการแข่งขันครั้งที่ 70 จากแหล่งเดิม ↗</a>);
         ข้อมูลครั้งที่ 73 มาจากผลการแข่งขันเดิมของเว็บไซต์นี้ ส่วนกิจกรรมที่ยังเทียบกับครั้งก่อนไม่ได้จะแสดง “รอตรวจสอบ”
-        และเลขรหัสร่างภายในไฟล์ CSV ไม่ใช่รหัสกิจกรรมทางการครั้งที่ 74
+        ส่วนรหัสที่อยู่ในไฟล์ CSV เป็นเพียงรหัสช่วยวางแผน ไม่ใช่รหัสรายการแข่งขันทางการครั้งที่ 74
       </div>
     </div>
     <details class="ia2-compare" id="ia2LegacyCompare">
