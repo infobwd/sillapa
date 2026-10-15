@@ -8,12 +8,14 @@ function makeBuildingLabel(name,y){const canvas=document.createElement('canvas')
 function building(label,i,total,isDistrict){const key=label.normalize('NFKC').replace(/\s+/g,'').toLowerCase();let x,z;const districtLayout={'อาคาร1':[0,8],'อาคาร2':[0,-11.5],'อาคารโดม':[0,-4]};if(isDistrict&&districtLayout[key]){[x,z]=districtLayout[key]}else{const cols=Math.ceil(Math.sqrt(total));x=(i%cols-(cols-1)/2)*6;z=(Math.floor(i/cols)-(Math.ceil(total/cols)-1)/2)*7}const group=new THREE.Group();group.position.set(x,0,z);if(isDistrict&&['อาคาร1','อาคาร2','อาคารโดม'].includes(key)){group.rotation.y=Math.PI/2;group.scale.z=.78}const office=isDistrict&&(key==='อาคาร1'||key==='อาคาร2'),dome=isDistrict&&key==='อาคารโดม';const color=['#e7d5b4','#d7e3ef','#d2b6bd','#a8d2c4'][i%4];function add(geo,mat,px,py,pz,clickable=true){const mesh=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:mat,side:THREE.DoubleSide,roughness:.82}));mesh.position.set(px,py,pz);group.add(mesh);if(clickable){mesh.userData.label=label;meshes.push(mesh)}return mesh}if(office){
  // Both office buildings retain two storeys and expose room fronts behind an open corridor.
  add(new THREE.BoxGeometry(4.1,4.8,14),color,.45,2.4,0);
- // D3D: close the exposed side ends of the front corridor on BOTH office buildings.
- // End walls sit at local Z ends, from the main facade to the corridor's outer edge.
- // Match the cream masonry and keep the front-facing balcony/room details untouched.
+ // D3D: end walls with open upper stair landings on BOTH office buildings.
+ // Keep the lower-storey masonry; leave an upper-storey opening so the stair exit is visible.
  for(const end of [-1,1]){
-  add(new THREE.BoxGeometry(1.8,4.7,.2),'#e7dfce',-2.75,2.38,end*7.04,false);
-  add(new THREE.BoxGeometry(.16,4.8,.28),'#f5f0e6',-3.63,2.4,end*7.04,false);
+  add(new THREE.BoxGeometry(1.8,2.5,.2),'#e7dfce',-2.75,1.25,end*7.04,false);
+  add(new THREE.BoxGeometry(1.8,.42,.2),'#e7dfce',-2.75,4.53,end*7.04,false);
+  for(const xx of [-3.63,-1.87]){
+   add(new THREE.BoxGeometry(.16,2.05,.28),'#f5f0e6',xx,3.5,end*7.04,false);
+  }
   add(new THREE.BoxGeometry(1.85,.16,.28),'#f5f0e6',-2.75,4.72,end*7.04,false);
  }
 
@@ -67,10 +69,14 @@ function building(label,i,total,isDistrict){const key=label.normalize('NFKC').re
   group.add(stair);
  }
  // Upper-floor safety rail, deliberately broken into bays so doors remain visible.
+ // Clear the two end railing bays to show where the stairs arrive on floor 2.
+ // Central bays keep their original safety rail; opening edges get upright posts.
  for(let zz=-5;zz<=5;zz+=2){
+  if(Math.abs(zz)===5)continue;
   add(new THREE.BoxGeometry(.12,.12,1.65),'#e7edf2',-3.56,3.25,zz,false);
   for(const pz of [zz-.75,zz+.75])add(new THREE.BoxGeometry(.1,.72,.1),'#e7edf2',-3.56,2.9,pz,false);
  }
+ for(const zz of [-4.1,4.1])add(new THREE.BoxGeometry(.12,.8,.12),'#e7edf2',-3.56,2.88,zz,false);
  // D3D-R1: two pitched roof planes, a raised ridge, eaves and visible end fascia.
  // Roof parts are non-clickable and can be hidden to inspect second-floor rooms.
  const roofGroup=new THREE.Group();
