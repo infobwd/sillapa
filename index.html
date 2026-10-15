@@ -1192,7 +1192,7 @@ function go(v,push=true){
   if(CUR)SCR[CUR]=window.scrollY;
   $$('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));
   const primary=iaParent(v);
-  $('.nav button[data-v]').forEach(b=>b.dataset.v===primary?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current'));
+  $$('.nav button[data-v]').forEach(b=>b.dataset.v===primary?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current'));
   $('#vTitle').textContent=VIEWS.find(x=>x[0]===v)[1];
   {const nf=['next','prep','judges','readiness','venue','archive'].includes(v);$('#btnFilter').hidden=nf;$('#fChips').hidden=nf;}
   if(push&&location.hash!=='#'+v)history.replaceState(null,'','#'+v);
