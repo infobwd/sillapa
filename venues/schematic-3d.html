@@ -157,6 +157,11 @@ function decorateDistrict(){
  // Long narrow site: three parallel-to-frontage buildings in a rearward row.
  slab(d.parcel.width,d.parcel.length,0,0,'#b6ad94',.02);
  slab(36,17,0,32,'#c3c1ba',.11); // front arrival yard
+ // Mark the open forecourt parking area indicated by the user, without covering the lawn.
+ for(const x of [-8.75,-5.25,-1.75,1.75,5.25,8.75]){
+  slab(.08,5.6,x,36,'#f4efe0',.255);
+ }
+ slab(18,.09,0,39,'#f4efe0',.256);
  for(const x of [d.gate.entryX,d.gate.exitX])slab(5,17,x,43,'#777f83',.18); // separate entry/exit
  slab(94,d.road3342.width,0,d.road3342.z,'#515962',.16);
  for(let x=-43;x<=43;x+=8)slab(3,.14,x,d.road3342.z,'#f0d982',.25);
