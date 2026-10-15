@@ -92,6 +92,12 @@ const lockedStore=createStore(locked,activity,levels);
 assert.equal(lockedStore.info().lastSaved,false);
 assert.equal(lockedStore.selectSchool('โรงเรียน ก').school,'โรงเรียน ก');
 assert.equal(lockedStore.info().lastSaved,false);
+const blockedRead={getItem(){throw Error('storage unavailable')},setItem(){throw Error('storage unavailable')}};
+const blockedStore=createStore(blockedRead,activity,levels);
+assert.equal(blockedStore.info().blocked,true,'Storage read failure does not abort public page');
+assert.equal(blockedStore.info().lastSaved,false);
+assert.equal(createStore(makeStorage(),activity,levels).selectSchool('__proto__').school,'',
+  'unsafe prototype key cannot become a school profile');
 const corrupt=makeStorage({[KEY]:'{"version":2,"schools":{}}',plan74:originalJson});
 const corruptStore=createStore(corrupt,activity,levels);
 assert.equal(corruptStore.info().blocked,true);
