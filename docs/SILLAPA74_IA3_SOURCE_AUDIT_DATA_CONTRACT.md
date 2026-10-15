@@ -51,7 +51,7 @@ Only the documented allowlisted fields are accepted. Unexpected fields (includin
 
 ## 4. KPI definitions and unknowns
 
-The first six cards are **global, unfiltered, source-complete figures only**. Applying filters drills down into records but intentionally displays **—** on full-scope KPI cards; this prevents an incorrectly complete denominator for filtered/policy-specific slices. **0** appears only where the coverage flag is `complete` and all relevant records are known.
+The first six cards are **global, unfiltered, source-complete figures only**. Applying group/category/activity/stage/status filters drills down into records but intentionally displays **—** on full-scope KPI cards; this prevents an incorrectly complete denominator for filtered/policy-specific slices. **0** appears only where the coverage flag is `complete` and all relevant records are known.
 
 | KPI | Formula / denominator | Coverage needed |
 |---|---|---|
