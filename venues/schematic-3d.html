@@ -447,7 +447,7 @@ function addDistrictVehicles(activityCount){
  const colors=['#f6f7f4','#b3c4d5','#d7c7a5','#e6e9ee','#6c91a9','#b9d1bf'];
  // Parking bays are within the open forecourt, clear of entry (-13) and exit (+13) lanes.
  const bays=[[-7,36],[-3.5,36],[0,36],[3.5,36],[7,36]];
- for(let i=0;i<bays.length;i++){
+ for(let i=2;i<bays.length;i++){
   const [x,z]=bays[i],model=makeDistrictCar(colors[i%colors.length],i%3===1);
   model.position.set(x,.24,z);model.rotation.y=Math.PI/2;root.add(model);
  }
@@ -488,12 +488,25 @@ function addDistrictVehicles(activityCount){
   }
   buses.push({model,route:'front-dropoff',phase:i*.5,arrive,depart,passengers,bay:bays[i]});
  }
+ // Additional vehicle follows the rear cross-road marked by the red arrow:
+ // west entry -> west side road -> rear transverse road z=-27 -> east side road -> exit.
+ const rearRoute=new THREE.CatmullRomCurve3([
+  [-13,55],[-13,44],[-13,20],[-13,-19],[-10,-27],[0,-27],
+  [10,-27],[13,-19],[13,12],[13,43],[13,52],[0,52],[-13,52],[-13,55]
+ ].map(p=>new THREE.Vector3(p[0],0,p[1])),true,'centripetal');
+ const rearCar=makeDistrictCar('#c9d7e3',true);
+ root.add(rearCar);buses.push({model:rearCar,route:'rear-loop',curve:rearRoute,phase:.25,speed:.009});
  root.visible=trafficEnabled;root.userData.vehicles=true;
  peopleRoot.visible=trafficEnabled&&peopleVisible;peopleRoot.userData.dropoffPeople=true;
  scene.add(root,peopleRoot);objects.push(root,peopleRoot);
 }
 function animateDistrictVehicles(t){
  for(const b of buses){
+  if(b.route==='rear-loop'){
+   const q=(t*b.speed+b.phase)%1,point=b.curve.getPointAt(q),dir=b.curve.getTangentAt(q);
+   b.model.position.set(point.x,.24,point.z);b.model.rotation.y=Math.atan2(dir.x,dir.z);
+   continue;
+  }
   if(b.route!=='front-dropoff')continue;
   const q=(t*.011+b.phase)%1;
   const arriving=q<.28,stopped=q>=.28&&q<.47;
