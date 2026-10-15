@@ -113,7 +113,7 @@
     return data.public_readiness_aggregates.filter(r=>
       (filters.cluster === 'all' || r.cluster_id === filters.cluster) &&
       (filters.activity === 'all' || r.activity_id === filters.activity) &&
-      (filters.category === 'all' || data.activity_catalog.some(a=>a.activity_id===r.activity_id && a.category===filters.category)) &&
+      ((!filters.category || filters.category === 'all') || data.activity_catalog.some(a=>a.activity_id===r.activity_id && a.category===filters.category)) &&
       (filters.stage === 'all' || r.stage_scope === filters.stage) &&
       (filters.status === 'all' || r.submission_state === filters.status ||
        r.verification_state === filters.status || r.planning_state === filters.status));
@@ -121,19 +121,19 @@
   function derive(data,filters={cluster:'all',category:'all',activity:'all',stage:'all',status:'all'}) {
     if (!validateSnapshot(data).ok) throw Error('unapproved public readiness input');
     const rows = selectRows(data,filters);
-    const activities = data.activity_catalog.filter(a=>(filters.activity === 'all' || a.activity_id === filters.activity) && (filters.category === 'all' || a.category === filters.category));
+    const activities = data.activity_catalog.filter(a=>(filters.activity === 'all' || a.activity_id === filters.activity) && ((!filters.category || filters.category === 'all') || a.category === filters.category));
     const requireRows = rows.filter(applicable);
     const byGroup = new Map();
     requireRows.forEach(r => {if (!byGroup.has(r.cluster_id)) byGroup.set(r.cluster_id,[]);byGroup.get(r.cluster_id).push(r);});
     const allGroupSubmitted = [...byGroup.values()].filter(a=>a.every(submitted)).length;
     const coverage = data.coverage;
-    const scoped = filters.cluster === 'all' && filters.category === 'all' && filters.activity === 'all' &&
+    const scoped = filters.cluster === 'all' && (!filters.category || filters.category === 'all') && filters.activity === 'all' &&
       filters.stage === 'all' && filters.status === 'all';
     // Partial feeds must NEVER present filtered counts as a complete official zero.
     const full = k => coverage[k] === 'complete';
     const openIssues = data.public_issues.filter(i=>i.state==='open' &&
       (filters.activity==='all' || i.activity_id===filters.activity) &&
-      (filters.category==='all' || activities.some(a=>a.activity_id===i.activity_id)) &&
+      ((!filters.category || filters.category==='all') || activities.some(a=>a.activity_id===i.activity_id)) &&
       (filters.cluster==='all' || i.cluster_id===filters.cluster));
     return {
       rows, scoped, issues:openIssues, activities,
