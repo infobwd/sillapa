@@ -1840,7 +1840,7 @@ function renderMine(){const s=PLAN.school,box=$('#ppMine'),st=$('#ppStat');
   const keep=NXI.filter(it=>it.a.length&&mine.some(d=>it.a.includes(d.act)));
   const cutB=CUT.filter(c=>mine.some(d=>c.acts.includes(d.act)));
   let h='';
-  h+=`<div class="sec-title"><h2>แข่งต่อได้ในครั้งที่ 74</h2><span class="pill keep">${keep.length} กิจกรรม</span></div><div class="card list">`;
+  h+=`<div class="sec-title"><h2>กิจกรรมเดิมที่ยังอยู่ในร่างครั้งที่ 74</h2><span class="pill keep">${keep.length} กิจกรรม</span></div><div class="card list">`;
   h+=keep.length?keep.map(it=>{const my=mine.filter(d=>it.a.includes(d.act));
     const rows=my.map(d=>{const b=bmRows({a:[d.act]})[0],gp=d.score!=null&&b.w!=null?b.w-d.score:null;
       return `<div class="r"><span>${esc(d.lvl)} · ${MED[d.m]}${d.score!=null?' <em>'+f2(d.score)+'</em>':''}${d.rank?' · อันดับ '+d.rank:''}</span>${d.rep?'<span class="gap ok">ตัวแทนเขต</span>':gp!=null?`<span class="gap no">ห่างที่ 1 ${f2(gp)}</span>`:''}</div>`}).join('');
@@ -1861,10 +1861,14 @@ function renderSubj(){$('#ppG').innerHTML=NX.groups.map((g,gi)=>`<button class="
   $('#ppSubj').innerHTML=g.i.map(it=>itemCard(it)).join('')+(cuts.length?`<div class="pc" style="background:var(--cut-soft)"><b style="color:var(--cut);font-size:14.5px">ถูกตัดออกจากกลุ่มนี้: ${cuts.map(c=>esc(c.b)).join(', ')}</b><div style="font-size:12.5px;color:var(--ink-2);margin-top:3px">ดูทางเลือกแทนได้ในแท็บ "โรงเรียนของฉัน" หรือแท็บ 73 vs 74</div></div>`:'')}
 
 /* ----- plan ----- */
-function planText(){const ks=Object.keys(PLAN.items);return [`แผนส่งแข่งขันศิลปหัตถกรรมนักเรียน ครั้งที่ 74 (ร่าง)`,`โรงเรียน: ${PLAN.school||'-'}`,`จำนวน ${ks.length} กิจกรรม`,'',
-  ...NX.groups.flatMap(g=>g.i.filter(it=>inPlan(it.t)).map(it=>`- [${g.g}] ${it.t}${PLAN.items[it.t].length?' ('+PLAN.items[it.t].join(', ')+')':''}`))].join('\n')}
+function planText(){const ks=Object.keys(PLAN.items);return [`แผนเตรียมแข่งขันศิลปหัตถกรรมนักเรียน ครั้งที่ 74 (ร่าง) — เก็บในเครื่องนี้ ไม่ใช่ใบสมัคร`,`โรงเรียน: ${PLAN.school||'-'}`,`จำนวน ${ks.length} กิจกรรม`,'',
+  ...NX.groups.flatMap(g=>g.i.filter(it=>inPlan(it.t)).map(it=>{
+    const checks=IA4Store.getChecks(it.t);
+    const completed=IA4Store.STEPS.filter(step=>checks[step.id]).length;
+    return `- [${g.g}] ${it.t}${PLAN.items[it.t].length?' ('+PLAN.items[it.t].join(', ')+')':''} · งานเตรียม ${completed}/${IA4Store.STEPS.length}`
+  })), 'สถานะทั้งหมดเป็นแผนในเครื่องนี้เท่านั้น ต้องยืนยันเกณฑ์/สมัครจริงกับระบบแข่งขันหลักเมื่อเปิดใช้งาน' ].join('\n')}
 function renderPlan(){const ks=Object.keys(PLAN.items);$('#ppCnt').textContent=ks.length?`(${ks.length})`:'';
-  if(!ks.length){$('#ppPlan').innerHTML='<div class="pl-empty">ยังไม่มีกิจกรรมในแผน<br>กด "+ เพิ่มในแผน" ที่กิจกรรมในแท็บอื่น</div>';}
+  if(!ks.length){$('#ppPlan').innerHTML='<div class="pl-empty">ยังไม่มีกิจกรรมในแผนของโรงเรียนนี้<br>เลือกโรงเรียนแล้วกด "+ เพิ่มในแผน" จากรายการที่สนใจ</div>';}
   else $('#ppPlan').innerHTML=NXI.filter(it=>inPlan(it.t)).map(it=>`<div class="pc"><div class="pc-h"><div class="main"><b>${esc(it.t)}</b><small>${esc(NX.groups[it.g].g)}${distN(it.t)?` · ${distN(it.t)} โรงเรียนในเขตวางแผนส่ง`:''}</small></div><button class="addb" type="button" data-add="${esc(it.t)}" aria-pressed="true">นำออก</button></div>${round70Rows(it).length?round70Html(it):''}
     <div class="lvpick" role="group" aria-label="ระดับชั้นที่วางแผน (ไม่ใช่เกณฑ์ที่รับรอง)">${PLV.map(l=>`<button class="chip" type="button" data-lv="${l}" data-t="${esc(it.t)}" aria-pressed="${PLAN.items[it.t].includes(l)}">${l}</button>`).join('')}</div>${window.SILLAPA_IA4.renderChecks(IA4Store,it.t)}</div>`).join('');
   $('#ppSync').className='sync';
