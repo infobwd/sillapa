@@ -45,3 +45,9 @@ Google Maps เป็นข้อมูลอ้างอิงเพื่อ�
 - The anuban source notes one identical duplicate on PDF page 2 and one activity split across pages; district source notes shortened/normalized labels and missing time values. Preserve these for reconciliation, do not auto-merge.
 - V74-2 source design lock explicitly requires matched/unmatched/ambiguous/duplicate preview and prohibits inferring GPS footprints or promoting 73 rows to confirmed 74 schedules.
 - Next implementation: generate a **public-safe, historical-only read-only snapshot** after review; do not pull draft branch JSON directly into production. Map 3D buildings only after venue-owner ground truth.
+
+## V1 searchable historical lookup implemented in PR #17
+- `venues/history73.json`: 98 review-only, public-field historical rows copied from the two active V74-2 review JSON files; no PII, no official activity IDs inferred.
+- `venues/index.html`: mobile-first search by activity/building/floor/room, venue filter, source PDF page and 73-only badge, Google Maps external search, and link to clearly separate mock 3D.
+- No data changes in AcademicCompetitionManager, no SQL executed, no live Production API access.
+- Owner must test locally on iPhone Safari/desktop (GitHub Actions paused). Do not merge until reviewing publication of raw 73 schedule rows and confirming source PDF accuracy. After merge, `https://infobwd.github.io/sillapa/venues/` is the expected URL.
