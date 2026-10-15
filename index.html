@@ -1183,7 +1183,7 @@ const IA_PARENT={reps:'archive',groups:'archive',schools:'archive',acts:'archive
 const iaParent=v=>IA_PARENT[v]||v;
 
 /* ---------- navigation: 6 sections on desktop, 3 + More on phone/tablet ---------- */
-$('.nav').insertAdjacentHTML('beforeend',IA_NAV.map(([k,short,long])=>`<button type="button" data-v="${k}" aria-label="${long}"><span class="pill-i"><svg class="i" viewBox="0 0 24 24">${ICONS[k]}</svg></span><span>${innerWidth<1024?short:long}</span></button>`).join(''));
+$('.nav').insertAdjacentHTML('beforeend',IA_NAV.map(([k,short,long])=>`<button type="button" data-v="${k}" aria-label="${long}"><span class="pill-i"><svg class="i" viewBox="0 0 24 24">${ICONS[k]}</svg></span><span class="ia-nav-short">${short}</span><span class="ia-nav-long">${long}</span></button>`).join(''));
 
 const SCR={};let CUR=null;
 function go(v,push=true){
