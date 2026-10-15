@@ -85,8 +85,9 @@
       if (policyOf.get(r.activity_id) === 'closed' && r.obligation_state === 'required' ||
           policyOf.get(r.activity_id) === 'open' && r.obligation_state === 'required')
         return fail('ข้อมูลภาระส่งตัวแทนขัดกับนโยบายกิจกรรม');
-      if (r.verification_state === 'locked' && !isTime(r.verified_at))
-        return fail('ข้อมูลยืนยันไม่มีเวลาตรวจรับ');
+      if ((reviewed(r) && !isTime(r.verified_at)) ||
+          (r.qualified_teams !== null && (!reviewed(r) || r.obligation_state !== 'required')))
+        return fail('ข้อมูลทีมผ่านเกณฑ์ยังไม่ได้รับรองหรือไม่มีเวลาตรวจรับ');
       records.add(r.record_id);
     }
     const pairs = new Set();
