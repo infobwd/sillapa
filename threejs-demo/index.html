@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#f4f7fc"><title>Sillapa 74 — ต้นแบบแผนผังสนาม 3D</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;height:100%;font-family:system-ui,"Noto Sans Thai",sans-serif;background:#f4f7fc;color:#192d4b}body{display:flex;flex-direction:column}header{padding:12px 16px;display:flex;align-items:center;gap:12px;background:#fff;border-bottom:1px solid #dde5f1}header a{color:#086f71;text-decoration:none;font-weight:700}header strong{font-size:17px}header small{display:block;color:#65758d}main{position:relative;flex:1;min-height:260px;overflow:hidden;background:linear-gradient(#dbeaff,#eaf5ef)}canvas{display:block;width:100%;height:100%;touch-action:none}.pill{position:absolute;top:14px;left:14px;background:#fffefeea;padding:10px 14px;border-radius:14px;box-shadow:0 4px 20px #24416421;font-size:13px;max-width:min(320px,70%)}.pill strong{display:block;font-size:15px}.tools{position:absolute;right:12px;top:14px;display:grid;gap:8px}.tools button{border:1px solid #d3e1f0;border-radius:12px;padding:12px;background:white;font-weight:700;cursor:pointer}.panel{background:#fff;border-radius:20px 20px 0 0;padding:16px 18px 20px;box-shadow:0 -8px 28px #23415c22;min-height:145px;position:relative}.panel h2{font-size:18px;margin:0 0 6px}.panel p{font-size:13px;line-height:1.7;color:#53627b;margin:0}.tag{display:inline-block;background:#fff0cc;color:#7b5200;border-radius:999px;padding:4px 9px;font-size:11px;font-weight:700;margin-bottom:8px}.legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.legend span{font-size:11px;background:#f2f6fc;border-radius:8px;padding:5px 8px}footer{padding:8px 14px calc(9px + env(safe-area-inset-bottom));text-align:center;font-size:11px;color:#6b7890;background:#fff}.fallback{position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:25px;text-align:center;background:#e8f1f8;color:#43546c}button:focus-visible,a:focus-visible{outline:3px solid #087c7c;outline-offset:2px}@media(min-width:850px){.panel{position:absolute;bottom:18px;left:18px;width:360px;border-radius:20px}footer{display:none}}
+</style></head><body>
+<header><a href="../#overview" aria-label="กลับสู่ Sillapa 74">← กลับ</a><div><strong>Sillapa 74 · แผนผัง 3D</strong><small>ต้นแบบ Three.js สำหรับเตรียมสนามแข่งขัน</small></div></header>
+<main id="stage"><div class="pill"><strong>สนามแข่งขันจำลอง</strong>ลากเพื่อหมุน · บีบนิ้วเพื่อซูม · แตะอาคารเพื่อดูรายละเอียด</div><div class="tools"><button id="reset" type="button">↺ มุมเริ่มต้น</button><button id="top" type="button">▣ มุมบน</button></div><div id="fallback" class="fallback" role="alert">ไม่สามารถเปิดภาพ 3D ได้ โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ตและ WebGL</div></main>
+<section class="panel" aria-live="polite"><span class="tag">DEMO · ไม่ใช่ผังสนามจริง</span><h2 id="name">เลือกอาคารบนแผนผัง</h2><p id="desc">โมเดลและชื่ออาคารทั้งหมดเป็นตัวอย่าง ไม่ใช่สถานที่หรือการจัดการแข่งขันที่ผู้จัดรับรอง</p><div class="legend"><span>🟣 ศิลปะ</span><span>🔵 ภาษาไทย</span><span>🟢 วิทยาศาสตร์</span><span>🟠 หอประชุม</span></div></section>
+<footer>ต้นแบบแยกจากระบบหลัก · ไม่ดึงข้อมูลนักเรียนหรือกรรมการ · ต้องใช้อินเทอร์เน็ตโหลด Three.js</footer>
+<script type="module">
+import * as THREE from 'https://esm.sh/three@0.180.0';
+import {OrbitControls} from 'https://esm.sh/three@0.180.0/examples/jsm/controls/OrbitControls.js';
+const stage=document.querySelector('#stage'),fallback=document.querySelector('#fallback');
+try{
+const scene=new THREE.Scene();scene.background=new THREE.Color(0xdceeff);scene.fog=new THREE.Fog(0xdceeff,45,100);
+const camera=new THREE.PerspectiveCamera(46,1,.1,150);camera.position.set(22,24,28);
+const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;stage.prepend(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xffffff,0x78936d,2));const sun=new THREE.DirectionalLight(0xffffff,2.4);sun.position.set(18,35,12);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-35;sun.shadow.camera.right=35;sun.shadow.camera.top=35;sun.shadow.camera.bottom=-35;scene.add(sun);
+const mat=(c)=>new THREE.MeshStandardMaterial({color:c,roughness:.82});
+const ground=mat(0x98cba3),path=mat(0xe4d9c8),road=mat(0x7b8798),windowMat=mat(0x92c5e3),trunk=mat(0x8c6245),leaves=mat(0x3b9666);
+function box(w,h,d,x,y,z,m,cast=true){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);o.castShadow=cast;o.receiveShadow=true;scene.add(o);return o}
+box(60,.25,55,0,-.2,0,ground,false);box(50,.05,4,0,.01,14,road,false);box(4,.06,44,-19,.02,0,path,false);box(4,.06,44,19,.02,0,path,false);
+const selectable=[];
+function building(id,title,description,x,z,color,w=9,d=7,floors=2){
+ const base=box(w,floors*2.7,d,x,floors*1.35,z,mat(color));
+ const roof=box(w+1,.55,d+1,x,floors*2.7+.25,z,mat(0x52647b));
+ const parts=[base,roof];for(let f=0;f<floors;f++){for(let i=-1;i<=1;i++){const win=box(1.25,1.35,.09,x+i*w/3,f*2.7+1.55,z+d/2+.055,windowMat);parts.push(win)}}
+ const entry=box(2.1,2,.12,x,1,z+d/2+.14,mat(0x3b566c));parts.push(entry);
+ for(const part of parts){part.userData.id=id}
+ selectable.push({id,title,description});
+}
+building('art','อาคาร 1 · กลุ่มสาระศิลปะ','ตัวอย่างอาคารแข่งขันศิลปะ คลิกเพื่อแสดงรายละเอียดของสนามที่ผู้จัดจะกำหนดภายหลัง',-11,-8,0xd9b5ee);
+building('thai','อาคาร 2 · กลุ่มสาระภาษาไทย','ตัวอย่างพื้นที่แข่งขันภาษาไทย ยังไม่มีตารางห้องหรือกำหนดการจริง',9,-8,0x91c6ee);
+building('science','อาคาร 3 · กลุ่มสาระวิทยาศาสตร์','ตัวอย่างพื้นที่แข่งขันวิทยาศาสตร์ ใช้สาธิตการเลือกอาคารและหมุนมุมกล้อง',-11,5,0x92d8bc);
+building('hall','หอประชุม · พิธีเปิดและกิจกรรม','พื้นที่หอประชุมจำลอง ยังไม่ได้ยืนยันการใช้สนามจริง',9,5,0xf6c58c,11,9,1);
+function tree(x,z,s=1){box(.55*s,2.1*s,.55*s,x,1*s,z,trunk);const crown=new THREE.Mesh(new THREE.IcosahedronGeometry(1.7*s,1),leaves);crown.position.set(x,3*s,z);crown.castShadow=true;scene.add(crown)}
+for(const [x,z] of [[-23,-16],[-23,-6],[-23,7],[-23,19],[24,-17],[24,-6],[24,8],[24,20],[-3,-18],[2,-18],[-3,18],[2,18]])tree(x,z,.9);
+const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.07;controls.target.set(0,1,0);controls.minDistance=13;controls.maxDistance=65;controls.maxPolarAngle=Math.PI*.49;controls.enablePan=false;
+document.querySelector('#reset').onclick=()=>{camera.position.set(22,24,28);controls.target.set(0,1,0);controls.update()};
+document.querySelector('#top').onclick=()=>{camera.position.set(.01,45,.01);controls.target.set(0,0,0);controls.update()};
+const ray=new THREE.Raycaster(),pointer=new THREE.Vector2();let down=null;
+renderer.domElement.addEventListener('pointerdown',e=>{down={x:e.clientX,y:e.clientY}});
+renderer.domElement.addEventListener('pointerup',e=>{if(!down||Math.hypot(e.clientX-down.x,e.clientY-down.y)>12)return;const rect=renderer.domElement.getBoundingClientRect();pointer.set((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);ray.setFromCamera(pointer,camera);const hit=ray.intersectObjects(scene.children).find(v=>v.object.userData.id);if(hit){const selected=selectable.find(s=>s.id===hit.object.userData.id);document.querySelector('#name').textContent=selected.title;document.querySelector('#desc').textContent=selected.description}});
+const resize=()=>{const w=stage.clientWidth,h=stage.clientHeight;camera.aspect=w/Math.max(h,1);camera.updateProjectionMatrix();renderer.setSize(w,h,false)};new ResizeObserver(resize).observe(stage);resize();let frame;const loop=()=>{frame=requestAnimationFrame(loop);controls.update();renderer.render(scene,camera)};loop();document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(frame)}else{loop()}});
+}catch(error){fallback.style.display='flex';fallback.textContent='เปิดภาพ 3D ไม่สำเร็จ: '+error.message}
+</script></body></html>
