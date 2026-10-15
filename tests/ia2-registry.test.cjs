@@ -72,7 +72,7 @@ const handwriting=families.find(x=>x.draftTitle==='คัดลายมือ�
 assert.equal(handwriting.events.map(x=>x.sourceId).join(','),'030,031,032');
 assert.equal(handwriting.events.map(x=>x.grade).join(','),'ป.1-ป.3,ป.4-ป.6,ม.1-ม.3');
 const scouts=families.find(x=>x.draftTitle==='กิจกรรมลูกเสือ เนตรนารี ยุวกาชาด ผู้บำเพ็ญประโยชน์');
-assert.equal(scouts.events.length,8,'the source's 8 separate scout/youth-red-cross events');
+assert.equal(scouts.events.length,8,'all 8 source scout/youth-red-cross events');
 assert.equal(api.filteredFamilies(families,{source:'70'}).length,25);
 assert.equal(api.filteredFamilies(families,{source:'73'}).length,29);
 assert.equal(api.filteredFamilies(families,{source:'unresolved'}).length,2);
