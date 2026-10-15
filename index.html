@@ -736,6 +736,7 @@ body{overscroll-behavior-y:auto}
 <link rel="stylesheet" href="./ia3.css">
 <link rel="stylesheet" href="./ia4.css">
 <link rel="stylesheet" href="./ia5.css">
+<link rel="stylesheet" href="./ia6.css">
 </head>
 <body>
 
@@ -841,7 +842,8 @@ body{overscroll-behavior-y:auto}
       <h2>พร้อมจัดการแข่งขัน<br>งานศิลปหัตถกรรมนักเรียน ครั้งที่ 74</h2>
       <p>สพป.กาญจนบุรี เขต 4 · ศึกษารายการ วางแผนงาน และติดตามสิ่งที่ต้องเตรียม โดยใช้ผลการแข่งขันครั้งที่ 73 และรายการอ้างอิงครั้งที่ 70</p>
       <div class="ia-cta">
-        <button class="ia-link primary" type="button" data-go="next">ดูรายการแข่งขัน 74 ↗</button>
+        <button class="ia-link primary" type="button" data-go="executive">Dashboard สำหรับผู้บริหาร ›</button>
+        <button class="ia-link" type="button" data-go="next">ดูรายการแข่งขัน 74 ↗</button>
         <button class="ia-link" type="button" data-go="prep">เตรียมแข่งขันของโรงเรียน ›</button>
       </div>
     </div>
@@ -1137,6 +1139,14 @@ body{overscroll-behavior-y:auto}
   </section>
 
 
+  <!-- IA-6: decision-support subview in the overview information section (six main nav sections unchanged). -->
+  <section class="view" id="v-executive" aria-label="Dashboard วิเคราะห์สำหรับผู้บริหาร" data-loading="true" aria-busy="true">
+    <div class="view-skeleton" aria-hidden="true"><div class="sk-line short"></div><div class="sk-tile hero"></div><div class="sk-stats"><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div></div></div>
+    <div class="ia6-root" id="ia6Root">
+      <div class="ia6-hero"><h2>Dashboard สำหรับผู้บริหาร</h2><p>กำลังจัดเตรียมข้อมูลสรุปที่ปลอดภัยและแยกแหล่งอ้างอิง</p></div>
+    </div>
+  </section>
+
   <!-- IA-3: public-safe readiness dashboard, no unapproved competition API. -->
   <section class="view" id="v-readiness" aria-label="ความพร้อมผู้จัดและกลุ่มเครือข่าย" data-loading="true" aria-busy="true">
     <div class="view-skeleton" aria-hidden="true"><div class="sk-line short"></div><div class="sk-tile hero"></div><div class="sk-stats"><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div></div></div>
@@ -1196,6 +1206,7 @@ body{overscroll-behavior-y:auto}
 <script src="./ia3-readiness.js"></script>
 <script src="./ia4-workspace.js"></script>
 <script src="./ia5-judge-venue.js"></script>
+<script src="./ia6-executive.js"></script>
 <script>
 /* Shared schedule: shown on Overview, comparison, and teacher planning views. */
 const scheduleTemplate=document.querySelector('#s74-calendar-template');
@@ -1225,7 +1236,7 @@ const ICONS={
  judges:'<circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="m15 11 2 2 4-4"/>',
  next:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/>'};
 const VIEWS=[
-  ['overview','ภาพรวมเตรียมงาน 74'],['next','รายการแข่งขัน 74'],['prep','เตรียมแข่งขันของโรงเรียน'],
+  ['overview','ภาพรวมเตรียมงาน 74'],['executive','Dashboard สำหรับผู้บริหาร'],['next','รายการแข่งขัน 74'],['prep','เตรียมแข่งขันของโรงเรียน'],
   ['readiness','ความพร้อมผู้จัดและกลุ่มเครือข่าย'],['venue','กรรมการและสนามแข่งขัน'],['archive','คลังข้อมูลย้อนหลัง 70 / 73'],
   ['reps','ตัวแทนเขตครั้งที่ 73'],['groups','รายกลุ่มครั้งที่ 73'],
   ['schools','โรงเรียนครั้งที่ 73'],['acts','รายการครั้งที่ 73'],['judges','กรรมการครั้งที่ 73']
@@ -1243,7 +1254,7 @@ Object.assign(ICONS,{
   venue:'<path d="M4 20h16M5 7h14v13H5zM9 7V4h6v3M9 12h6M9 16h6"/>',
   archive:'<rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v11h14V9M10 14h4"/>'
 });
-const IA_PARENT={reps:'archive',groups:'archive',schools:'archive',acts:'archive',judges:'venue'};
+const IA_PARENT={reps:'archive',groups:'archive',schools:'archive',acts:'archive',judges:'venue',executive:'overview'};
 const iaParent=v=>IA_PARENT[v]||v;
 
 /* ---------- navigation: 6 sections on desktop, 3 + More on phone/tablet ---------- */
@@ -1258,7 +1269,7 @@ function go(v,push=true){
   const primary=iaParent(v);
   $$('.nav button[data-v]').forEach(b=>b.dataset.v===primary?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current'));
   $('#vTitle').textContent=VIEWS.find(x=>x[0]===v)[1];
-  {const nf=['next','prep','judges','readiness','venue','archive'].includes(v);$('#btnFilter').hidden=nf;$('#fChips').hidden=nf;}
+  {const nf=['next','prep','judges','readiness','venue','archive','executive'].includes(v);$('#btnFilter').hidden=nf;$('#fChips').hidden=nf;}
   if(push&&location.hash!=='#'+v)history.replaceState(null,'','#'+v);
   $('#lTitleT').textContent=$('#vTitle').textContent;
   CUR=v;window.scrollTo(0,SCR[v]||0);onScr();
@@ -2028,6 +2039,19 @@ try {
   console.error('IA-5 judge/venue planning initialization failed:',error);
   const root=document.getElementById('ia5Root');
   if(root)root.textContent='ไม่สามารถแสดงตารางวางแผนกรรมการและสนามได้ กรุณาเปิดหน้าเว็บใหม่';
+}
+/* IA-6 starts disconnected; do not connect local school/judge plans or historical
+ * identities to executive official KPIs. The publication contract is a future gate. */
+try {
+  const execFamilies=window.SILLAPA_IA2.buildRegistry(NX.groups,window.SILLAPA70_CATALOG);
+  window.SILLAPA_IA6.mount({
+    rootId:'ia6Root',families:execFamilies,release:null,revocation:null,
+    offline:navigator.onLine===false
+  });
+} catch (error) {
+  console.error('IA-6 executive initialization failed:',error);
+  const root=document.getElementById('ia6Root');
+  if(root)root.textContent='ไม่สามารถแสดง Dashboard สำหรับผู้บริหารได้ กรุณาเปิดหน้าเว็บใหม่';
 }
 render();go(location.hash.slice(1)||'overview',false);_markMore();
 /* Embedded data: release each section only after the full first render succeeds. */

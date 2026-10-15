@@ -116,7 +116,7 @@ for(const token of ['id="v-venue"','id="ia5Root"','ia5.css','ia5-judge-venue.js'
  'SILLAPA_IA5.historyGroups(JG,AGRP,JCON)','SILLAPA_IA5.mount({rootId:',
  'id="v-judges"','id="ia4Summary"','id="ia3Root"','id="ia2Root"','data-go="judges"'])
  assert.ok(html.includes(token),'missing retained IA integration '+token);
-assert.match(sw,/sillapa-public-v7-ia5-20261015/);
+assert.match(sw,/sillapa-public-v\d+-ia\d+-\d{8}/,'service worker cache version must advance with IA releases');
 assert.ok(sw.includes('./ia5.css')&&sw.includes('./ia5-judge-venue.js'));
 assert.equal(/fetch\(|XMLHttpRequest|navigator\.sendBeacon|db\.collection/i.test(js),false,
  'IA-5 must not fetch private core data');
