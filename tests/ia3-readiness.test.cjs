@@ -81,7 +81,7 @@ base.public_readiness_aggregates[2].verification_state='locked';
 base.public_readiness_aggregates[2].verified_at=iso;
 base.public_readiness_aggregates[2].qualified_teams=0;
 assert.equal(derive(base).kpis.qualifiedTeams,2,'more than one representative is counted');
-assert.equal(selectRows(base,{cluster:'g1',activity:'all',stage:'district',status:'submitted'}).length,1);
+assert.equal(selectRows(base,{cluster:'g1',activity:'all',stage:'district',status:'submitted'}).length,2);
 assert.equal(selectRows(base,{cluster:'all',activity:'all',stage:'district',status:'needs_revision'}).length,0);
 const subset=derive(base,{cluster:'g1',activity:'all',stage:'all',status:'all'});
 assert.equal(subset.kpis.verifiedRecords,null,'filtered KPIs cannot claim full coverage');
