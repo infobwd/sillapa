@@ -157,6 +157,29 @@ function decorateDistrict(){
   post.position.set(cp.x+x,1.55,cp.z+z);g.add(post);
  }
  for(const x of [-3.5,0,3.5])slab(.1,cp.length-1,cp.x+x,cp.z,'#e8e6de',.22);
+ // Rear carport restroom blocks: male LEFT, female RIGHT when viewed from frontage (+Z).
+ // Their roof ridges and long dimensions follow the carport's Z orientation.
+ function parkingRestroom(x,sex,genderSymbol){
+  const z=cp.z;
+  const block=new THREE.Group();
+  const wall=new THREE.Mesh(new THREE.BoxGeometry(3.5,2.5,cp.length),mat('#e6d8c1'));
+  wall.position.set(x,1.25,z);block.add(wall);
+  const restroomRoof=new THREE.Mesh(new THREE.BoxGeometry(3.8,.3,cp.length+.45),mat('#5f7881'));
+  restroomRoof.position.set(x,2.65,z);block.add(restroomRoof);
+  const entrance=new THREE.Mesh(new THREE.BoxGeometry(1.1,1.85,.1),mat('#735c4e'));
+  entrance.position.set(x,.99,z+cp.length/2+.08);block.add(entrance);
+  const plaqueCanvas=document.createElement('canvas');plaqueCanvas.width=256;plaqueCanvas.height=256;
+  const ctx=plaqueCanvas.getContext('2d');ctx.fillStyle=sex==='หญิง'?'#824477':'#276b88';ctx.fillRect(0,0,256,256);
+  ctx.fillStyle='white';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.font='bold 116px sans-serif';ctx.fillText(genderSymbol,128,102);
+  ctx.font='bold 47px sans-serif';ctx.fillText('สุขา'+sex,128,202);
+  const tex=new THREE.CanvasTexture(plaqueCanvas);tex.colorSpace=THREE.SRGBColorSpace;
+  const plaque=new THREE.Mesh(new THREE.PlaneGeometry(1.6,1.6),new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide}));
+  plaque.position.set(x,1.72,z+cp.length/2+.16);block.add(plaque);
+  g.add(block);
+ }
+ parkingRestroom(cp.x-cp.width/2-2.25,'ชาย','♂');
+ parkingRestroom(cp.x+cp.width/2+2.25,'หญิง','♀');
  // Pond: hand-authored irregular geometry, NOT traced from satellite.
  const shape=new THREE.Shape();const pts=[[-9,-2],[-7,-5],[-2,-6],[4,-5],[9,-2],[8,3],[4,6],[-3,5],[-8,2]];
  pts.forEach(([x,z],i)=>i?shape.lineTo(x,z):shape.moveTo(x,z));shape.closePath();
