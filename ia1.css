@@ -104,3 +104,8 @@
   .nav button{min-height:52px;height:auto!important;font-size:13.5px;line-height:1.35}
 }
 @media(prefers-reduced-motion:reduce){.ia-action,.ia-link{transition:none}}
+
+/* Orientation changes switch short/long labels without a reload. */
+.nav .ia-nav-short{display:none}
+.nav .ia-nav-long{display:inline}
+@media(max-width:1023px){.nav .ia-nav-short{display:inline}.nav .ia-nav-long{display:none}}
