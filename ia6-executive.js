@@ -44,6 +44,7 @@ function validateRelease(doc){
    if(row.coverage[c]==='complete'&&fields.some(f=>!natural(row[f])))return fail('incomplete denominator');
    if(row.coverage[c]!=='complete'&&fields.some(f=>row[f]!==null))return fail('partial figures presented as complete');
   }
+  if(row.stage_scope==='cluster'&&row.coverage.obligations!=='missing')return fail('representative obligations apply only to district');
   if(row.coverage.obligations==='complete'&&
     (row.obligations_verified>row.obligations_submitted||row.obligations_submitted>row.obligations_required))
     return fail('obligations exceed scope');
