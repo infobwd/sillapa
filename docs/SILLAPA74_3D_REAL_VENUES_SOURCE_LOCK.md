@@ -36,3 +36,12 @@ Google Maps เป็นข้อมูลอ้างอิงเพื่อ�
 - The same UI exposes `venue.locationUrl`; it can be a reference link but is not sufficient to determine building footprints.
 - Import adapter must explicitly map these fields into historical `edition:73` records, sanitize text and URLs, strip personal data, and preserve provenance; do not publish live API keys or private schedule data.
 - Next source audit: identify actual data exports/files/PR from owner, inspect records, compare names against the two venues, report unmatched buildings/rooms, then request verified site plans.
+
+## Confirmed active import branches (15 Oct 2026)
+- `infobwd/AcademicCompetitionManager@feat/74-venue-reference-import-20261015` contains `data/venue-reference/73-anuban-bophloi-review.json` and `73-district-office-review.json`.
+- `infobwd/AcademicCompetitionManager@feat/v74-2-venue-reconciliation-20261015` contains both files, `tools/venues/v74_2_preview.py` and `db/07-venue-reference.sql` (inspect migration before any execution).
+- Anuban Bophloi: declared `row_count:53`, source PDF `ตารางการแข่งขัน - โรงเรียนอนุบาลบ่อพลอย.pdf`; district office: `row_count:45`, source PDF `ตารางการแข่งขัน - สำนักงานเขตพื้นที่การศึกษาประถมศึกษากาญจนบุรี เขต 4.pdf`.
+- Total **98 review rows**, not approved 74 records. Raw fields include `source_row`, `source_page`, `cycle:73`, `date`, `time_raw`, `activity_label_review`, `building_raw`, `floor_raw`, `room_raw`, `stage`, `review_status`.
+- The anuban source notes one identical duplicate on PDF page 2 and one activity split across pages; district source notes shortened/normalized labels and missing time values. Preserve these for reconciliation, do not auto-merge.
+- V74-2 source design lock explicitly requires matched/unmatched/ambiguous/duplicate preview and prohibits inferring GPS footprints or promoting 73 rows to confirmed 74 schedules.
+- Next implementation: generate a **public-safe, historical-only read-only snapshot** after review; do not pull draft branch JSON directly into production. Map 3D buildings only after venue-owner ground truth.
