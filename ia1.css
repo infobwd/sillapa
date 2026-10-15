@@ -130,3 +130,30 @@
   margin-top:10px;padding-bottom:10px}
 @media(max-width:640px){.sillapa-home-credit{font-size:12px;line-height:1.7}
   .sillapa-footer-credit{font-size:12.5px}}
+
+/* Archive-first shortcuts (2026-10-15): 74 planning is the primary home content. */
+.ia-history-glance{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 13px}
+.ia-history-glance>div{min-width:0;padding:13px 8px 11px;border:1px solid var(--line);border-radius:15px;background:var(--surface);text-align:center}
+.ia-history-glance b{display:block;font:700 clamp(21px,5vw,28px)/1.25 var(--serif);font-variant-numeric:tabular-nums;color:var(--ink)}
+.ia-history-glance span{display:block;color:var(--ink-2);font-size:12px;line-height:1.4;margin-top:3px}
+.ia-history-details{margin:0 0 20px}
+.ia-history-details>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:48px;padding:10px 15px;border:1px solid var(--line);border-radius:13px;background:var(--surface);font-size:13.5px;font-weight:700;color:var(--rep);cursor:pointer;list-style:none}
+.ia-history-details>summary::-webkit-details-marker{display:none}
+.ia-history-details>summary span{font-size:20px;transition:transform .16s}
+.ia-history-details[open]>summary span{transform:rotate(180deg)}
+.ia-history-details[open]>summary{border-radius:13px 13px 0 0}
+.ia-history-body{border:1px solid var(--line);border-top:0;border-radius:0 0 13px 13px;padding:12px;background:var(--surface-2)}
+.ia-history-body .sec-title:first-of-type{margin-top:15px}
+.ia-archive-subtitle{font-size:16px;margin:19px 2px 12px;color:var(--ink)}
+#v-archive .ia-archive-shortcuts{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:15px}
+#v-archive .ia-archive-shortcuts .tile{min-height:102px;justify-content:center;overflow-wrap:anywhere}
+.ia-archive-secondary .ia-archive-link{display:block;width:100%;min-height:0}
+@media(min-width:700px){
+  #v-archive .ia-archive-shortcuts{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .ia-history-glance{max-width:540px}
+}
+@media(max-width:1023px){
+  .shell{padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px) + 48px)}
+  html{scroll-padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px) + 24px)}
+}
+@media(prefers-reduced-motion:reduce){.ia-history-details>summary span{transition:none}}

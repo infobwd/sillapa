@@ -1,9 +1,23 @@
 # Sillapa 74 — Information Architecture Delivery Roadmap
 
-> **Status:** PROPOSED / documentation planning gate only — NOT a code/deployment authorization  
+> **Status updated 15 October 2026:** IA-0 documents PR #5, IA-1 through IA-6 UI PR #6–#11, Thai copy #12 and quiet developer attribution #13 **MERGED**. The original proposed sequence below is retained for traceability. Data publication and real-device acceptance are **NOT COMPLETED**.  
 > **Paired Design Lock:** [Information Architecture & Data Contract Design Lock](SILLAPA74_INFORMATION_ARCHITECTURE_DATA_CONTRACT_DESIGN_LOCK.md)  
 > **Repo:** infobwd/sillapa · **External canonical platform:** infobwd/AcademicCompetitionManager  
 > **Prepared:** 15 October 2026
+
+## Delivery reconciliation and next gates (15 October 2026)
+
+**UI/Local-first delivery:** IA-0 #5, IA-1 #6, IA-2 #7, IA-3 #8, IA-4 #9, IA-5 #10, IA-6 #11, UX copy #12, attribution #13 all merged in main. Existing validators and mock-safe empty states do not mean a certified round-74 public dataset is attached.
+
+**Remaining work in dependency order:**
+
+1. Mobile/home/archive usability PR: place the six 73 historical shortcuts and export in the Archive reachable via More; compact the 73 preview on overview; keep 74 preparation above history; keep legacy hashes and increase iPhone nav/safe-area clearance.
+2. G1 local and device acceptance at the exact PR SHA: iPhone Safari, iPad, desktop, dark/light, keyboard, More drawer, export, archive deep links, 73 expanded history, local school plans, offline PWA/cache update. Do not report CI or device PASS based only on code inspection.
+3. G2 public 74 catalog source acceptance: reconcile organizer-authorized activity, grade, stage policy and canonical IDs; preserve unresolved 70 reference groups and distinguish open vs representative obligations.
+4. G2/G3 public-data projection and privacy gate: read-only 74 readiness, judge/venue and executive summaries require verified coverage, denominators, timestamps, publication/version/revocation contract, steward sign-off and PDPA/security review. Until then official KPI = — (unknown).
+5. G4/G5 separate controlled publication: new PR for any actual source/feed, owner approval, rollback plan, production SHA, cached/stale/revoked behavior and device verification before GO.
+
+**Never** change frozen round-73 Production or publish private student/teacher/judge data on public Pages; do not implement duplicate registration or scoring within this repository.
 
 ## A. Definition of the initiative
 
@@ -13,7 +27,7 @@ The roadmap deliberately separates **information architecture / UI that can run 
 
 **Data integrity rules kept unchanged throughout all PRs:** Competition 73 frozen/protected; historical 70 catalog presented in every verified child grade/subevent, not as confirmed 74; unresolved family mapping remains pending; no student/teacher PII in Pages; planning in localStorage is not registered teams; approved 74 policy stage can be representative_only/open/representative_plus_open/closed; clusters may have more than one representative.
 
-## B. Proposed PR series / strict sequencing
+## B. Original proposed PR series / strict sequencing (UI now delivered)
 
 | Stage | Proposed PR/work package | Scope | Entry and exit gate | Does this change public UI? |
 | --- | --- | --- | --- | --- |
@@ -145,7 +159,7 @@ Local code changes require exact-SHA evidence and no false CI-pass claims. For s
 - Official 74 registration windows, per-cluster competition dates, staff confirmation and venue details: **unknown** until published.
 - Roadmap implementation start and finish dates remain **TBD**; dates above are event context and do not authorize accelerated or unsafe deployment.
 
-## H. Recommendation after owner reviews IA-0
+## H. Original IA-0 recommendation (historical, superseded by merged PRs)
 
 1. **Approve or amend Design Lock** wording, public/private source boundaries, six-section navigation, and representative/approval status definitions.
 2. Merge this **documentation-only** PR after review; record its approved SHA and update documents' state from PROPOSED only with a separate owner-backed status change.

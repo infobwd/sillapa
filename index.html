@@ -863,10 +863,17 @@ body{overscroll-behavior-y:auto}
       <button class="ia-action" type="button" data-go="venue"><span class="ia-action-icon" aria-hidden="true">👥</span><span class="ia-action-copy"><b>วางแผนกรรมการและสนามแข่งขัน</b><small>ศึกษาข้อมูลเดิมก่อนเสนอจัดสรรครั้งที่ 74</small></span><span class="ia-chevron" aria-hidden="true">›</span></button>
     </div>
     <div data-s74-calendar></div>
-    <div class="ia-archive-heading"><h2>ข้อมูลอ้างอิงจากการแข่งขันครั้งที่ 73</h2><p>สถิติ เหรียญ ผลการแข่งขัน และรายชื่อเดิมเป็นข้อมูลย้อนหลัง ใช้ช่วยวางแผนครั้งที่ 74 ไม่ใช่ผลการแข่งขันครั้งที่ 74 · <button type="button" class="linkbtn" data-go="archive">เปิดคลังย้อนหลัง ›</button></p></div>
-    <div class="tiles" id="tiles"></div>
+    <div class="ia-archive-heading"><h2>ข้อมูลย้อนหลังครั้งที่ 73</h2><p>ใช้ผลการแข่งขันเดิมช่วยวางแผนครั้งที่ 74 ไม่ใช่ผลการแข่งขันครั้งที่ 74 · <button type="button" class="linkbtn" data-go="archive">เปิดคลังข้อมูลย้อนหลัง ›</button></p></div>
+    <div class="ia-history-glance" aria-label="สรุปข้อมูลการแข่งขันครั้งที่ 73 ตามตัวกรอง">
+      <div><b id="iaHistoryWorks">—</b><span>ผลงาน</span></div>
+      <div><b id="iaHistorySchools">—</b><span>โรงเรียน</span></div>
+      <div><b id="iaHistoryActs">—</b><span>รายการแข่งขัน</span></div>
+    </div>
     <button hidden class="card nx-promo" type="button" data-go="prep" id="ppPromo"><span class="ic" aria-hidden="true" style="background:var(--rep-soft);color:var(--rep)">✏️</span><span class="main"><b>สำหรับครู: เตรียมสมัครครั้งที่ 74</b><small>ดูผลเดิมของโรงเรียน เกณฑ์คะแนน และวางแผนกิจกรรมที่จะส่ง</small></span><svg class="i chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></button>
     <button hidden class="card nx-promo" type="button" data-go="next" id="nxPromo"></button>
+    <details class="ia-history-details" id="iaHistoricalCharts">
+      <summary>ดูกราฟและสถิติการแข่งขันครั้งที่ 73 <span aria-hidden="true">⌄</span></summary>
+      <div class="ia-history-body">
     <div class="kpis" id="kpis"></div>
     <div class="sec-title"><h2>ผลงานทั้งหมด</h2></div>
     <p class="hint">หนึ่งช่องคือหนึ่งผลงาน เรียงตามเหรียญและคะแนน กรอบเขียวคือตัวแทนเขต แตะช่องเพื่อดูรายละเอียด</p>
@@ -891,6 +898,8 @@ body{overscroll-behavior-y:auto}
       <div class="sec-title"><h2>รายการที่มีคนเปิดดูมากที่สุด</h2><button class="link" data-go="acts" type="button">ดูทั้งหมด</button></div>
       <div class="card list" id="popList"></div>
     </div>
+      </div>
+    </details>
   </section>
 
   <!-- Representatives -->
@@ -1171,13 +1180,10 @@ body{overscroll-behavior-y:auto}
     <div class="view-skeleton" aria-hidden="true"><div class="sk-line short"></div><div class="sk-tile hero"></div><div class="sk-cards"><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div></div></div>
     <div class="ia-pane-lead"><h2>คลังข้อมูลย้อนหลังครั้งที่ 70 / 73</h2><p>สถิติ ผลการแข่งขัน ตัวแทนเขต โรงเรียน รายการ และกรรมการจากครั้งที่ 73 รวมถึงรายการแข่งขันอ้างอิงครั้งที่ 70 สำหรับประกอบการจัดครั้งที่ 74</p></div>
     <div class="ia-provenance"><strong>คำอธิบายแหล่งข้อมูล:</strong> “70” และ “73” หมายถึงการแข่งขันครั้งที่ผ่านมา ไม่ใช่สถานะรับสมัครหรือผลการแข่งขันของครั้งที่ 74 รายการอ้างอิงครั้งที่ 70 ต้องรอการรับรองก่อนใช้เป็นเกณฑ์ครั้งที่ 74</div>
-    <div class="ia-archive-grid">
-      <button class="ia-archive-link" type="button" data-go="reps"><span class="ia-archive-emoji" aria-hidden="true">🏅</span><strong>ตัวแทนเขตครั้งที่ 73</strong><small>ข้อมูลตัวแทนที่ผ่านมา</small></button>
-      <button class="ia-archive-link" type="button" data-go="groups"><span class="ia-archive-emoji" aria-hidden="true">📊</span><strong>สถิติรายกลุ่มครั้งที่ 73</strong><small>วิเคราะห์กลุ่มกิจกรรมและระดับชั้น</small></button>
-      <button class="ia-archive-link" type="button" data-go="schools"><span class="ia-archive-emoji" aria-hidden="true">🏫</span><strong>โรงเรียนครั้งที่ 73</strong><small>ดูข้อมูลแต่ละโรงเรียนย้อนหลัง</small></button>
-      <button class="ia-archive-link" type="button" data-go="acts"><span class="ia-archive-emoji" aria-hidden="true">📋</span><strong>รายการแข่งขันครั้งที่ 73</strong><small>ศึกษาแต่ละรายการและผลงานเดิม</small></button>
-      <button class="ia-archive-link" type="button" data-go="judges"><span class="ia-archive-emoji" aria-hidden="true">👥</span><strong>กรรมการครั้งที่ 73</strong><small>ข้อมูลการทำหน้าที่ย้อนหลัง</small></button>
-      <button class="ia-archive-link" type="button" data-go="next"><span class="ia-archive-emoji" aria-hidden="true">🗂️</span><strong>รายการอ้างอิงครั้งที่ 70</strong><small>ดูทุกรายการย่อยและระดับชั้นในร่าง 74</small></button>
+    <h3 class="ia-archive-subtitle">เลือกดูข้อมูลย้อนหลังครั้งที่ 73</h3>
+    <div class="tiles ia-archive-shortcuts" id="tiles"></div>
+    <div class="ia-archive-secondary">
+      <button class="ia-archive-link" type="button" data-go="next"><span class="ia-archive-emoji" aria-hidden="true">🗂️</span><strong>รายการอ้างอิงครั้งที่ 70</strong><small>ดูรายการย่อยและระดับชั้นในร่าง 74 ซึ่งยังไม่ใช่ประกาศอย่างเป็นทางการ</small></button>
     </div>
     <div class="ia-ref-warning">ข้อมูลประวัติและเกณฑ์คะแนนทั้งหมดใช้เพื่อวิเคราะห์เท่านั้น การสมัครแข่งขัน การแต่งตั้งกรรมการ และการบันทึกคะแนนเป็นหน้าที่ของระบบจัดการแข่งขันหลัก</div>
   </section>
@@ -1269,7 +1275,7 @@ Object.assign(ICONS,{
   venue:'<path d="M4 20h16M5 7h14v13H5zM9 7V4h6v3M9 12h6M9 16h6"/>',
   archive:'<rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v11h14V9M10 14h4"/>'
 });
-const IA_PARENT={reps:'archive',groups:'archive',schools:'archive',acts:'archive',judges:'venue',executive:'overview'};
+const IA_PARENT={reps:'archive',groups:'archive',schools:'archive',acts:'archive',judges:'archive',executive:'overview'};
 const iaParent=v=>IA_PARENT[v]||v;
 
 /* ---------- navigation: 6 sections on desktop, 3 + More on phone/tablet ---------- */
@@ -1422,6 +1428,10 @@ $('#peek').addEventListener('click',e=>{if(e.target.id==='peekGo')openSchool(D[p
 
 function overview(rows){
   const comp=rows.filter(d=>d.score!=null).length,g=rows.filter(d=>d.m==='G').length,reps=rows.filter(d=>d.rep);
+  // The compact 73 preview uses the same filtered records as the detailed charts.
+  $('#iaHistoryWorks').textContent=fmt(rows.length);
+  $('#iaHistorySchools').textContent=fmt(new Set(rows.map(d=>d.school)).size);
+  $('#iaHistoryActs').textContent=fmt(new Set(rows.map(d=>d.act)).size);
   $('#kpis').innerHTML=`
     <button class="card kpi hero" type="button" data-go="reps"><b>${fmt(reps.length)}</b><span>ทีมได้เป็นตัวแทนเขต<br>จาก ${fmt(new Set(reps.map(d=>d.school)).size)} โรงเรียน</span><svg class="i" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></button>
     <div class="card kpi"><b>${fmt(rows.length)}</b><span>ผลงานส่งแข่งขัน</span></div>
@@ -1945,7 +1955,7 @@ setSchoolUI();renderPrep();
 
 /* ---------- shortcuts ---------- */
 const TI={
- reps:['ตัวแทนเขต','#0F6B66'],groups:['รายกลุ่ม','#5B6B86'],schools:['โรงเรียน','#2F5BD3'],acts:['รายการ','#B8862B'],judges:['กรรมการ','#1F7A8C'],
+ reps:['ตัวแทนเขต 73','#0F6B66'],groups:['รายกลุ่ม 73','#5B6B86'],schools:['โรงเรียน 73','#2F5BD3'],acts:['รายการ 73','#B8862B'],judges:['กรรมการ 73','#1F7A8C'],
  next:['73 vs 74','#B23A3A'],prep:['เตรียม 74','#0F8A6A'],export:['ส่งออก','#7A4E9C'],school:['โรงเรียนฉัน','#C2410C']};
 const TICON={...ICONS,export:'<path d="M12 4v11m0 0-4-4m4 4 4-4M5 19h14"/>',school:'<path d="M3 21h18M5 21V10l7-5 7 5v11M10 21v-5h4v5"/><circle cx="18" cy="6" r="2.5"/>',
  more:'<circle cx="6" cy="6" r="1.6"/><circle cx="12" cy="6" r="1.6"/><circle cx="18" cy="6" r="1.6"/><circle cx="6" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18" cy="12" r="1.6"/><circle cx="6" cy="18" r="1.6"/><circle cx="12" cy="18" r="1.6"/><circle cx="18" cy="18" r="1.6"/>'};
@@ -1966,6 +1976,7 @@ $('#navMore').onclick=()=>openSheet('เมนูเพิ่มเติม','�
   <button type="button" data-go="groups"><b>สถิติรายกลุ่มครั้งที่ 73</b><span class="ia-more-arrow">›</span></button>
   <button type="button" data-go="schools"><b>โรงเรียนครั้งที่ 73</b><span class="ia-more-arrow">›</span></button>
   <button type="button" data-go="acts"><b>รายการครั้งที่ 73</b><span class="ia-more-arrow">›</span></button>
+   <button type="button" data-go="judges"><b>กรรมการครั้งที่ 73</b><span class="ia-more-arrow">›</span></button>
   <div class="ia-more-title">เครื่องมือ</div>
   <button type="button" data-tile="school"><b>เลือกโรงเรียนของฉัน</b><span class="ia-more-arrow">›</span></button>
   <button type="button" data-export><b>ส่งออกข้อมูล</b><span class="ia-more-arrow">›</span></button>

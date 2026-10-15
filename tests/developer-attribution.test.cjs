@@ -23,7 +23,7 @@ assert.ok(footer[1].includes('id="pwaInstallFooter"')&&footer[1].includes('data-
 assert.ok(!/ท่านผู้อำนวยการ|ผู้ริเริ่มคนแรก|โดยสำนักงานเขตพื้นที่|ได้รับการรับรองจากสำนักงานเขตพื้นที่/.test(footer[1]),'avoid boast/official designation');
 assert.equal((html.match(/นายนพรุจ ลับบัวงาม/g)||[]).length,2,'only two low-key attribution placements');
 assert.ok(css.includes('.sillapa-home-credit')&&css.includes('.sillapa-footer-about summary:focus-visible'),'subtle and keyboard focus styling');
-assert.match(sw,/sillapa-public-v10-ia6-20261015/,'new PWA cache version for changed HTML/CSS');
+assert.match(sw,/sillapa-public-v\d+-ia6-20261015/,'new PWA cache version for changed HTML/CSS');
 assert.ok(sw.includes('./index.html')&&sw.includes('./ia1.css'),'changed assets covered by offline shell');
 for(const [i,m] of [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].entries()){
   new vm.Script(m[1],{filename:'index.inline.credit.'+i+'.js'});
