@@ -10,7 +10,7 @@
 - Replaced only `#readiness` placeholder with a distinct, **read-only** IA-3 dashboard; existing 6-section navigation, mobile 4-button bottom bar, More sheet, historic `#groups`, 70/73 registry, saved school plan, PWA install and historical views are not removed.
 - Six planning KPIs render **—** without approved input. Cards explain the unit and denominator (distinct groups, distinct cluster–activity pairs and count of verified teams).
 - Controls for group, category, activity, stage, readiness status; approved activity/group options only appear if a validated public snapshot exists. With no release, filters are visibly disabled, not filled with fictitious names.
-- Distinct submission vs verification labels, responsive desktop table / mobile stacked cards, source+timestamp+publication metadata panel, sanctioned issues list, empty and rejected-data states.
+- Distinct submission vs verification labels, responsive desktop table / mobile stacked cards, stage-specific planning/submission/review columns, per-KPI source+timestamp+publication state and overall publication metadata panel, sanctioned issues list, empty and rejected-data states.
 - Shows 4 Dec 2569 representatives deadline and **tentative** 21–24 Dec 2569 district schedule; retains explicit caveat that this is not a registration closing date.
 - Contract validator rejects cycle != 74, unpublished release, unknown stages/policies, unexpected fields, duplicate keys/pairs, inconsistent approval times, and fabricated/open-only cluster obligations.
 - Future mounted approved snapshots are presented as a *dated publication*, with explicit offline/cached labeling. Present shipped dashboard is always disconnected; no automatic REST request or JSON feed is installed.
@@ -54,10 +54,10 @@ For **real iPhone/iPad testing**, put the computer and mobile device on the same
 | More than 1 representative | Verified 2+ teams counted without quota=1 assumption | Synthetic contract test included |
 | Representative-only vs open vs closed | No phantom group obligation from `open` or `closed`; combined mode supported | Synthetic contract test included |
 | Submitted / pending / revision / verified / locked | Two independent state dimensions; submitted != verified | Contract/UI code check; browser pending |
-| Group/activity/stage/status filtering | Stage/pair filter consistent, no full-denominator KPI shown after filtered slice | Synthetic contract test included |
+| Group/activity/stage/status filtering | Stage/category/cluster/pair filter consistent, composite activity+stage keys, no full-denominator KPI shown after filtered slice | Synthetic contract test included |
 | Android/iPhone 375–430px | Cards 2 columns, filter controls 2 columns, rows become cards, no overlay bottom navigation | Real device NOT RUN |
 | iPad portrait/landscape | Mobile/tablet nav as IA-1, responsive rows/table, no horizontal clipping | Real device NOT RUN |
-| Desktop >= 1030px | 6-section nav; 8-column scrollable table only if approved data | Browser NOT RUN |
+| Desktop >= 1030px | 6-section nav; 10-column scrollable table only if approved data | Browser NOT RUN |
 | Dark/light / keyboard / reduced motion | Uses IA tokens and focus-visible controls; toggle and focus checked | Browser NOT RUN |
 | PWA install / offline / reload | Static shell includes IA-3 files; offline uses last shell, no private API | SW source review; installed device NOT RUN |
 | Legacy anchors, IA-2, school draft | Navigate `#groups`, `#next`, `#prep` unchanged; rerun IA-2 local test | Regression NOT RUN on Owner local Node |
