@@ -731,6 +731,7 @@ body{overscroll-behavior-y:auto}
 @media(prefers-reduced-motion:reduce){.pull-refresh-indicator{transition:none}}
 
 </style>
+<link rel="stylesheet" href="./ia1.css">
 </head>
 <body>
 
@@ -831,9 +832,32 @@ body{overscroll-behavior-y:auto}
   <!-- Overview -->
   <section class="view" id="v-overview" aria-label="ภาพรวม" data-loading="true" aria-busy="true">
 <div class="view-skeleton" aria-hidden="true"><div class="sk-line short"></div><div class="sk-tile hero"></div><div class="sk-stats"><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div></div><div class="sk-chart"></div></div>
-    <div class="card s74-purpose"><strong>ศูนย์ข้อมูลสารสนเทศเพื่อเตรียมจัดการแข่งขันครั้งที่ 74</strong><p>ใช้ผลครั้งที่ 73 และรายการอ้างอิงครั้งที่ 70 เพื่อวิเคราะห์ วางแผน และเตรียมความพร้อมของผู้จัดกับโรงเรียน <b>ไม่ใช่ระบบรายงานผลการแข่งขันครั้งที่ 74</b> และยังไม่ใช่ระบบเปิดรับสมัคร</p><div class="s74-purpose-actions"><button type="button" class="chip" data-go="next">ศึกษาร่างรายการครั้งที่ 74 ›</button><button type="button" class="chip" data-go="prep">วางแผนสำหรับโรงเรียน ›</button></div></div>
-    <div class="tiles" id="tiles"></div>
+    <div class="ia-hero">
+      <span class="ia-eyebrow">ศูนย์สารสนเทศ · เตรียมการแข่งขันครั้งที่ 74</span>
+      <h2>พร้อมจัดการแข่งขัน<br>งานศิลปหัตถกรรมนักเรียน ครั้งที่ 74</h2>
+      <p>สพป.กาญจนบุรี เขต 4 · ศึกษารายการ วางแผนงาน และติดตามสิ่งที่ต้องเตรียม โดยใช้ผลการแข่งขันครั้งที่ 73 และรายการอ้างอิงครั้งที่ 70</p>
+      <div class="ia-cta">
+        <button class="ia-link primary" type="button" data-go="next">ดูรายการแข่งขัน 74 ↗</button>
+        <button class="ia-link" type="button" data-go="prep">เตรียมแข่งขันของโรงเรียน ›</button>
+      </div>
+    </div>
+    <div class="ia-provenance" role="note"><strong>แหล่งข้อมูลปัจจุบัน:</strong> ร่างรายการแข่งขันครั้งที่ 74 + ข้อมูลย้อนหลังครั้งที่ 73 และรายการอ้างอิงครั้งที่ 70 · <strong>ยังไม่มีการเชื่อมข้อมูลรับรองครั้งที่ 74</strong> และไม่ใช่ระบบรับสมัครหรือรายงานผลการแข่งขัน</div>
+    <div class="ia-overline"><h2>ภาพรวมเพื่อเตรียมงาน</h2><small>แยกร่างจากข้อมูลยืนยันแล้ว</small></div>
+    <div class="ia-stat-grid" aria-label="ตัวชี้วัดการเตรียมงานครั้งที่ 74">
+      <div class="ia-stat draft"><small>กิจกรรมในร่างครั้งที่ 74</small><b id="iaDraftFamilyCount">—</b><span class="ia-stat-foot">นับตามกลุ่มกิจกรรมในร่าง ไม่ใช่รายการย่อย</span></div>
+      <div class="ia-stat"><small>รายการที่ยืนยันให้แข่งขัน</small><b>—</b><span class="ia-stat-foot">ยังไม่มีข้อมูลรายการที่รับรอง</span></div>
+      <div class="ia-stat"><small>กลุ่มเครือข่ายส่งข้อมูลแล้ว</small><b>—</b><span class="ia-stat-foot">ยังไม่ได้เชื่อมสถานะการส่งจริง</span></div>
+      <div class="ia-stat"><small>กรรมการและสนามที่ยืนยัน</small><b>—</b><span class="ia-stat-foot">ยังไม่ได้เชื่อมข้อมูลแต่งตั้ง/สนามจริง</span></div>
+    </div>
+    <div class="ia-overline"><h2>เรื่องที่ต้องเตรียม</h2><small>แนวทาง ไม่ใช่สถานะส่งงาน</small></div>
+    <div class="ia-action-list">
+      <button class="ia-action" type="button" data-go="next"><span class="ia-action-icon" aria-hidden="true">📋</span><span class="ia-action-copy"><b>ตรวจร่างรายการแข่งขัน</b><small>ทบทวนรายการย่อยและระดับชั้นอ้างอิงครั้งที่ 70</small></span><span class="ia-chevron" aria-hidden="true">›</span></button>
+      <button class="ia-action" type="button" data-go="readiness"><span class="ia-action-icon" aria-hidden="true">🏫</span><span class="ia-action-copy"><b>เตรียมรับข้อมูลกลุ่มเครือข่าย</b><small>กำหนดส่งข้อมูลตัวแทนภายใน 4 ธ.ค. 2569</small></span><span class="ia-chevron" aria-hidden="true">›</span></button>
+      <button class="ia-action" type="button" data-go="venue"><span class="ia-action-icon" aria-hidden="true">👥</span><span class="ia-action-copy"><b>สำรวจกรรมการและสนาม</b><small>ศึกษาข้อมูลเดิมก่อนเสนอจัดสรรครั้งที่ 74</small></span><span class="ia-chevron" aria-hidden="true">›</span></button>
+    </div>
     <div data-s74-calendar></div>
+    <div class="ia-archive-heading"><h2>ข้อมูลอ้างอิงจากการแข่งขันครั้งที่ 73</h2><p>สถิติ เหรียญ ผลการแข่งขัน และรายชื่อเดิมเป็นข้อมูลย้อนหลัง ใช้ช่วยวางแผนครั้งที่ 74 ไม่ใช่ผลการแข่งขันครั้งที่ 74 · <button type="button" class="linkbtn" data-go="archive">เปิดคลังย้อนหลัง ›</button></p></div>
+    <div class="tiles" id="tiles"></div>
     <button hidden class="card nx-promo" type="button" data-go="prep" id="ppPromo"><span class="ic" aria-hidden="true" style="background:var(--rep-soft);color:var(--rep)">✏️</span><span class="main"><b>สำหรับครู: เตรียมสมัครครั้งที่ 74</b><small>ดูผลเดิมของโรงเรียน เกณฑ์คะแนน และวางแผนกิจกรรมที่จะส่ง</small></span><svg class="i chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></button>
     <button hidden class="card nx-promo" type="button" data-go="next" id="nxPromo"></button>
     <div class="kpis" id="kpis"></div>
@@ -1040,6 +1064,53 @@ body{overscroll-behavior-y:auto}
     </div>
   </section>
 
+
+  <!-- IA-1: Stage-aware organizer readiness, not the historical representatives view. -->
+  <section class="view" id="v-readiness" aria-label="ความพร้อมผู้จัดและกลุ่มเครือข่าย" data-loading="true" aria-busy="true">
+    <div class="view-skeleton" aria-hidden="true"><div class="sk-line short"></div><div class="sk-tile hero"></div><div class="sk-stats"><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div></div></div>
+    <div class="ia-pane-lead"><h2>ความพร้อมผู้จัดและกลุ่มเครือข่าย</h2><p>พื้นที่รวบรวมความคืบหน้าการส่งข้อมูลตัวแทนระดับกลุ่มและการเตรียมการแข่งขันระดับเขต แยก “ส่งข้อมูลแล้ว” ออกจาก “ตรวจสอบและรับรองแล้ว”</p></div>
+    <div class="ia-provenance"><strong>สถานะข้อมูลครั้งที่ 74:</strong> ยังไม่มีการเชื่อมสถานะจริงจากระบบแข่งขันหลัก · ตัวเลขศูนย์หมายถึงตรวจสอบแล้วว่าไม่มีข้อมูล แต่เครื่องหมายขีด (—) หมายถึงยังไม่ทราบ</div>
+    <div class="ia-stat-grid">
+      <div class="ia-stat"><small>กลุ่มที่ต้องส่งข้อมูลตัวแทน</small><b>—</b><span class="ia-stat-foot">ต้องยืนยันขอบเขตและกติกาก่อนนับ</span></div>
+      <div class="ia-stat"><small>กลุ่มที่ส่งแล้ว</small><b>—</b><span class="ia-stat-foot">ยังไม่มีข้อมูลการส่งที่ได้รับอนุญาต</span></div>
+      <div class="ia-stat"><small>ข้อมูลที่เขตรับรองแล้ว</small><b>—</b><span class="ia-stat-foot">ไม่เท่ากับข้อมูลที่กลุ่มส่งมา</span></div>
+      <div class="ia-stat"><small>ทีมผ่านเกณฑ์ขึ้นระดับเขต</small><b>—</b><span class="ia-stat-foot">รองรับหลายตัวแทนตามกติกาของกิจกรรม</span></div>
+    </div>
+    <div class="ia-overline"><h2>สถานะที่ต้องติดตาม</h2><small>รอเชื่อมชุดข้อมูลสาธารณะที่ได้รับอนุมัติ</small></div>
+    <div class="ia-empty-state"><b>ยังไม่มีข้อมูลความพร้อมที่ยืนยันแล้ว</b><p>การส่งตัวแทนของกลุ่มเครือข่าย การรับรองของเขต และจำนวนทีมยังไม่เชื่อมจากระบบหลัก เพื่อป้องกันการสรุปผิด จะแสดงข้อมูลจริงเมื่อผ่านการตรวจสอบและอนุมัติให้เผยแพร่เท่านั้น</p></div>
+    <ul class="ia-note-list"><li><b>ส่งข้อมูลตัวแทนภายใน 4 ธันวาคม 2569</b>เป็นกำหนดส่งผลและรายชื่อทีมตัวแทนจากกลุ่มสู่เขต ไม่ใช่วันแข่งขันระดับกลุ่มหรือวันปิดรับสมัครทุกกิจกรรม</li><li><b>รูปแบบรับสมัครระดับเขต</b>บางกิจกรรมอาจใช้ตัวแทนจากกลุ่ม สมัครตรง หรือทั้งสองแบบ ตามนโยบายที่อนุมัติ ต้องแยกตัวหารการติดตามให้ถูกต้อง</li></ul>
+    <div class="ia-overline"><h2>ใช้ข้อมูลย้อนหลังประกอบการวิเคราะห์</h2></div>
+    <button class="ia-link" type="button" data-go="groups">ดูสถิติรายกลุ่มครั้งที่ 73 ›</button>
+  </section>
+
+  <!-- IA-1: bridge from historic judge intelligence to future judge/venue readiness. -->
+  <section class="view" id="v-venue" aria-label="กรรมการและสนามแข่งขัน" data-loading="true" aria-busy="true">
+    <div class="view-skeleton" aria-hidden="true"><div class="sk-line short"></div><div class="sk-tile hero"></div><div class="sk-stats"><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div></div></div>
+    <div class="ia-pane-lead"><h2>กรรมการและสนามแข่งขัน</h2><p>เตรียมข้อมูลบุคลากรและสถานที่สำหรับครั้งที่ 74 ด้วยหลักฐานย้อนหลัง โดยแยก “ผู้เคยเป็นกรรมการ” ออกจาก “ผู้ได้รับแต่งตั้งครั้งที่ 74”</p></div>
+    <div class="ia-stat-grid"><div class="ia-stat"><small>กรรมการที่รับรองครั้งที่ 74</small><b>—</b><span class="ia-stat-foot">ยังไม่มีข้อมูลแต่งตั้งยืนยัน</span></div><div class="ia-stat"><small>สนาม/ห้องที่จัดสรรแล้ว</small><b>—</b><span class="ia-stat-foot">ยังไม่มีตารางสนามยืนยัน</span></div><div class="ia-stat"><small>ข้อขัดแย้งที่ตรวจทานแล้ว</small><b>—</b><span class="ia-stat-foot">ต้องตรวจผู้ควบคุมทีมและเวลาซ้อน</span></div><div class="ia-stat"><small>กิจกรรมที่ยืนยันช่วงแข่งขัน</small><b>—</b><span class="ia-stat-foot">ช่วง 21–24 ธ.ค. ยังเป็นกำหนดเบื้องต้น</span></div></div>
+    <div class="ia-overline"><h2>จุดตรวจความพร้อม</h2></div>
+    <ul class="ia-note-list"><li><b>กรรมการจากครั้งที่ 73</b>ใช้ประกอบการเสนอชื่อเท่านั้น ยังไม่ได้แต่งตั้งให้ทำหน้าที่ครั้งที่ 74</li><li><b>ความเกี่ยวข้องกับทีมแข่งขัน</b>ตรวจการเป็นผู้ควบคุมทีม โรงเรียนที่ส่งแข่ง ภาระซ้อน และความพร้อมในวันจัดงานก่อนรับรอง</li><li><b>สนาม ห้องและเวลา</b>ยังไม่สามารถยืนยันจากข้อมูลที่มีอยู่ ต้องอาศัยกำหนดการที่ผู้จัดรับรองแล้ว</li></ul>
+    <div class="ia-overline"><h2>แหล่งข้อมูลที่เปิดดูได้</h2></div>
+    <button class="ia-link primary" type="button" data-go="judges">ดูข้อมูลกรรมการย้อนหลังครั้งที่ 73 ›</button>
+    <div class="ia-ref-warning">รายชื่อและสถานะจากครั้งที่ 73 ไม่ใช่คำสั่งแต่งตั้งหรือการยืนยันความพร้อมสำหรับครั้งที่ 74 และระบบสารสนเทศนี้ไม่ทำเกียรติบัตรซ้ำกับระบบแข่งขันเดิม</div>
+  </section>
+
+  <!-- IA-1: protect existing historical routes and drilldowns. -->
+  <section class="view" id="v-archive" aria-label="คลังข้อมูลย้อนหลังครั้งที่ 70 และ 73" data-loading="true" aria-busy="true">
+    <div class="view-skeleton" aria-hidden="true"><div class="sk-line short"></div><div class="sk-tile hero"></div><div class="sk-cards"><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div></div></div>
+    <div class="ia-pane-lead"><h2>คลังข้อมูลย้อนหลังครั้งที่ 70 / 73</h2><p>สถิติ ผลการแข่งขัน ตัวแทนเขต โรงเรียน รายการ และกรรมการจากครั้งที่ 73 รวมถึงรายการแข่งขันอ้างอิงครั้งที่ 70 สำหรับประกอบการจัดครั้งที่ 74</p></div>
+    <div class="ia-provenance"><strong>คำอธิบายแหล่งข้อมูล:</strong> “70” และ “73” หมายถึงการแข่งขันครั้งที่ผ่านมา ไม่ใช่สถานะรับสมัครหรือผลการแข่งขันของครั้งที่ 74 รายการอ้างอิงครั้งที่ 70 ต้องรอการรับรองก่อนใช้เป็นเกณฑ์ครั้งที่ 74</div>
+    <div class="ia-archive-grid">
+      <button class="ia-archive-link" type="button" data-go="reps"><span class="ia-archive-emoji" aria-hidden="true">🏅</span><strong>ตัวแทนเขตครั้งที่ 73</strong><small>ข้อมูลตัวแทนที่ผ่านมา</small></button>
+      <button class="ia-archive-link" type="button" data-go="groups"><span class="ia-archive-emoji" aria-hidden="true">📊</span><strong>สถิติรายกลุ่มครั้งที่ 73</strong><small>วิเคราะห์กลุ่มกิจกรรมและระดับชั้น</small></button>
+      <button class="ia-archive-link" type="button" data-go="schools"><span class="ia-archive-emoji" aria-hidden="true">🏫</span><strong>โรงเรียนครั้งที่ 73</strong><small>ดูข้อมูลแต่ละโรงเรียนย้อนหลัง</small></button>
+      <button class="ia-archive-link" type="button" data-go="acts"><span class="ia-archive-emoji" aria-hidden="true">📋</span><strong>รายการแข่งขันครั้งที่ 73</strong><small>ศึกษาแต่ละรายการและผลงานเดิม</small></button>
+      <button class="ia-archive-link" type="button" data-go="judges"><span class="ia-archive-emoji" aria-hidden="true">👥</span><strong>กรรมการครั้งที่ 73</strong><small>ข้อมูลการทำหน้าที่ย้อนหลัง</small></button>
+      <button class="ia-archive-link" type="button" data-go="next"><span class="ia-archive-emoji" aria-hidden="true">🗂️</span><strong>รายการอ้างอิงครั้งที่ 70</strong><small>ดูทุกรายการย่อยและระดับชั้นในร่าง 74</small></button>
+    </div>
+    <div class="ia-ref-warning">ข้อมูลประวัติและเกณฑ์คะแนนทั้งหมดใช้เพื่อวิเคราะห์เท่านั้น การสมัครแข่งขัน การแต่งตั้งกรรมการ และการบันทึกคะแนนเป็นหน้าที่ของระบบจัดการแข่งขันหลัก</div>
+  </section>
+
   <footer>ที่มา: ร่างรายการครั้งที่ 74 จากเอกสาร "(ร่าง) รายการแข่งขันงานศิลปหัตถกรรมนักเรียน ครั้งที่ 74 ปีการศึกษา 2569" · ผลการแข่งขันครั้งที่ 73 ระดับเขตพื้นที่ สพป.กาญจนบุรี เขต 4 ข้อมูล ณ วันที่ 8 ตุลาคม 2569 (523 รายการ) · คณะกรรมการตัดสินระดับเขต ข้อมูล ณ วันที่ 14 ตุลาคม 2569 (95 รายการ) เกณฑ์เหรียญ ทอง 80–100 คะแนน เงิน 70–79 ทองแดง 60–69 · <button type="button" class="linkbtn" id="pwaInstallFooter">ติดตั้งเป็นแอป</button> · <button type="button" class="linkbtn" data-pdpa>ประกาศการใช้ข้อมูลส่วนบุคคล (PDPA)</button></footer>
 </main>
 
@@ -1089,11 +1160,30 @@ const ICONS={
  prep:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>',
  judges:'<circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="m15 11 2 2 4-4"/>',
  next:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/>'};
-const VIEWS=[['overview','ภาพรวม'],['reps','ตัวแทนเขต'],['groups','รายกลุ่ม'],['schools','โรงเรียน'],['acts','รายการ'],['judges','กรรมการ'],['next','73 vs 74'],['prep','เตรียม 74']];
-const NAVL={reps:'ตัวแทน',groups:'รายกลุ่ม'};
+const VIEWS=[
+  ['overview','ภาพรวมเตรียมงาน 74'],['next','รายการแข่งขัน 74'],['prep','เตรียมแข่งขันของโรงเรียน'],
+  ['readiness','ความพร้อมผู้จัดและกลุ่มเครือข่าย'],['venue','กรรมการและสนามแข่งขัน'],['archive','คลังข้อมูลย้อนหลัง 70 / 73'],
+  ['reps','ตัวแทนเขตครั้งที่ 73'],['groups','รายกลุ่มครั้งที่ 73'],
+  ['schools','โรงเรียนครั้งที่ 73'],['acts','รายการครั้งที่ 73'],['judges','กรรมการครั้งที่ 73']
+];
+const IA_NAV=[
+  ['overview','ภาพรวม', 'ภาพรวมเตรียมงาน 74'],
+  ['next','รายการ 74','รายการแข่งขัน 74'],
+  ['prep','โรงเรียน','เตรียมแข่งขันของโรงเรียน'],
+  ['readiness','ผู้จัด','ความพร้อมผู้จัดและกลุ่มเครือข่าย'],
+  ['venue','กรรมการ/สนาม','กรรมการและสนามแข่งขัน'],
+  ['archive','คลังย้อนหลัง','คลังข้อมูลย้อนหลัง 70 / 73']
+];
+Object.assign(ICONS,{
+  readiness:'<path d="M4 20V9l8-5 8 5v11M2 20h20M9 20v-7h6v7M4 10h16"/>',
+  venue:'<path d="M4 20h16M5 7h14v13H5zM9 7V4h6v3M9 12h6M9 16h6"/>',
+  archive:'<rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v11h14V9M10 14h4"/>'
+});
+const IA_PARENT={reps:'archive',groups:'archive',schools:'archive',acts:'archive',judges:'venue'};
+const iaParent=v=>IA_PARENT[v]||v;
 
-/* ---------- navigation ---------- */
-$('.nav').insertAdjacentHTML('beforeend',VIEWS.map(([k,t])=>`<button type="button" data-v="${k}"><span class="pill-i"><svg class="i" viewBox="0 0 24 24">${ICONS[k]}</svg></span><span>${(innerWidth<1024&&NAVL[k])||t}</span></button>`).join(''));
+/* ---------- navigation: 6 sections on desktop, 3 + More on phone/tablet ---------- */
+$('.nav').insertAdjacentHTML('beforeend',IA_NAV.map(([k,short,long])=>`<button type="button" data-v="${k}" aria-label="${long}"><span class="pill-i"><svg class="i" viewBox="0 0 24 24">${ICONS[k]}</svg></span><span class="ia-nav-short">${short}</span><span class="ia-nav-long">${long}</span></button>`).join(''));
 
 const SCR={};let CUR=null;
 function go(v,push=true){
@@ -1101,9 +1191,10 @@ function go(v,push=true){
   if(v===CUR){window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});return}
   if(CUR)SCR[CUR]=window.scrollY;
   $$('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));
-  $$('.nav button').forEach(b=>b.dataset.v===v?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current'));
-  $('#vTitle').textContent=v==='prep'?'เตรียมแข่งครั้งที่ 74':v==='next'?'เทียบครั้งที่ 73 กับ 74':VIEWS.find(x=>x[0]===v)[1];
-  {const nf=v==='next'||v==='prep'||v==='judges';$('#btnFilter').hidden=nf;$('#fChips').hidden=nf;}
+  const primary=iaParent(v);
+  $$('.nav button[data-v]').forEach(b=>b.dataset.v===primary?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current'));
+  $('#vTitle').textContent=VIEWS.find(x=>x[0]===v)[1];
+  {const nf=['next','prep','judges','readiness','venue','archive'].includes(v);$('#btnFilter').hidden=nf;$('#fChips').hidden=nf;}
   if(push&&location.hash!=='#'+v)history.replaceState(null,'','#'+v);
   $('#lTitleT').textContent=$('#vTitle').textContent;
   CUR=v;window.scrollTo(0,SCR[v]||0);onScr();
@@ -1111,7 +1202,7 @@ function go(v,push=true){
 function onScr(){$('.appbar').classList.toggle('scrolled',window.scrollY>($('#lTitle').offsetTop+$('#lTitle').offsetHeight-40))}
 addEventListener('scroll',onScr,{passive:true});
 $('.nav').addEventListener('click',e=>{const b=e.target.closest('button[data-v]');if(!b)return;if(b.dataset.v!==CUR&&navigator.vibrate)navigator.vibrate(8);go(b.dataset.v)});
-document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)go(b.dataset.go)});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b){if($('#sheet').classList.contains('on'))closeSheet();go(b.dataset.go)}});
 addEventListener('hashchange',()=>go(location.hash.slice(1),false));
 
 /* ---------- global filter ---------- */
@@ -1405,6 +1496,7 @@ const round70Html=it=>{
 const NXI=[];NX.groups.forEach((g,gi)=>g.i.forEach(it=>{it.g=gi;it.rows=D.filter(d=>it.a.includes(d.act));it.b=bases(it.a);NXI.push(it)}));
 const CUT=bases(NX.drop).map(x=>({...x,g:CAT2G[x.rows[0].cat],cat:x.rows[0].cat}));
 const NKEEP=NXI.filter(it=>it.a.length).length,NNEW=NXI.length-NKEEP;
+$('#iaDraftFamilyCount').textContent=fmt(NXI.length);
 let qNx='',NXF='all';
 const lvChips=lv=>lv.map(l=>`<span class="lv">${esc(l)}</span>`).join('');
 (()=>{
@@ -1755,14 +1847,28 @@ const TI={
 const TICON={...ICONS,export:'<path d="M12 4v11m0 0-4-4m4 4 4-4M5 19h14"/>',school:'<path d="M3 21h18M5 21V10l7-5 7 5v11M10 21v-5h4v5"/><circle cx="18" cy="6" r="2.5"/>',
  more:'<circle cx="6" cy="6" r="1.6"/><circle cx="12" cy="6" r="1.6"/><circle cx="18" cy="6" r="1.6"/><circle cx="6" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18" cy="12" r="1.6"/><circle cx="6" cy="18" r="1.6"/><circle cx="12" cy="18" r="1.6"/><circle cx="18" cy="18" r="1.6"/>'};
 const tileHTML=(keys,sub={})=>keys.map(k=>`<button class="tile" type="button" data-tile="${k}" style="--tc:${TI[k][1]}"><span class="ti"><svg class="i" viewBox="0 0 24 24">${TICON[k]}</svg></span>${TI[k][0]}${sub[k]?`<small>${sub[k]}</small>`:''}</button>`).join('');
-const TKEYS=['prep','next','reps','groups','schools','acts','judges','school','export'];
+const TKEYS=['reps','groups','schools','acts','judges','export'];
 function drawTiles(){$('#tiles').innerHTML=tileHTML(TKEYS,{school:PLAN.school?'ตั้งค่าแล้ว':'ยังไม่เลือก',prep:Object.keys(PLAN.items).length?Object.keys(PLAN.items).length+' ในแผน':''})}
 function runTile(k){if(k==='export'){openExport();return}if(k==='school'){openSchoolPicker();return}closeSheet();go(k)}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-tile]');if(b){runTile(b.dataset.tile);return}const x=e.target.closest('[data-export]');if(x)openExport()});
-$('.nav').insertAdjacentHTML('beforeend',`<button type="button" class="more-b" id="navMore" aria-label="เมนูทั้งหมด"><span class="pill-i"><svg class="i" viewBox="0 0 24 24">${TICON.more}</svg></span><span>เมนู</span></button>`);
-$('#navMore').onclick=()=>openSheet('เมนูทั้งหมด','ทางลัดไปทุกส่วนของแอป',`<div class="sh-tiles"><div class="tiles">${tileHTML(['reps','groups','schools','acts','judges','next','prep','school','export'])}</div></div>`);
-const MORE_V=['reps','groups','schools','judges'];
-const _markMore=()=>{const v=location.hash.slice(1);$('#navMore').toggleAttribute('aria-current',MORE_V.includes(v));if(MORE_V.includes(v))$('#navMore').setAttribute('aria-current','page')};
+$('.nav').insertAdjacentHTML('beforeend',`<button type="button" class="more-b" id="navMore" aria-label="เปิดเมนูเพิ่มเติม" aria-haspopup="dialog"><span class="pill-i"><svg class="i" viewBox="0 0 24 24">${TICON.more}</svg></span><span>เพิ่มเติม</span></button>`);
+$('#navMore').onclick=()=>openSheet('เมนูเพิ่มเติม','ส่วนอื่น ๆ ของระบบสารสนเทศเตรียมการแข่งขันครั้งที่ 74',`
+<div class="ia-more-nav">
+  <div class="ia-more-title">ส่วนหลักสำหรับเตรียมการแข่งขันครั้งที่ 74</div>
+  <button type="button" data-go="readiness"><b>🏫 ความพร้อมผู้จัดและกลุ่มเครือข่าย</b><span class="ia-more-arrow">›</span></button>
+  <button type="button" data-go="venue"><b>👥 กรรมการและสนามแข่งขัน</b><span class="ia-more-arrow">›</span></button>
+  <button type="button" data-go="archive"><b>🗂️ คลังข้อมูลย้อนหลัง 70 / 73</b><span class="ia-more-arrow">›</span></button>
+  <div class="ia-more-title">ค้นหาข้อมูลย้อนหลัง</div>
+  <button type="button" data-go="reps"><b>ตัวแทนเขตครั้งที่ 73</b><span class="ia-more-arrow">›</span></button>
+  <button type="button" data-go="groups"><b>สถิติรายกลุ่มครั้งที่ 73</b><span class="ia-more-arrow">›</span></button>
+  <button type="button" data-go="schools"><b>โรงเรียนครั้งที่ 73</b><span class="ia-more-arrow">›</span></button>
+  <button type="button" data-go="acts"><b>รายการครั้งที่ 73</b><span class="ia-more-arrow">›</span></button>
+  <div class="ia-more-title">เครื่องมือ</div>
+  <button type="button" data-tile="school"><b>เลือกโรงเรียนของฉัน</b><span class="ia-more-arrow">›</span></button>
+  <button type="button" data-export><b>ส่งออกข้อมูล</b><span class="ia-more-arrow">›</span></button>
+</div>`);
+const MORE_V=['readiness','venue','archive','reps','groups','schools','acts','judges'];
+const _markMore=()=>{const v=CUR||location.hash.slice(1);if(MORE_V.includes(v))$('#navMore').setAttribute('aria-current','page');else $('#navMore').removeAttribute('aria-current')};
 addEventListener('hashchange',_markMore);
 document.addEventListener('click',e=>{if(e.target.closest('.nav button[data-v],[data-go],[data-tile]'))setTimeout(_markMore,0)});
 
