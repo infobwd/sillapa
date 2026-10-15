@@ -24,6 +24,29 @@ function decorateDistrict(){
  slab(38,4,0,25,'#c3c1ba',.13); // open arrival yard, not another transverse road
  // Gate joins the internal network through the front arrival yard.
  slab(8,19,0,34,'#81888a',.22);
+ // District office name sign and front lawn: on the arrival-yard side of the
+ // ONLY cross road (z=15), keeping vehicle lanes and side roads unobstructed.
+ for(const x of [-9.5,9.5]){
+  slab(10,5.2,x,21,'#5b9453',.2);
+  for(const px of [x-3.8,x+3.8]){
+   const shrub=new THREE.Mesh(new THREE.IcosahedronGeometry(.45,1),mat('#3e7541'));
+   shrub.position.set(px,.63,22.8);g.add(shrub);
+  }
+ }
+ // Low masonry monument and readable Thai sign, facing the road/front approach.
+ slab(10,.85,-9.5,20.2,'#e9e1cd',.65);
+ const signBase=new THREE.Mesh(new THREE.BoxGeometry(10,1.7,.48),mat('#eee9df'));
+ signBase.position.set(-9.5,1.55,20.2);g.add(signBase);
+ const signCanvas=document.createElement('canvas');signCanvas.width=1024;signCanvas.height=256;
+ const signCtx=signCanvas.getContext('2d');
+ signCtx.fillStyle='#173c63';signCtx.fillRect(0,0,1024,256);
+ signCtx.fillStyle='#ffffff';signCtx.textAlign='center';signCtx.textBaseline='middle';
+ signCtx.font='bold 60px system-ui, sans-serif';
+ signCtx.fillText('สำนักงานเขตพื้นที่การศึกษา',512,84,970);
+ signCtx.fillText('ประถมศึกษากาญจนบุรี เขต 4',512,174,970);
+ const signTex=new THREE.CanvasTexture(signCanvas);signTex.colorSpace=THREE.SRGBColorSpace;
+ const signFace=new THREE.Mesh(new THREE.PlaneGeometry(9.6,1.55),new THREE.MeshBasicMaterial({map:signTex,side:THREE.DoubleSide}));
+ signFace.position.set(-9.5,1.55,20.48);g.add(signFace);
  // Pedestrian bands are separate from the vehicle corridors.
  for(const x of [-11,11])slab(1,63,x,-8,'#d9d6c9',.2);
  // Open-sided parking canopy BEHIND อาคาร 2, before the rear pond.
