@@ -85,7 +85,7 @@
         return fail('ข้อมูลการส่งตัวแทนไม่ถูกต้อง');
       if (r.obligation_state === 'required' && (r.stage_scope !== 'district' ||
           ['closed','open'].includes(policyOf.get(activityKey(r.activity_id,r.stage_scope)))))
-        return fail('ข้อมูลภาระส่งตัวแทนขัดกับนโยบายกิจกรรม');
+        return fail('ข้อมูลเรื่องการส่งตัวแทนไม่ตรงกับกติกาการแข่งขัน');
       if ((reviewed(r) && !isTime(r.verified_at)) ||
           (r.qualified_teams !== null && (!reviewed(r) || r.obligation_state !== 'required')))
         return fail('ข้อมูลทีมผ่านเกณฑ์ยังไม่ได้รับรองหรือไม่มีเวลาตรวจรับ');
@@ -166,18 +166,18 @@
       ['qualifiedTeams','ทีมที่ได้รับสิทธิ์แข่งระดับเขต','นับเฉพาะทีมที่เขตรับรองแล้ว'],
       ['openIssues','ประเด็นที่ต้องติดตาม','เฉพาะประเด็นที่อนุมัติให้เผยแพร่']
     ];
-    return '<div class="ia3-head"><span class="ia-eyebrow">IA-3 · ความพร้อมครั้งที่ 74</span><h2>ติดตามการเตรียมงานระดับเขต</h2>'+
-      '<p>แยกข้อมูลการวางแผน การส่งตัวแทน และการตรวจรับออกจากกัน ไม่ใช่ระบบรับสมัครหรือรายงานผลการแข่งขัน</p></div>'+
+    return '<div class="ia3-head"><span class="ia-eyebrow">ความพร้อมการจัดการแข่งขันครั้งที่ 74</span><h2>ติดตามความพร้อมของกลุ่มเครือข่ายและเขตพื้นที่</h2>'+
+      '<p>แยกข้อมูลการวางแผน การส่งตัวแทน และการตรวจสอบของเขตออกจากกัน ไม่ใช่ระบบรับสมัครหรือรายงานผลการแข่งขัน</p></div>'+
       '<div class="ia3-source" id="ia3Source" role="status" aria-live="polite"></div>'+
       '<div class="ia3-kpis" id="ia3Kpis">'+tiles.map(([k,t,s])=>
-        '<article class="ia3-kpi"><span>'+t+'</span><strong data-kpi="'+k+'">—</strong><small>'+s+'</small><em class="ia3-kpi-source" data-kpi-source="'+k+'">แหล่งข้อมูล: — · ยืนยัน: — · เวลา: —</em></article>').join('')+'</div>'+
-      '<div class="ia3-section-head"><h3>ความพร้อมรายกลุ่มเครือข่าย</h3><small>แสดงข้อมูลเฉพาะที่อนุมัติเผยแพร่</small></div>'+
+        '<article class="ia3-kpi"><span>'+t+'</span><strong data-kpi="'+k+'">—</strong><small>'+s+'</small><em class="ia3-kpi-source" data-kpi-source="'+k+'">ข้อมูลจาก: ยังไม่ประกาศ · วันที่ตรวจสอบ: —</em></article>').join('')+'</div>'+
+      '<div class="ia3-section-head"><h3>กลุ่มเครือข่ายส่งข้อมูลถึงขั้นตอนไหนแล้ว</h3><small>แสดงเฉพาะข้อมูลที่เขตอนุญาตให้แสดง</small></div>'+
       '<div class="ia3-filters" id="ia3Filters">'+
       '<label>กลุ่มเครือข่าย<select id="ia3Cluster"><option value="all">ทุกกลุ่ม</option></select></label>'+
       '<label>หมวดหมู่<select id="ia3Category"><option value="all">ทุกหมวด</option></select></label>'+ 
       '<label>กิจกรรม<select id="ia3Activity"><option value="all">ทุกกิจกรรม</option></select></label>'+
       '<label>ระดับการแข่งขัน<select id="ia3Stage">'+option('all','ทุกระดับ')+option('district','ระดับเขต')+option('cluster','ระดับกลุ่ม')+'</select></label>'+
-      '<label>สถานะข้อมูล<select id="ia3Status">'+option('all','ทุกสถานะ')+
+      '<label>ขั้นตอนการดำเนินงาน<select id="ia3Status">'+option('all','ทุกสถานะ')+
          [...new Set([...PLANNING,...SUBMISSION,...REVIEW])].map(v=>option(v,LABEL[v])).join('')+'</select></label></div>'+
       '<div id="ia3Result" class="ia3-result" role="status" aria-live="polite"></div>'+
       '<div id="ia3Rows" class="ia3-rows"></div>'+
@@ -212,10 +212,10 @@
       const offline = typeof navigator !== 'undefined' && navigator.onLine === false;
       if (!approved) {
         source.textContent = snap ?
-          'ข้อผิดพลาดข้อมูล: ชุดเผยแพร่ไม่ผ่านการตรวจสอบ ('+validation.reason+')' :
+          'ข้อผิดพลาดข้อมูล: ข้อมูลที่ได้รับมายังไม่ผ่านการตรวจสอบ ('+validation.reason+')' :
           (offline?'ออฟไลน์ · ':'')+'ยังไม่มีข้อมูลการส่งงานและความพร้อมครั้งที่ 74 ที่เขตรับรองให้แสดง · วันที่อัปเดต: —';
-        rows.innerHTML = '<div class="ia3-empty"><b>ยังไม่มีข้อมูลความพร้อมที่ยืนยันแล้ว</b><p>ข้อมูลกลุ่มที่ส่งแล้ว การตรวจรับ และยอดทีมจะแสดงเมื่อมีชุดข้อมูลสาธารณะที่ได้รับอนุมัติเท่านั้น ไม่ใช้สถิติครั้งที่ 73 แทน</p></div>';
-        issues.innerHTML = '<div class="ia3-empty"><b>ยังไม่มีข้อมูลประเด็นที่เผยแพร่ได้</b><p>ไม่ถือว่าปัญหาเป็นศูนย์จนกว่าจะตรวจสอบข้อมูลครบ</p></div>';
+        rows.innerHTML = '<div class="ia3-empty"><b>ยังไม่มีข้อมูลความพร้อมที่ยืนยันแล้ว</b><p>เมื่อเขตตรวจและอนุญาตให้เผยแพร่แล้ว จึงจะแสดงว่ากลุ่มใดส่งแล้ว ตรวจผ่านหรือยัง และมีทีมกี่ทีม ขณะนี้ยังไม่ใช้ตัวเลขครั้งที่ 73 แทนข้อมูลครั้งที่ 74</p></div>';
+        issues.innerHTML = '<div class="ia3-empty"><b>ยังไม่มีเรื่องที่ต้องติดตามซึ่งเขตอนุญาตให้แสดง</b><p>ยังบอกไม่ได้ว่าไม่มีปัญหา เพราะยังไม่มีข้อมูลที่ตรวจครบ</p></div>';
         pick('ia3Result').textContent='ยังไม่มีข้อมูลที่เขตยืนยัน';
         el.querySelectorAll('[data-kpi]').forEach(x=>x.textContent=UNKNOWN);
         el.querySelectorAll('[data-kpi-source]').forEach(x=>x.textContent='ข้อมูลจาก: ยังไม่ประกาศ · วันที่ตรวจสอบ: —');
@@ -236,7 +236,7 @@
       });
       pick('ia3Result').textContent = 'รายการที่ตรงตัวกรอง '+model.rows.length.toLocaleString('th-TH')+' รายการ (ข้อมูลที่เผยแพร่)';
       if (!model.rows.length) {
-        rows.innerHTML='<div class="ia3-empty"><b>ไม่มีรายการในตัวกรองนี้</b><p>ไม่ใช่หลักฐานว่ากลุ่มหรือกิจกรรมไม่มีหน้าที่ส่งตัวแทน โปรดตรวจขอบเขตชุดข้อมูล</p></div>';
+        rows.innerHTML='<div class="ia3-empty"><b>ไม่มีรายการในตัวกรองนี้</b><p>ไม่พบรายการตามที่เลือก แต่ยังสรุปไม่ได้ว่ากลุ่มนั้นไม่ต้องส่งตัวแทน</p></div>';
       } else {
         const names=new Map(snap.clusters.map(g=>[g.cluster_id,g.label]));
         const acts=new Map(snap.activity_catalog.map(a=>[activityKey(a.activity_id,a.stage_scope),a]));
@@ -254,7 +254,7 @@
           '</tr></thead><tbody>'+values.map(v=>'<tr>'+[v.group,v.activity,v.stage,v.policy,v.qualification,v.planning,v.submission,v.review,v.teams,v.date].map(s=>'<td>'+s+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>'+
           '<div class="ia3-mobile-rows">'+values.map(v=>'<article class="ia3-row-card"><h4>'+v.group+'</h4>'+
           '<p>'+v.activity+'</p><dl><div><dt>ระดับ</dt><dd>'+v.stage+'</dd></div><div><dt>นโยบาย</dt><dd>'+v.policy+'</dd></div>'+
-          '<div><dt>ภาระ</dt><dd>'+v.qualification+'</dd></div>'+
+          '<div><dt>ต้องส่งตัวแทนหรือไม่</dt><dd>'+v.qualification+'</dd></div>'+
           '<div><dt>การเตรียม</dt><dd>'+v.planning+'</dd></div><div><dt>ส่งข้อมูล</dt><dd>'+v.submission+'</dd></div><div><dt>การตรวจรับ</dt><dd>'+v.review+'</dd></div>'+
           '<div><dt>ทีมผ่านเกณฑ์</dt><dd>'+v.teams+'</dd></div><div><dt>ข้อมูล ณ</dt><dd>'+v.date+'</dd></div></dl></article>').join('')+'</div>';
       }
