@@ -427,35 +427,57 @@ function decorateDistrict(){
 }
 function addWalkers(isDistrict,activityCount=0){const root=new THREE.Group();const routes=isDistrict?[[[-7,28],[-7,22],[-7,15],[-7,9]],[ [7,22],[7,13],[7,0],[7,-10] ],[[-6,10],[-6,2],[-6,-10]],[[-8,-16],[-8,-22],[-8,-27]],[[8,-18],[8,-25],[8,-29]]]:[[[-8,-8],[-8,8]],[[0,-8],[0,8]],[[8,8],[8,-8]]];const skin=new THREE.MeshStandardMaterial({color:'#d4a27c'}),hair=new THREE.MeshStandardMaterial({color:'#292d35'}),legMat=new THREE.MeshStandardMaterial({color:'#283a59'}),teacherMat=new THREE.MeshStandardMaterial({color:'#b48e67'}),shirtMat=new THREE.MeshStandardMaterial({color:'#f5f6f8'});const geoHead=new THREE.SphereGeometry(.15,8,6),geoBody=new THREE.BoxGeometry(.34,.45,.2),geoLimb=new THREE.BoxGeometry(.105,.43,.12),geoHair=new THREE.SphereGeometry(.155,8,6);for(let i=0;i<Math.min(isDistrict?44:32,Math.max(isDistrict?10:8,Math.round(activityCount*.45)));i++){const teacher=i%6===0;const person=new THREE.Group();const body=new THREE.Mesh(geoBody,teacher?teacherMat:shirtMat);body.position.y=.84;person.add(body);const head=new THREE.Mesh(geoHead,skin);head.position.y=1.23;person.add(head);const cap=new THREE.Mesh(geoHair,hair);cap.scale.y=.42;cap.position.y=1.36;person.add(cap);const limbs=[];for(const x of [-.11,.11]){const pivot=new THREE.Group();pivot.position.set(x,.61,0);const limb=new THREE.Mesh(geoLimb,legMat);limb.position.y=-.2;pivot.add(limb);person.add(pivot);limbs.push(pivot)}for(const x of [-.23,.23]){const pivot=new THREE.Group();pivot.position.set(x,1.04,0);const limb=new THREE.Mesh(geoLimb,teacher?teacherMat:shirtMat);limb.position.y=-.19;pivot.add(limb);person.add(pivot);limbs.push(pivot)}root.add(person);const route=routes[i%routes.length].map(p=>new THREE.Vector3(p[0],0,p[1]));walkers.push({person,route,limbs,speed:.28+(i%5)*.055,phase:i*1.37})}root.visible=peopleVisible;root.userData.people=true;scene.add(root);objects.push(root)}
 // Illustrative vehicle flow scaled by historic activity rows, not actual team or vehicle counts.
+// D3D-R6: shared vehicle geometry for moving and parked cars.
+function makeDistrictCar(color){
+ const model=new THREE.Group(),paint=new THREE.MeshStandardMaterial({color,roughness:.55,metalness:.12});
+ const body=new THREE.Mesh(new THREE.BoxGeometry(1.35,.62,2.45),paint);
+ body.position.y=.68;model.add(body);
+ const cabin=new THREE.Mesh(new THREE.BoxGeometry(1.12,.55,1.25),new THREE.MeshStandardMaterial({color:'#a9c5d0',metalness:.12,roughness:.42}));
+ cabin.position.set(0,1.24,-.22);model.add(cabin);
+ for(const xx of [-.7,.7])for(const zz of [-.78,.78]){
+  const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.27,.27,.15,10),new THREE.MeshStandardMaterial({color:'#29353e'}));
+  wheel.rotation.z=Math.PI/2;wheel.position.set(xx,.42,zz);model.add(wheel);
+ }
+ return model;
+}
 function addDistrictVehicles(activityCount){
- const root=new THREE.Group();
- const total=Math.min(6,Math.max(2,Math.round(activityCount/12)));
- const colors=['#f6f7f4','#b3c4d5','#d7c7a5','#e6e9ee','#6c91a9','#b9d1bf'];
+ const root=new THREE.Group(),colors=['#f6f7f4','#b3c4d5','#d7c7a5','#e6e9ee','#6c91a9','#b9d1bf'];
+ const total=Math.min(5,Math.max(2,Math.round(activityCount/15)));
  for(let i=0;i<total;i++){
-  const model=new THREE.Group();
-  const body=new THREE.Mesh(new THREE.BoxGeometry(1.35,.62,2.45),new THREE.MeshStandardMaterial({color:colors[i%colors.length]}));
-  body.position.y=.68;model.add(body);
-  const cabin=new THREE.Mesh(new THREE.BoxGeometry(1.12,.55,1.25),new THREE.MeshStandardMaterial({color:'#a9c5d0',metalness:.12,roughness:.42}));
-  cabin.position.set(0,1.24,-.22);model.add(cabin);
-  for(const xx of [-.7,.7])for(const zz of [-.78,.78]){
-   const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.27,.27,.15,10),new THREE.MeshStandardMaterial({color:'#29353e'}));
-   wheel.rotation.z=Math.PI/2;wheel.position.set(xx,.42,zz);model.add(wheel);
-  }
-  root.add(model);
-  buses.push({model,phase:i/total,route:i%2===0?'entry':'exit',speed:.035+(i%3)*.004});
+  const model=makeDistrictCar(colors[i%colors.length]);root.add(model);
+  buses.push({model,phase:i/total,speed:.022+(i%3)*.002,route:'district-loop'});
+ }
+ // Static parking: two under the carport on the right of building 1,
+ // and three under the rear carport behind building 2.
+ const parked=[
+  {x:18.15,z:1.45,angle:0},{x:18.15,z:4.75,angle:0},
+  {x:-3.4,z:-35,angle:Math.PI/2},{x:0,z:-35,angle:Math.PI/2},{x:3.4,z:-35,angle:Math.PI/2}
+ ];
+ for(let i=0;i<parked.length;i++){
+  const p=parked[i],model=makeDistrictCar(colors[(i+2)%colors.length]);
+  model.position.set(p.x,.24,p.z);model.rotation.y=p.angle;root.add(model);
  }
  root.visible=trafficEnabled;root.userData.vehicles=true;
  scene.add(root);objects.push(root);
 }
 function animateDistrictVehicles(t){
+ // Loop uses the modeled west entry, the transverse road at z=22,
+ // the east exit, and the frontage road (3342) to re-enter.
+ // Turns are rounded with a Catmull-Rom spline; no teleport at the loop boundary.
+ const route=new THREE.CatmullRomCurve3([
+  new THREE.Vector3(-13,0,55),new THREE.Vector3(-13,0,44),
+  new THREE.Vector3(-13,0,27),new THREE.Vector3(-10,0,22),
+  new THREE.Vector3(0,0,22),new THREE.Vector3(10,0,22),
+  new THREE.Vector3(13,0,27),new THREE.Vector3(13,0,43),
+  new THREE.Vector3(13,0,52),new THREE.Vector3(4,0,52),
+  new THREE.Vector3(-8,0,52),new THREE.Vector3(-13,0,55)
+ ],true,'centripetal',.5);
  for(const b of buses){
-  if(!b.route)continue;
+  if(b.route!=='district-loop')continue;
   const q=(t*b.speed+b.phase)%1;
-  const entry=b.route==='entry';
-  // One-way internal roads: west entry runs toward rear (-Z), east exit runs toward frontage (+Z).
-  const x=entry?-13:13,z=entry?45-q*70:-25+q*70;
-  b.model.position.set(x,.24,z);
-  b.model.rotation.y=entry?Math.PI:0;
+  const point=route.getPointAt(q),tangent=route.getTangentAt(q);
+  b.model.position.set(point.x,.24,point.z);
+  b.model.rotation.y=Math.atan2(tangent.x,tangent.z);
  }
 }
 function animateBuses(t){if(!trafficEnabled)return;animateDistrictVehicles(t);for(let i=0;i<buses.length;i++){const b=buses[i];if(b.route)continue;const q=(t*.36+b.phase)%48;const start=i===0?-35:35;const dir=i===0?1:-1;let x=start,z=29;if(q<17){x=start+dir*q*1.7}else if(q<23){x=start+dir*28.9;z=29+(q-17)*(-2.2)}else if(q<35){x=start+dir*28.9;z=15.8}else if(q<41){x=start+dir*28.9;z=15.8+(q-35)*2.2}else{x=start+dir*28.9+dir*(q-41)*1.4;z=29}b.model.position.set(x,.28,z);b.model.rotation.y=q>=17&&q<23?(dir===1?Math.PI/2:-Math.PI/2):q>=35&&q<41?(dir===1?-Math.PI/2:Math.PI/2):0;for(let j=0;j<b.passengers.length;j++){const person=b.passengers[j];const dt=q-(23+j*.75);person.visible=dt>=0&&dt<11;if(!person.visible)continue;const u=Math.min(1,dt/9);const a=new THREE.Vector3(x+dir*(j-1.5)*.3,0,15.2);const target=new THREE.Vector3(i===0?-6:6,0,5);person.position.copy(a).lerp(target,u);person.rotation.y=Math.atan2(target.x-a.x,target.z-a.z)}}}
