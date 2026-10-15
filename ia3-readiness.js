@@ -113,25 +113,27 @@
     return data.public_readiness_aggregates.filter(r=>
       (filters.cluster === 'all' || r.cluster_id === filters.cluster) &&
       (filters.activity === 'all' || r.activity_id === filters.activity) &&
+      (filters.category === 'all' || data.activity_catalog.some(a=>a.activity_id===r.activity_id && a.category===filters.category)) &&
       (filters.stage === 'all' || r.stage_scope === filters.stage) &&
       (filters.status === 'all' || r.submission_state === filters.status ||
        r.verification_state === filters.status || r.planning_state === filters.status));
   }
-  function derive(data,filters={cluster:'all',activity:'all',stage:'all',status:'all'}) {
+  function derive(data,filters={cluster:'all',category:'all',activity:'all',stage:'all',status:'all'}) {
     if (!validateSnapshot(data).ok) throw Error('unapproved public readiness input');
     const rows = selectRows(data,filters);
-    const activities = data.activity_catalog.filter(a=>filters.activity === 'all' || a.activity_id === filters.activity);
+    const activities = data.activity_catalog.filter(a=>(filters.activity === 'all' || a.activity_id === filters.activity) && (filters.category === 'all' || a.category === filters.category));
     const requireRows = rows.filter(applicable);
     const byGroup = new Map();
     requireRows.forEach(r => {if (!byGroup.has(r.cluster_id)) byGroup.set(r.cluster_id,[]);byGroup.get(r.cluster_id).push(r);});
     const allGroupSubmitted = [...byGroup.values()].filter(a=>a.every(submitted)).length;
     const coverage = data.coverage;
-    const scoped = filters.cluster === 'all' && filters.activity === 'all' &&
+    const scoped = filters.cluster === 'all' && filters.category === 'all' && filters.activity === 'all' &&
       filters.stage === 'all' && filters.status === 'all';
     // Partial feeds must NEVER present filtered counts as a complete official zero.
     const full = k => coverage[k] === 'complete';
     const openIssues = data.public_issues.filter(i=>i.state==='open' &&
       (filters.activity==='all' || i.activity_id===filters.activity) &&
+      (filters.category==='all' || activities.some(a=>a.activity_id===i.activity_id)) &&
       (filters.cluster==='all' || i.cluster_id===filters.cluster));
     return {
       rows, scoped, issues:openIssues, activities,
@@ -170,6 +172,7 @@
       '<div class="ia3-section-head"><h3>ความพร้อมรายกลุ่มเครือข่าย</h3><small>แสดงข้อมูลเฉพาะที่อนุมัติเผยแพร่</small></div>'+
       '<div class="ia3-filters" id="ia3Filters">'+
       '<label>กลุ่มเครือข่าย<select id="ia3Cluster"><option value="all">ทุกกลุ่ม</option></select></label>'+
+      '<label>หมวดหมู่<select id="ia3Category"><option value="all">ทุกหมวด</option></select></label>'+ 
       '<label>กิจกรรม<select id="ia3Activity"><option value="all">ทุกกิจกรรม</option></select></label>'+
       '<label>ระดับการแข่งขัน<select id="ia3Stage">'+option('all','ทุกระดับ')+option('district','ระดับเขต')+option('cluster','ระดับกลุ่ม')+'</select></label>'+
       '<label>สถานะข้อมูล<select id="ia3Status">'+option('all','ทุกสถานะ')+
@@ -189,7 +192,7 @@
     if (!el) return false;
     el.innerHTML = makeTemplate();
     const pick = id => document.getElementById(id);
-    const filters = {cluster:'all',activity:'all',stage:'all',status:'all'};
+    const filters = {cluster:'all',category:'all',activity:'all',stage:'all',status:'all'};
     const snap = args && args.snapshot || null;
     const validation = snap ? validateSnapshot(snap) : null;
     const approved = validation && validation.ok;
@@ -197,6 +200,9 @@
     if (approved) {
       pick('ia3Cluster').innerHTML = option('all','ทุกกลุ่ม')+
         snap.clusters.map(g=>option(g.cluster_id,g.label)).join('');
+      pick('ia3Category').innerHTML = option('all','ทุกหมวด')+
+        [...new Set(snap.activity_catalog.map(a=>a.category))].sort((a,b)=>a.localeCompare(b,'th'))
+          .map(a=>option(a,a)).join('');
       pick('ia3Activity').innerHTML = option('all','ทุกกิจกรรม')+
         snap.activity_catalog.map(a=>option(a.activity_id,a.title)).join('');
     }
@@ -232,18 +238,18 @@
         const values=model.rows.map(r=>{
           const a=acts.get(r.activity_id);
           return {group:escapeHTML(names.get(r.cluster_id)),activity:escapeHTML(a.title),
-            policy:escapeHTML(LABEL[a.competition_mode]),submission:escapeHTML(LABEL[r.submission_state]||'ยังไม่มีข้อมูลยืนยัน'),
+            policy:escapeHTML(LABEL[a.competition_mode]),planning:escapeHTML(LABEL[r.planning_state]||'ยังไม่มีข้อมูลยืนยัน'),submission:escapeHTML(LABEL[r.submission_state]||'ยังไม่มีข้อมูลยืนยัน'),
             review:escapeHTML(LABEL[r.verification_state]||'ยังไม่มีข้อมูลยืนยัน'),
             qualification:escapeHTML(r.obligation_state==='required'?'ต้องส่งตัวแทน':'ไม่ต้องส่งตัวแทน'),
             teams:num(r.qualified_teams),date:escapeHTML(fmtDate(r.source_as_of))};
         });
         rows.innerHTML='<div class="ia3-table-wrap"><table class="ia3-table"><thead><tr>'+
-          ['กลุ่มเครือข่าย','กิจกรรม','นโยบาย','ภาระส่งตัวแทน','การส่ง','การตรวจรับ','ทีมผ่านเกณฑ์','ข้อมูล ณ'].map(s=>'<th>'+s+'</th>').join('')+
-          '</tr></thead><tbody>'+values.map(v=>'<tr>'+[v.group,v.activity,v.policy,v.qualification,v.submission,v.review,v.teams,v.date].map(s=>'<td>'+s+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>'+
+          ['กลุ่มเครือข่าย','กิจกรรม','นโยบาย','ภาระส่งตัวแทน','การเตรียม','การส่ง','การตรวจรับ','ทีมผ่านเกณฑ์','ข้อมูล ณ'].map(s=>'<th>'+s+'</th>').join('')+
+          '</tr></thead><tbody>'+values.map(v=>'<tr>'+[v.group,v.activity,v.policy,v.qualification,v.planning,v.submission,v.review,v.teams,v.date].map(s=>'<td>'+s+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>'+
           '<div class="ia3-mobile-rows">'+values.map(v=>'<article class="ia3-row-card"><h4>'+v.group+'</h4>'+
           '<p>'+v.activity+'</p><dl><div><dt>นโยบาย</dt><dd>'+v.policy+'</dd></div>'+
           '<div><dt>ภาระ</dt><dd>'+v.qualification+'</dd></div>'+
-          '<div><dt>ส่งข้อมูล</dt><dd>'+v.submission+'</dd></div><div><dt>การตรวจรับ</dt><dd>'+v.review+'</dd></div>'+
+          '<div><dt>การเตรียม</dt><dd>'+v.planning+'</dd></div><div><dt>ส่งข้อมูล</dt><dd>'+v.submission+'</dd></div><div><dt>การตรวจรับ</dt><dd>'+v.review+'</dd></div>'+
           '<div><dt>ทีมผ่านเกณฑ์</dt><dd>'+v.teams+'</dd></div><div><dt>ข้อมูล ณ</dt><dd>'+v.date+'</dd></div></dl></article>').join('')+'</div>';
       }
       issues.innerHTML=model.issues.length?'<ul>'+model.issues.map(i=>'<li><b>'+escapeHTML(i.title)+
@@ -251,7 +257,7 @@
         '<div class="ia3-empty"><b>ไม่มีประเด็นที่เผยแพร่ในตัวกรองนี้</b><p>'+
         (snap.coverage.issues==='complete'?'ตรวจสอบครบตามขอบเขตชุดข้อมูล':'ข้อมูลประเด็นยังไม่ครบ ไม่สามารถยืนยันว่าไม่มีประเด็น')+'</p></div>';
     }
-    ['Cluster','Activity','Stage','Status'].forEach(name=>{
+    ['Cluster','Category','Activity','Stage','Status'].forEach(name=>{
       pick('ia3'+name).addEventListener('change',e=>{filters[name.toLowerCase()]=e.target.value;draw();});
     });
     if (typeof window !== 'undefined') {
