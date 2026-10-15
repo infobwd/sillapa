@@ -8,6 +8,15 @@ function makeBuildingLabel(name,y){const canvas=document.createElement('canvas')
 function building(label,i,total,isDistrict){const key=label.normalize('NFKC').replace(/\s+/g,'').toLowerCase();let x,z;const districtLayout={'อาคาร1':[0,8],'อาคาร2':[0,-11.5],'อาคารโดม':[0,-4]};if(isDistrict&&districtLayout[key]){[x,z]=districtLayout[key]}else{const cols=Math.ceil(Math.sqrt(total));x=(i%cols-(cols-1)/2)*6;z=(Math.floor(i/cols)-(Math.ceil(total/cols)-1)/2)*7}const group=new THREE.Group();group.position.set(x,0,z);if(isDistrict&&['อาคาร1','อาคาร2','อาคารโดม'].includes(key)){group.rotation.y=Math.PI/2;group.scale.z=.78}const office=isDistrict&&(key==='อาคาร1'||key==='อาคาร2'),dome=isDistrict&&key==='อาคารโดม';const color=['#e7d5b4','#d7e3ef','#d2b6bd','#a8d2c4'][i%4];function add(geo,mat,px,py,pz,clickable=true){const mesh=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:mat,side:THREE.DoubleSide,roughness:.82}));mesh.position.set(px,py,pz);group.add(mesh);if(clickable){mesh.userData.label=label;meshes.push(mesh)}return mesh}if(office){
  // Both office buildings retain two storeys and expose room fronts behind an open corridor.
  add(new THREE.BoxGeometry(4.1,4.8,14),color,.45,2.4,0);
+ // D3D: close the exposed side ends of the front corridor on BOTH office buildings.
+ // End walls sit at local Z ends, from the main facade to the corridor's outer edge.
+ // Match the cream masonry and keep the front-facing balcony/room details untouched.
+ for(const end of [-1,1]){
+  add(new THREE.BoxGeometry(1.8,4.7,.2),'#e7dfce',-2.75,2.38,end*7.04,false);
+  add(new THREE.BoxGeometry(.16,4.8,.28),'#f5f0e6',-3.63,2.4,end*7.04,false);
+  add(new THREE.BoxGeometry(1.85,.16,.28),'#f5f0e6',-2.75,4.72,end*7.04,false);
+ }
+
  for(const [height,upper] of [[.15,false],[2.48,true]]){
   add(new THREE.BoxGeometry(1.55,.18,14.2),upper?'#eee5d5':'#d5d2c7',-2.8,height,0,false);
  }
