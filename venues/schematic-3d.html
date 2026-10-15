@@ -18,6 +18,29 @@ function building(label,i,total,isDistrict){const key=label.normalize('NFKC').re
    add(new THREE.BoxGeometry(.13,.45,.82),'#93bed0',-1.78,base+2.04,zz,false);
   }
  }
+ // Upper-storey rooms: distinguish each room with wall piers, door frames, window panes and number plates.
+ for(let bay=0;bay<7;bay++){
+  const zz=-6+bay*2;
+  add(new THREE.BoxGeometry(.2,2.1,.17),'#f5f0e6',-1.78,3.62,zz-1,false);
+  add(new THREE.BoxGeometry(.14,1.7,1.05),'#614d3e',-1.82,3.48,zz,false);
+  add(new THREE.BoxGeometry(.15,.85,.54),'#a8d4e4',-1.92,3.8,zz+.16,false);
+  add(new THREE.BoxGeometry(.16,.13,1.24),'#e6e3d8',-1.94,4.43,zz,false);
+  add(new THREE.BoxGeometry(.08,.09,.12),'#e9c87e',-1.98,3.38,zz-.38,false);
+ }
+ // Stairs at BOTH ends of the front corridor, connecting the ground and second floors.
+ // Local building Z runs along its length; these are placed outside the end walls.
+ for(const end of [-1,1]){
+  const stair=new THREE.Group();
+  for(let n=0;n<9;n++){
+   const step=new THREE.Mesh(new THREE.BoxGeometry(1.25,.15,.36),new THREE.MeshStandardMaterial({color:'#c7c9c4',roughness:.88}));
+   step.position.set(-2.85,.22+n*.265,end*(7.1+n*.36));stair.add(step);
+  }
+  for(const side of [-3.52,-2.18]){
+   const rail=new THREE.Mesh(new THREE.BoxGeometry(.09,1.05,3.6),new THREE.MeshStandardMaterial({color:'#e3e7e9'}));
+   rail.position.set(side,1.55,end*8.6);stair.add(rail);
+  }
+  group.add(stair);
+ }
  // Upper-floor safety rail, deliberately broken into bays so doors remain visible.
  for(let zz=-5;zz<=5;zz+=2){
   add(new THREE.BoxGeometry(.12,.12,1.65),'#e7edf2',-3.56,3.25,zz,false);
@@ -153,6 +176,27 @@ function decorateDistrict(){
  leftRestroom(8,'สุขา อาคาร 1',false);
  leftRestroom(-4,'สุขา โดม',false);
  leftRestroom(-11.5,'สุขาหญิง อาคาร 2',true);
+ // Thai-style sitting pavilion on the right side of Building 2, inside the east road edge.
+ // Raised seating platform, open posts and a two-tier pitched roof.
+ const sala=new THREE.Group();
+ const salaX=8.4,salaZ=-11.5;
+ slab(3.4,3.5,salaX,salaZ,'#a57f59',.28);
+ for(const xx of [-1.35,1.35])for(const zz of [-1.35,1.35]){
+  const post=new THREE.Mesh(new THREE.CylinderGeometry(.12,.15,2.65,8),mat('#8c5d3b'));
+  post.position.set(salaX+xx,1.65,salaZ+zz);sala.add(post);
+ }
+ const roofMat=mat('#a64b3b');
+ for(const side of [-1,1]){
+  const roof=new THREE.Mesh(new THREE.BoxGeometry(2.45,.2,3.95),roofMat);
+  roof.rotation.z=side*.54;roof.position.set(salaX+side*.95,3.34,salaZ);sala.add(roof);
+ }
+ const ridge=new THREE.Mesh(new THREE.BoxGeometry(.18,.22,4.2),mat('#e2b66b'));
+ ridge.position.set(salaX,3.88,salaZ);sala.add(ridge);
+ const bench=new THREE.Mesh(new THREE.BoxGeometry(2.5,.18,1.25),mat('#b68a55'));
+ bench.position.set(salaX,.74,salaZ);sala.add(bench);
+ const salaLabel=makeBuildingLabel('ศาลานั่งเล่น',4.75);
+ salaLabel.position.set(salaX,4.75,salaZ);salaLabel.scale.set(4.2,1.05,1);sala.add(salaLabel);
+ g.add(sala);
  // One-storey rear extension to อาคาร 2, before the rear cross-road.
  const rearOffice=new THREE.Mesh(new THREE.BoxGeometry(10.8,2.4,5.2),mat('#e7d5b4'));
  rearOffice.position.set(0,1.2,-16.6);g.add(rearOffice);
