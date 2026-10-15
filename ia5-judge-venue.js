@@ -49,8 +49,10 @@
     return {ok:true,rows:doc.rows.length,source_as_of:doc.source_as_of};
   }
   function sanitizeCount(v){
-    if(v===''||v==null)return null;
-    const n=Number(v);return Number.isSafeInteger(n)&&n>=1&&n<=999?n:null;
+    if(v===''||v==null||typeof v==='boolean')return null;
+    if(typeof v==='string'&&!/^[1-9][0-9]{0,2}$/.test(v.trim()))return null;
+    const n=Number(v);
+    return Number.isSafeInteger(n)&&n>=1&&n<=999?n:null;
   }
   function makeStore(storage,families){
     const allowed=new Set((families||[]).map(f=>f.key).filter(k=>typeof k==='string'&&/^draft-F\d+-A\d+$/.test(k)));
