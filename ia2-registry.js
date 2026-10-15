@@ -74,8 +74,16 @@
       return true;
     });
   }
-  function exportRows(families) {
-    const header = ['รหัสกลุ่มในร่าง (ไม่ใช่รหัสทางการ)','กลุ่มกิจกรรม','ชื่อกิจกรรมในร่าง 74',
+  function visibleEvents(family, filter = {}) {
+    const grade=filter.grade || 'all',query=clean(filter.query || '');
+    const familyMatch=!query || clean([family.groupName,family.draftTitle,...family.draftSubtypes].join(' ')).includes(query);
+    return family.events.filter(e =>
+      (grade==='all' || e.grade===grade) &&
+      (familyMatch || clean([e.title,e.grade,e.sourceId].join(' ')).includes(query))
+    );
+  }
+  function exportRows(families, filter = {}) {
+    const header = ['รหัสอ้างอิงรายการในร่าง (ชั่วคราว ไม่ใช่รหัสทางการ)','กลุ่มกิจกรรม','ชื่อกิจกรรมในร่าง 74',
       'สถานะครั้งที่ 74','รหัสรายการครั้งที่ 74','ระดับการแข่งขัน 74','โหมดรับสมัคร 74',
       'ชุดข้อมูลอ้างอิง','รหัสการแข่งขันต้นทาง','ชื่อรายการย่อยจากต้นทาง','ระดับชั้นต้นทาง',
       'ประเภทรายการย่อย (ตามชื่อเดิม)','สถานะการจับคู่','แหล่งข้อมูล','หมายเหตุ'];
@@ -87,7 +95,8 @@
       const notes = family.historyCycle === 'unresolved'
         ? 'ไม่มีข้อมูลรายการย่อย/ระดับชั้นที่จับคู่ได้; ห้ามสมมติจากชื่อกลุ่ม'
         : 'จับคู่เพื่ออ้างอิงตามร่างเท่านั้น; ระดับชั้นและสิทธิ์แข่งขันครั้งที่ 74 รอประกาศ';
-      const matches = family.events.length ? family.events : [{sourceId:null,title:'',grade:null}];
+      const matched=visibleEvents(family,filter);
+      const matches = matched.length ? matched : [{sourceId:null,title:'',grade:null}];
       matches.forEach(ev => out.push([
         family.key, family.groupName,family.draftTitle,'ร่าง — ยังไม่ยืนยัน',
         '', 'ยังไม่ประกาศ', 'ยังไม่ประกาศ',
@@ -100,9 +109,9 @@
   }
   const sourceLabel = family => family.historyCycle === '70' ? 'อ้างอิงครั้งที่ 70'
     : family.historyCycle === '73' ? 'อ้างอิงครั้งที่ 73' : 'รอตรวจสอบรายการต้นทาง';
-  function familyHTML(family, expand, round70URL) {
+  function familyHTML(family, expand, round70URL, filter = {}) {
     const title = escapeHTML(family.draftTitle), group = escapeHTML(family.groupName);
-    const total = family.events.length;
+    const total = family.events.length,shown=visibleEvents(family,filter);
     const grades = family.grades.map(level => '<span class="ia2-grade">' + escapeHTML(level) + '</span>').join('');
     const visibleGrades = grades || '<span class="ia2-grade pending">ระดับชั้นรอตรวจสอบ</span>';
     const safeURL = typeof round70URL === 'string' && /^https:\/\/[^\s]+$/.test(round70URL) ? escapeHTML(round70URL) : null;
@@ -111,18 +120,18 @@
       : family.historyCycle === '73'
       ? '<a href="#acts" class="ia2-ref-link">ดูฐานข้อมูลย้อนหลังครั้งที่ 73 ›</a>'
       : '<span class="ia2-unknown">ไม่มีรายการย่อยที่จับคู่ได้ตรงตัว ต้องตรวจสอบกับประกาศต้นทาง</span>';
-    const rows = family.events.map(e => '<li class="ia2-child">' +
+    const rows = shown.map(e => '<li class="ia2-child">' +
       '<span class="ia2-child-grade">' + escapeHTML(e.grade || 'ไม่ระบุ') + '</span>' +
       '<span class="ia2-child-main"><b>' + escapeHTML(e.title) + '</b>' +
       '<small>' + (e.sourceId ? 'รหัสรายการครั้งที่ ' + escapeHTML(e.historyCycle) + ': ' + escapeHTML(e.sourceId)
       : 'ไม่มีรหัสกิจกรรมต้นทางในชุดข้อมูลที่เผยแพร่') + '</small></span></li>').join('');
-    const records = total ? '<ol class="ia2-child-list">' + rows + '</ol>'
+    const records = shown.length ? '<ol class="ia2-child-list">' + rows + '</ol>'
       : '<div class="ia2-child-none">ยังไม่มีรายการย่อยที่ตรวจสอบได้ — อย่าตีความว่าไม่มีการแข่งขันหรือว่ามีทุกระดับชั้น</div>';
     return '<details class="ia2-family" data-key="' + escapeHTML(family.key) + '"' + (expand ? ' open' : '') + '>' +
       '<summary><span class="ia2-family-top"><span class="ia2-family-name">' + title + '</span>' +
       '<span class="ia2-status" title="สถานะรายการในร่าง ไม่ใช่การอนุมัติ">ร่าง 74</span></span>' +
       '<span class="ia2-family-meta">' + group + ' · ' + sourceLabel(family) +
-      ' · ' + (total ? total + ' รายการย่อยอ้างอิง' : 'ยังไม่พบรายการย่อยตรงตัว') + '</span>' +
+      ' · ' + (total ? total + ' รายการย่อยอ้างอิง' + (shown.length!==total ? ' (แสดง '+shown.length+')' : '') : 'ยังไม่พบรายการย่อยตรงตัว') + '</span>' +
       '<span class="ia2-grades">' + visibleGrades + '</span>' +
       '<span class="ia2-hint">ดูข้อมูลรายการย่อยและที่มา <span aria-hidden="true">▾</span></span></summary>' +
       '<div class="ia2-family-detail"><div class="ia2-warning"><b>สถานะ: ร่างการแข่งขันครั้งที่ 74</b>' +
@@ -173,9 +182,9 @@
       visible=filteredFamilies(families,f);
       elCount.textContent='พบ '+visible.length+' จาก '+families.length+' กลุ่มกิจกรรมในร่าง';
       const search=clean(f.query);
-      elList.innerHTML=visible.map(fam=>familyHTML(fam,expandAll||
+      elList.innerHTML=visible.map(fam=>familyHTML(fam,expandAll||f.grade!=='all'||
         Boolean(search && !clean(fam.draftTitle+' '+fam.groupName).includes(search)),
-        opts.round70 && opts.round70.source)).join('');
+        opts.round70 && opts.round70.source,f)).join('');
       elEmpty.hidden=visible.length!==0;
       if(!visible.length){
         elEmpty.textContent=(f.stage==='district'||f.stage==='cluster'||f.status==='confirmed')
@@ -196,7 +205,7 @@
     elExpand.addEventListener('click',()=>{expandAll=!expandAll;render()});
     elExport.addEventListener('click',()=>{
       if(!visible.length)return;
-      saveCSV('Sillapa74_ทะเบียนร่าง_รายการอ้างอิง.csv',exportRows(visible));
+      saveCSV('Sillapa74_ทะเบียนร่าง_รายการอ้างอิง.csv',exportRows(visible,filters()));
     });
     render();
     root.dataset.ready='true';
