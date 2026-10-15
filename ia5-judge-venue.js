@@ -144,7 +144,7 @@
       return ['แผนในเครื่องนี้ ไม่ใช่แต่งตั้ง/จัดสนาม',f.draftTitle,f.groupName,f.key,
         stage==='cluster'?'ระดับกลุ่ม':'ระดับเขต',p.judges??'',p.rooms??'',p.capacity??'',
         RISKS.filter(r=>p.flags[r.key]).map(r=>r.label).join('; '),
-        'ร่างครั้งที่ 74 / อ้างอิง '+f.historyCycle];
+        'แผนครั้งที่ 74 / '+(f.historyCycle==='unresolved'?'ยังเทียบรายการเดิมไม่ได้':'ใช้รายการครั้งที่ '+f.historyCycle+' เทียบ')];
     })];
     return '\ufeff'+list.map(r=>r.map(cell).join(',')).join('\r\n');
   }
@@ -169,7 +169,7 @@
       ?'ตัวเลขที่กรอกเก็บในอุปกรณ์นี้เท่านั้น ไม่ส่งให้เขตหรือระบบแข่งขัน · แผนระดับกลุ่มและระดับเขตแยกกัน'
       :'บันทึกแผนในเครื่องไม่สำเร็จ · โปรดส่งออก CSV เก็บสำรอง (ข้อมูลที่เห็นอาจหายเมื่อรีเฟรช)';
     root.querySelector('#ia5Local').setAttribute('role',sg.lastSaved?'note':'alert');
-    root.querySelector('#ia5Found').textContent='แสดง '+visible.length+' จาก '+families.length+' กิจกรรมในร่าง · '+(stage==='cluster'?'ระดับกลุ่ม':'ระดับเขต')+' (แผนเฉพาะเครื่อง)';
+    root.querySelector('#ia5Found').textContent='แสดง '+visible.length+' จาก '+families.length+' กลุ่มกิจกรรมที่กำลังวางแผน · '+(stage==='cluster'?'ระดับกลุ่ม':'ระดับเขต')+' (แผนเฉพาะเครื่อง)';
     const shown=visible.slice(0,filters.limit);
     root.querySelector('#ia5Rows').innerHTML=shown.length?shown.map(f=>{
       const p=store.get(f.key,stage),h=known.get(f.groupName);
@@ -231,7 +231,7 @@
       '<p>นับกรรมการไม่ซ้ำภายในกลุ่มในครั้งที่ 73 เท่านั้น คนเดียวอาจอยู่หลายกลุ่ม จึงไม่ควรรวมคอลัมน์นี้ข้ามกลุ่มเป็นจำนวนคนทั้งหมด สัญญาณโรงเรียนร่วมแข่งขันในครั้งที่ 73 เป็นเพียงเรื่องควรตรวจ ไม่ใช่คำวินิจฉัยความขัดแย้งหรือฐานการแต่งตั้งครั้งที่ 74</p>'+
       '<div class="ia5-table-wrap"><table><thead><tr><th scope="col">กลุ่มกิจกรรม</th><th scope="col">กิจกรรมในร่าง 74</th><th scope="col">รายการแข่ง 73 ที่มีกรรมการ</th><th scope="col">กรรมการในกลุ่ม 73</th><th scope="col">ตำแหน่ง 73</th><th scope="col">กรณีโรงเรียนของกรรมการส่งแข่งขันครั้งที่ 73</th><th scope="col">แต่งตั้งจริง 74</th><th scope="col">สนามยืนยัน 74</th></tr></thead>'+
       '<tbody id="ia5HistoricRows"></tbody></table></div></section>'+
-      '<section class="ia5-next"><h3>เงื่อนไขก่อนแต่งตั้งและจัดสนามจริง</h3>'+
+      '<section class="ia5-next"><h3>เรื่องที่ต้องตรวจให้ครบก่อนประกาศกรรมการและสนาม</h3>'+
       '<p>ตรวจผู้ควบคุมทีม, โรงเรียนที่ส่งแข่งขัน, ภาระซ้อน/วันเวลา, ความพร้อมมาปฏิบัติงาน และความจุห้องจากผู้รับผิดชอบ ก่อนออกคำสั่ง/ประกาศ โดยต้องทำในระบบแข่งขันหลักที่กำหนดสิทธิ์ ไม่ใช้ข้อมูลในเครื่องเป็นหลักฐานยืนยัน</p>'+
       '<button type="button" data-go="judges" class="ia5-archive-link">ดูกรรมการย้อนหลังครั้งที่ 73 ›</button>'+
       '<p>การเผยแพร่รายชื่อกรรมการหรือสนามที่ยืนยันแล้ว ต้องให้ผู้รับผิดชอบข้อมูลตรวจความถูกต้องและความเป็นส่วนตัวก่อน จึงจะนำมาแสดงได้</p></section>';
