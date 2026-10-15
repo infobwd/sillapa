@@ -1,0 +1,40 @@
+/* IA-4 school workspace: additive design on existing prep and navigation shell. */
+.ia4-summary{border:1px solid var(--line);border-radius:18px;padding:17px;
+  background:linear-gradient(135deg,var(--surface),var(--surface-2));margin:0 0 13px;color:var(--ink)}
+.ia4-topline{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
+.ia4-local-tag{display:inline-flex;align-items:center;padding:5px 10px;border-radius:16px;
+  font-size:11px;font-weight:800;color:var(--rep);background:var(--rep-soft)}
+.ia4-device{color:var(--ink-2);font-size:11px;line-height:1.4}
+.ia4-head h2{font:800 clamp(19px,3vw,25px)/1.4 var(--serif);margin:12px 0 5px}
+.ia4-head p,.ia4-tip{font-size:12px;line-height:1.7;color:var(--ink-2);margin:0}
+.ia4-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:15px 0}
+.ia4-stats>div{border:1px solid var(--line);border-radius:12px;padding:12px 9px;background:var(--surface)}
+.ia4-stats strong{display:block;color:var(--rep);font-size:23px;font-weight:800;font-variant-numeric:tabular-nums}
+.ia4-stats small{display:block;font-size:11px;line-height:1.5;color:var(--ink-2)}
+.ia4-prompt,.ia4-warning{margin:12px 0;padding:11px 13px;font-size:12px;line-height:1.7;
+  border-radius:11px;background:var(--surface);border:1px solid var(--line)}
+.ia4-warning button{display:block;margin-top:9px;min-height:44px;border-radius:10px;
+  padding:8px 12px;border:1px solid var(--rep);background:var(--rep);color:#fff;
+  font:700 12px/1.5 inherit}
+.ia4-warning button:disabled{opacity:.45}
+.ia4-tip{margin-top:10px}
+.ia4-checklist{margin:12px 0 0;padding:11px 13px;border:1px solid var(--line);
+  border-radius:12px;background:var(--surface-2);min-width:0}
+.ia4-checklist legend{font-size:11.5px;font-weight:800;color:var(--ink);padding:0 3px}
+.ia4-checklist label{display:flex;align-items:flex-start;gap:10px;min-height:43px;
+  padding:10px 3px;border-top:1px solid var(--line);
+  color:var(--ink-2);font-size:12.5px;line-height:1.6;cursor:pointer}
+.ia4-checklist label:first-of-type{border-top:none}
+.ia4-checklist input{width:20px;height:20px;flex:none;margin:1px 0 0;accent-color:var(--rep)}
+.ia4-checklist label:has(input:checked){color:var(--ink)}
+.ia4-checklist label span{min-width:0;overflow-wrap:anywhere}
+.ia4-checklist input:focus-visible,.ia4-warning button:focus-visible{outline:2px solid var(--rep);outline-offset:3px}
+.ia4-export-note{font-size:12px;line-height:1.65;color:var(--ink-2);
+  padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);margin:11px 0}
+.ia4-header-pick{font-size:11.5px;color:var(--ink-2);line-height:1.7;margin-top:8px}
+.ia4-disconnected{padding:14px;border:1px dashed var(--line);border-radius:12px;
+  background:var(--surface-2);color:var(--ink-2);font-size:12px;line-height:1.7}
+@media(min-width:750px){.ia4-summary{padding:20px}.ia4-stats strong{font-size:26px}}
+@media(max-width:430px){.ia4-stats{gap:6px}.ia4-stats>div{padding:9px 7px}.ia4-stats strong{font-size:20px}
+ .ia4-stats small{font-size:10.5px}.ia4-summary{padding:14px}}
+@media(prefers-reduced-motion:reduce){.ia4-summary *{scroll-behavior:auto!important}}

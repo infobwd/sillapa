@@ -115,9 +115,10 @@ for(const token of ['id="v-readiness"','id="ia3Root"','ia3-readiness.js','ia3.cs
   "SILLAPA_IA3.mount({rootId:'ia3Root',snapshot:null})"]){
   assert.ok(html.includes(token),'missing HTML integration: '+token);
 }
-for(const token of ['./ia3.css','./ia3-readiness.js','sillapa-public-v5-ia3']){
+for(const token of ['./ia3.css','./ia3-readiness.js']){
   assert.ok(sw.includes(token),'missing SW shell: '+token);
 }
+assert.match(sw,/sillapa-public-v\d+-ia\d+-\d{8}/,'public shell must have an explicit version');
 assert.ok(html.includes('data-go="groups"'),'historical navigation retained');
 assert.equal(/fetch\(|https?:\/\/|localStorage|sessionStorage/i.test(read('ia3-readiness.js')),false,
   'No network calls, hardcoded external fetch, or private storage in IA-3 module');

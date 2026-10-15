@@ -734,6 +734,7 @@ body{overscroll-behavior-y:auto}
 <link rel="stylesheet" href="./ia1.css">
 <link rel="stylesheet" href="./ia2.css">
 <link rel="stylesheet" href="./ia3.css">
+<link rel="stylesheet" href="./ia4.css">
 </head>
 <body>
 
@@ -1100,9 +1101,11 @@ body{overscroll-behavior-y:auto}
   <!-- Teacher prep (74) -->
   <section class="view" id="v-prep" aria-label="เตรียมแข่งครั้งที่ 74" data-loading="true" aria-busy="true">
 <div class="view-skeleton" aria-hidden="true"><div class="sk-line short"></div><div class="sk-tile hero"></div><div class="sk-stats"><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div></div><div class="sk-chips"><div class="sk-chip"></div><div class="sk-chip"></div><div class="sk-chip"></div></div><div class="sk-rows"><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div></div></div>
+    <div class="ia4-summary" id="ia4Summary" aria-live="polite"></div>
     <div class="card pp-hero">
       <p>วิเคราะห์และวางแผนสำหรับโรงเรียน: ดูผลงานย้อนหลังและทุกระดับชั้นอ้างอิงจากครั้งที่ 70 เพื่อเตรียมแข่งขันครั้งที่ 74 (ไม่ใช่ระบบรายงานผลหรือรับสมัคร)</p>
       <button class="pickbtn" type="button" id="ppPick"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span id="ppPickT">แตะเพื่อค้นหาโรงเรียน</span><em>เลือก</em></button>
+      <p class="ia4-header-pick">รายชื่อด้านล่างอ้างอิงข้อมูลโรงเรียนครั้งที่ 73 หรือเพิ่มชื่อเองได้ · ยังไม่ได้เชื่อมรหัสโรงเรียนที่รับรองสำหรับครั้งที่ 74</p>
       <div class="pp-stat" id="ppStat" hidden></div>
     </div>
     <div data-s74-calendar></div>
@@ -1121,10 +1124,11 @@ body{overscroll-behavior-y:auto}
     </div>
     <div class="sub" id="psub-plan">
       <div class="sec-title"><h2>แผนของโรงเรียน</h2><span><button class="link" type="button" id="ppCopy">คัดลอก</button> · <button class="link" type="button" data-export>ส่งออกไฟล์</button></span></div>
+      <p class="ia4-export-note">แผนและรายการที่ติ๊กเสร็จเก็บไว้ในเบราว์เซอร์เครื่องนี้เท่านั้น การเพิ่มในแผนไม่ใช่การสมัครหรือส่งตัวแทนไปยังระบบแข่งขัน</p>
       <div class="card list" id="ppPlan"></div>
       <p class="sync" id="ppSync"></p>
       <div class="sec-title"><h2>ภาพรวมทั้งเขต</h2></div>
-      <p class="hint" id="ppDistHint">จำนวนโรงเรียนที่วางแผนส่งแต่ละกิจกรรม รวมจากทุกคนที่ใช้หน้านี้</p>
+      <p class="hint" id="ppDistHint">ยังไม่มีการเชื่อมภาพรวมเขตที่รับรอง ไม่แสดงตัวเลขคาดเดาจากแผนในเครื่องอื่น</p>
       <div class="card dist" id="ppDist"></div>
       <div class="sec-title"><h2>กิจกรรมที่ยังไม่มีโรงเรียนวางแผนส่ง</h2></div>
       <div class="card"><div class="zero" id="ppZero" style="padding-top:14px"></div></div>
@@ -1193,6 +1197,7 @@ body{overscroll-behavior-y:auto}
 <script src="./round70-catalog.js"></script>
 <script src="./ia2-registry.js"></script>
 <script src="./ia3-readiness.js"></script>
+<script src="./ia4-workspace.js"></script>
 <script>
 /* Shared schedule: shown on Overview, comparison, and teacher planning views. */
 const scheduleTemplate=document.querySelector('#s74-calendar-template');
@@ -1795,8 +1800,14 @@ const ALT=[
 const altFor=b=>(ALT.find(([k])=>b.includes(k))||[0,[]])[1].map(([t,why])=>({it:NXI.find(x=>x.t===t),why})).filter(x=>x.it);
 const PLV=['ปฐมวัย','ป.1-ป.3','ป.4-ป.6','ป.1-ป.6','ม.1-ม.3'];
 const SCHOOLS=[...new Set(D.map(d=>d.school))].sort((a,b)=>a.localeCompare(b,'th'));
-let PLAN={school:'',items:{}},planRef=null,planDB=null,PLANS=[],pSave=null,PG=0;
-try{const s=JSON.parse(localStorage.getItem('plan74')||'null');if(s&&typeof s==='object'){PLAN.school=typeof s.school==='string'?s.school:'';PLAN.items=s.items&&typeof s.items==='object'?s.items:{}}}catch(e){}
+// IA-4: all new writes are device-local and school-specific. plan74 is a read-only legacy import.
+const IA4Storage=(()=>{
+  try{return window.localStorage}catch(_){
+    return {getItem(){throw Error('storage unavailable')},setItem(){throw Error('storage unavailable')}};
+  }
+})();
+const IA4Store=window.SILLAPA_IA4.createStore(IA4Storage,NXI.map(it=>it.t),PLV);
+let PLAN=IA4Store.current(),planRef=null,planDB=null,PLANS=[],pSave=null,PG=0;
 const OTHER='__other__';
 function bmRows(it){return it.a.map(a=>{const l=D.filter(d=>d.act===a),sc=l.filter(d=>d.score!=null);
   const w=l.find(d=>d.rank===1),rp=l.filter(d=>d.rep&&d.score!=null).map(d=>d.score),g=l.filter(d=>d.m==='G'&&d.score!=null).map(d=>d.score);
@@ -1813,7 +1824,7 @@ function itemCard(it,extra='',only=null){const sub=it.s.length?`<span class="nx-
 
 /* ----- school picker ----- */
 function setSchoolUI(){$('#ppPickT').textContent=PLAN.school||'แตะเพื่อค้นหาโรงเรียน';$('#ppPick').querySelector('em').textContent=PLAN.school?'เปลี่ยน':'เลือก'}
-function pickSchool(s){PLAN.school=s;savePlan();setSchoolUI();renderPrep();closeSheet()}
+function pickSchool(s){PLAN=IA4Store.selectSchool(s);setSchoolUI();renderPrep();closeSheet()}
 function openSchoolPicker(){
   openSheet('เลือกโรงเรียน',`${SCHOOLS.length} โรงเรียนที่มีผลครั้งที่ 73 · พิมพ์ชื่อโรงเรียนอื่นได้`,
    `<div class="psearch"><label class="search"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="pkQ" type="search" placeholder="พิมพ์ชื่อโรงเรียน" aria-label="ค้นหาโรงเรียน" autocomplete="off"></label></div><div id="pkList"></div>`);
@@ -1834,7 +1845,7 @@ function renderMine(){const s=PLAN.school,box=$('#ppMine'),st=$('#ppStat');
   const keep=NXI.filter(it=>it.a.length&&mine.some(d=>it.a.includes(d.act)));
   const cutB=CUT.filter(c=>mine.some(d=>c.acts.includes(d.act)));
   let h='';
-  h+=`<div class="sec-title"><h2>แข่งต่อได้ในครั้งที่ 74</h2><span class="pill keep">${keep.length} กิจกรรม</span></div><div class="card list">`;
+  h+=`<div class="sec-title"><h2>กิจกรรมเดิมที่ยังอยู่ในร่างครั้งที่ 74</h2><span class="pill keep">${keep.length} กิจกรรม</span></div><div class="card list">`;
   h+=keep.length?keep.map(it=>{const my=mine.filter(d=>it.a.includes(d.act));
     const rows=my.map(d=>{const b=bmRows({a:[d.act]})[0],gp=d.score!=null&&b.w!=null?b.w-d.score:null;
       return `<div class="r"><span>${esc(d.lvl)} · ${MED[d.m]}${d.score!=null?' <em>'+f2(d.score)+'</em>':''}${d.rank?' · อันดับ '+d.rank:''}</span>${d.rep?'<span class="gap ok">ตัวแทนเขต</span>':gp!=null?`<span class="gap no">ห่างที่ 1 ${f2(gp)}</span>`:''}</div>`}).join('');
@@ -1855,51 +1866,58 @@ function renderSubj(){$('#ppG').innerHTML=NX.groups.map((g,gi)=>`<button class="
   $('#ppSubj').innerHTML=g.i.map(it=>itemCard(it)).join('')+(cuts.length?`<div class="pc" style="background:var(--cut-soft)"><b style="color:var(--cut);font-size:14.5px">ถูกตัดออกจากกลุ่มนี้: ${cuts.map(c=>esc(c.b)).join(', ')}</b><div style="font-size:12.5px;color:var(--ink-2);margin-top:3px">ดูทางเลือกแทนได้ในแท็บ "โรงเรียนของฉัน" หรือแท็บ 73 vs 74</div></div>`:'')}
 
 /* ----- plan ----- */
-function planText(){const ks=Object.keys(PLAN.items);return [`แผนส่งแข่งขันศิลปหัตถกรรมนักเรียน ครั้งที่ 74 (ร่าง)`,`โรงเรียน: ${PLAN.school||'-'}`,`จำนวน ${ks.length} กิจกรรม`,'',
-  ...NX.groups.flatMap(g=>g.i.filter(it=>inPlan(it.t)).map(it=>`- [${g.g}] ${it.t}${PLAN.items[it.t].length?' ('+PLAN.items[it.t].join(', ')+')':''}`))].join('\n')}
+function planText(){const ks=Object.keys(PLAN.items);return [`แผนเตรียมแข่งขันศิลปหัตถกรรมนักเรียน ครั้งที่ 74 (ร่าง) — เก็บในเครื่องนี้ ไม่ใช่ใบสมัคร`,`โรงเรียน: ${PLAN.school||'-'}`,`จำนวน ${ks.length} กิจกรรม`,'',
+  ...NX.groups.flatMap(g=>g.i.filter(it=>inPlan(it.t)).map(it=>{
+    const checks=IA4Store.getChecks(it.t);
+    const completed=IA4Store.STEPS.filter(step=>checks[step.id]).length;
+    return `- [${g.g}] ${it.t}${PLAN.items[it.t].length?' ('+PLAN.items[it.t].join(', ')+')':''} · งานเตรียม ${completed}/${IA4Store.STEPS.length}`
+  })), 'สถานะทั้งหมดเป็นแผนในเครื่องนี้เท่านั้น ต้องยืนยันเกณฑ์/สมัครจริงกับระบบแข่งขันหลักเมื่อเปิดใช้งาน' ].join('\n')}
 function renderPlan(){const ks=Object.keys(PLAN.items);$('#ppCnt').textContent=ks.length?`(${ks.length})`:'';
-  if(!ks.length){$('#ppPlan').innerHTML='<div class="pl-empty">ยังไม่มีกิจกรรมในแผน<br>กด "+ เพิ่มในแผน" ที่กิจกรรมในแท็บอื่น</div>';}
+  if(!ks.length){$('#ppPlan').innerHTML='<div class="pl-empty">ยังไม่มีกิจกรรมในแผนของโรงเรียนนี้<br>เลือกโรงเรียนแล้วกด "+ เพิ่มในแผน" จากรายการที่สนใจ</div>';}
   else $('#ppPlan').innerHTML=NXI.filter(it=>inPlan(it.t)).map(it=>`<div class="pc"><div class="pc-h"><div class="main"><b>${esc(it.t)}</b><small>${esc(NX.groups[it.g].g)}${distN(it.t)?` · ${distN(it.t)} โรงเรียนในเขตวางแผนส่ง`:''}</small></div><button class="addb" type="button" data-add="${esc(it.t)}" aria-pressed="true">นำออก</button></div>${round70Rows(it).length?round70Html(it):''}
-    <div class="lvpick" role="group" aria-label="ระดับชั้นที่จะส่ง">${PLV.map(l=>`<button class="chip" type="button" data-lv="${l}" data-t="${esc(it.t)}" aria-pressed="${PLAN.items[it.t].includes(l)}">${l}</button>`).join('')}</div></div>`).join('');
-  $('#ppSync').className='sync'+(planRef?' ok':'');
-  $('#ppSync').textContent=planRef?(PLAN.school?'บันทึกแผนเข้าภาพรวมเขตอัตโนมัติ (แสดงเฉพาะชื่อโรงเรียนและกิจกรรม)':'เลือกโรงเรียนก่อน แผนจึงจะถูกนับในภาพรวมเขต'):'บันทึกไว้ในเบราว์เซอร์เครื่องนี้เท่านั้น (ยังไม่เชื่อมระบบรวมแผนของเขต)';
+    <div class="lvpick" role="group" aria-label="ระดับชั้นที่วางแผน (ไม่ใช่เกณฑ์ที่รับรอง)">${PLV.map(l=>`<button class="chip" type="button" data-lv="${l}" data-t="${esc(it.t)}" aria-pressed="${PLAN.items[it.t].includes(l)}">${l}</button>`).join('')}</div>${window.SILLAPA_IA4.renderChecks(IA4Store,it.t)}</div>`).join('');
+  $('#ppSync').className='sync';
+  $('#ppSync').textContent=IA4Store.info().lastSaved?
+    'บันทึกแผนไว้ในเครื่องนี้เท่านั้น · ไม่ใช่ใบสมัคร · ไม่มีการส่งข้อมูลไปยังเขต' :
+    'ไม่สามารถบันทึกในเครื่องได้ กรุณาส่งออกไฟล์เก็บสำรอง';
+  $('#ia4Summary').innerHTML=window.SILLAPA_IA4.renderSummary(IA4Store);
   renderDist()}
 function distMap(){const M={};PLANS.forEach(p=>{if(!p.school)return;Object.keys(p.items).forEach(t=>{(M[t]??=new Set()).add(p.school)})});return M}
 let DM={};const distN=t=>DM[t]?DM[t].size:0;
 function renderDist(){DM=distMap();const sch=new Set(PLANS.filter(p=>p.school&&Object.keys(p.items).length).map(p=>p.school));
-  if(!planDB){$('#ppDistHint').textContent='ภาพรวมเขตยังไม่เปิดใช้งานบน GitHub Pages (ต้องเชื่อมฐานข้อมูลส่วนกลาง)';$('#ppDist').innerHTML='<div class="pl-empty">ยังไม่มีข้อมูล</div>';$('#ppZero').innerHTML='';return}
+  if(!planDB){$('#ppDistHint').textContent='ยังไม่มีข้อมูลภาพรวมการวางแผนทั้งเขตที่ได้รับอนุมัติเผยแพร่ · แผนของโรงเรียนในเครื่องนี้ไม่ถูกส่งไปนับรวม';$('#ppDist').innerHTML='<div class="ia4-disconnected">— · ยังไม่มีข้อมูลยืนยันจากระบบหลัก ไม่ใช่จำนวน 0 โรงเรียน</div>';$('#ppZero').innerHTML='';return}
   $('#ppDistHint').textContent=`${sch.size} โรงเรียนวางแผนแล้ว · จำนวนโรงเรียนที่วางแผนส่งแต่ละกิจกรรม`;
   const r=NXI.filter(it=>distN(it.t)).sort((a,b)=>distN(b.t)-distN(a.t)),mx=r.length?distN(r[0].t):1;
   $('#ppDist').innerHTML=r.length?r.map(it=>`<div class="row"><b>${esc(it.t)}</b><small>${esc(NX.groups[it.g].g)}</small><span class="trk" style="width:100%"><i class="r" style="width:${distN(it.t)/mx*100}%;background:var(--rep)"></i></span><span class="n">${distN(it.t)}</span></div>`).join(''):'<div class="pl-empty">ยังไม่มีโรงเรียนวางแผนส่ง</div>';
   const z=NXI.filter(it=>!distN(it.t));$('#ppZero').innerHTML=z.map(it=>`<span>${esc(it.t)}</span>`).join('')||'<span>ทุกกิจกรรมมีโรงเรียนวางแผนส่งแล้ว</span>'}
-function savePlan(){try{localStorage.setItem('plan74',JSON.stringify(PLAN))}catch(e){}
-  if(!planRef)return;clearTimeout(pSave);pSave=setTimeout(async()=>{try{await planRef.set({school:PLAN.school.slice(0,120),items:PLAN.items,at:Date.now()})}catch(e){if(e&&(e.code==='not_granted'||e.code==='revoked'))planRef=null;renderPlan()}},800)}
-function toggleItem(t){if(inPlan(t))delete PLAN.items[t];else PLAN.items[t]=[];savePlan();renderPrep()}
+function savePlan(){IA4Store.savePlan(PLAN)}
+function toggleItem(t){if(!PLAN.school){openSchoolPicker();return}if(inPlan(t))delete PLAN.items[t];else PLAN.items[t]=[];savePlan();renderPrep()}
 function renderPrep(){renderMine();renderSubj();renderPlan();if(window.__tiles)drawTiles()}
 $('#v-prep').addEventListener('click',e=>{
+  const legacy=e.target.closest('#ia4Adopt');
+  if(legacy){if(IA4Store.adoptOrphan()){PLAN=IA4Store.current();renderPrep()}return}
   const a=e.target.closest('[data-add]');if(a){toggleItem(a.dataset.add);return}
   const l=e.target.closest('[data-lv]');if(l){const arr=PLAN.items[l.dataset.t];if(!arr)return;const i=arr.indexOf(l.dataset.lv);i<0?arr.push(l.dataset.lv):arr.splice(i,1);arr.sort((p,q)=>PLV.indexOf(p)-PLV.indexOf(q));savePlan();renderPlan();return}
   const g=e.target.closest('[data-pg]');if(g){PG=+g.dataset.pg;renderSubj();showPSub('subj');return}
   const s=e.target.closest('[data-psub]');if(s){showPSub(s.dataset.psub);return}
   const sg=e.target.closest('#ppSeg [data-sub]');if(sg)showPSub(sg.dataset.sub)});
+$('#v-prep').addEventListener('change',e=>{
+  const c=e.target.closest('[data-ia4-check]');
+  if(!c)return;
+  IA4Store.setCheck(c.dataset.ia4Title,c.dataset.ia4Check,c.checked);
+  $('#ia4Summary').innerHTML=window.SILLAPA_IA4.renderSummary(IA4Store);
+  $('#ppSync').textContent=IA4Store.info().lastSaved?
+    'เช็กลิสต์บันทึกในเครื่องนี้แล้ว · ไม่ใช่การยืนยันจากเขต':
+    'ไม่สามารถบันทึกในเครื่องได้ กรุณาส่งออกแผนเก็บสำรอง';
+});
 function showPSub(k){$$('#ppSeg button').forEach(x=>x.setAttribute('aria-selected',x.dataset.sub===k));$$('#v-prep .sub').forEach(s=>s.classList.toggle('on',s.id==='psub-'+k));
   const y=$('#ppSeg').getBoundingClientRect().top+scrollY-60;if(scrollY>y)scrollTo(0,y)}
 $('#ppCopy').onclick=async()=>{const s=planText();let ok=false;try{await navigator.clipboard.writeText(s);ok=true}catch(e){const ta=document.createElement('textarea');ta.value=s;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{ok=document.execCommand('copy')}catch(_){}ta.remove()}
   $('#ppCopy').textContent=ok?'คัดลอกแล้ว ✓':'คัดลอกไม่สำเร็จ';setTimeout(()=>$('#ppCopy').textContent='คัดลอกแผน',1800)};
 setSchoolUI();renderPrep();
-(async()=>{if(!window.claude||typeof window.claude.use!=='function')return;
-  const [db,user]=await Promise.all(['db','user'].map(n=>window.claude.use(n).catch(()=>null)));
-  if(!db)return;planDB=db;const uid=user?await user.id():null;
-  if(uid){try{planRef=db.collection('plans').doc(uid)}catch(e){planRef=null}}
-  let first=true;
-  db.collection('plans').onSnapshot(snap=>{
-    PLANS=snap.docs.map(d=>{const x=d.data()||{};const it={};if(x.items&&typeof x.items==='object')for(const [k,v] of Object.entries(x.items)){if(NXI.some(n=>n.t===k))it[k]=Array.isArray(v)?v.filter(l=>PLV.includes(l)):[]}
-      return {id:d.id,school:typeof x.school==='string'?x.school.slice(0,120):'',items:it,at:+x.at||0}});
-    if(first){first=false;const mine=uid&&PLANS.find(p=>p.id===uid);
-      if(mine&&(mine.school||Object.keys(mine.items).length)){PLAN={school:mine.school,items:mine.items};try{localStorage.setItem('plan74',JSON.stringify(PLAN))}catch(e){}setSchoolUI()}
-      else if(planRef&&(PLAN.school||Object.keys(PLAN.items).length))savePlan()}
-    renderPrep()},()=>{planDB=null;planRef=null;renderPrep()});
-})();
+/* IA-4: retired optional undocumented 'claude' collection sync in the public school
+ * workspace. No school plan is sent off-device, no legacy plan74 key is rewritten,
+ * and there is no implicit cross-school cloud synchronization. */
 
 /* ---------- shortcuts ---------- */
 const TI={
