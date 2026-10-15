@@ -12,7 +12,8 @@
     {key:'team_supervisor',label:'ผู้ควบคุมทีมอาจทำหน้าที่กรรมการด้วย'},
     {key:'same_school',label:'โรงเรียนที่เกี่ยวข้องส่งทีมในกิจกรรมเดียวกัน'},
     {key:'schedule_overlap',label:'เวลาจัดกิจกรรมหรือภารกิจอาจซ้อนกัน'},
-    {key:'availability',label:'ยังต้องสอบถามความสะดวกมาปฏิบัติหน้าที่'}
+    {key:'availability',label:'ยังต้องสอบถามความสะดวกมาปฏิบัติหน้าที่'},
+    {key:'venue_capacity',label:'ความจุห้องหรืออุปกรณ์อาจไม่เพียงพอ'}
   ];
   const isObject=x=>x&&typeof x==='object'&&!Array.isArray(x);
   const own=(x,k)=>Object.prototype.hasOwnProperty.call(x,k);
@@ -62,7 +63,7 @@
         for(const [id,p] of Object.entries(raw.plans)){
           const [key,stage,...overflow]=id.split('|');
           if(overflow.length||!allowed.has(key)||!STAGES.includes(stage)||!isObject(p))continue;
-          const clean={judges:sanitizeCount(p.judges),rooms:sanitizeCount(p.rooms),flags:{}};
+          const clean={judges:sanitizeCount(p.judges),rooms:sanitizeCount(p.rooms),capacity:sanitizeCount(p.capacity),flags:{}};
           if(isObject(p.flags))RISKS.forEach(r=>{if(p.flags[r.key]===true)clean.flags[r.key]=true});
           state.plans[id]=clean;
         }
@@ -73,18 +74,19 @@
       try{storage.setItem(KEY,JSON.stringify(state));lastSaved=true;return true}
       catch(_){lastSaved=false;return false}
     }
-    const blank=()=>({judges:null,rooms:null,flags:{}});
+    const blank=()=>({judges:null,rooms:null,capacity:null,flags:{}});
     function get(key,stage){
       if(!allowed.has(key)||!STAGES.includes(stage))return blank();
       const p=state.plans[key+'|'+stage]||blank();
-      return {judges:p.judges,rooms:p.rooms,flags:{...p.flags}};
+      return {judges:p.judges,rooms:p.rooms,capacity:p.capacity,flags:{...p.flags}};
     }
     function set(key,stage,patch){
       if(!allowed.has(key)||!STAGES.includes(stage)||!isObject(patch)||
-        Object.keys(patch).some(k=>!['judges','rooms','risk','checked'].includes(k)))return false;
+        Object.keys(patch).some(k=>!['judges','rooms','capacity','risk','checked'].includes(k)))return false;
       const id=key+'|'+stage,p=get(key,stage);
       if(own(patch,'judges'))p.judges=sanitizeCount(patch.judges);
       if(own(patch,'rooms'))p.rooms=sanitizeCount(patch.rooms);
+      if(own(patch,'capacity'))p.capacity=sanitizeCount(patch.capacity);
       if(own(patch,'risk')){
         if(!RISKS.some(r=>r.key===patch.risk)||typeof patch.checked!=='boolean')return false;
         if(patch.checked)p.flags[patch.risk]=true;else delete p.flags[patch.risk];
@@ -133,12 +135,12 @@
     });
   }
   function exportCSV(rows,store,stage){
-    const header=['ชนิดข้อมูล','ชื่อกิจกรรมในร่าง 74','หมวดกิจกรรม','รหัสชั่วคราว','ระดับแข่งขันเพื่อวางแผน','จำนวนกรรมการคาดการณ์','จำนวนห้องคาดการณ์','ธงให้ตรวจ (ไม่ใช่คำวินิจฉัย)','หลักฐานที่มาของกิจกรรม'];
+    const header=['ชนิดข้อมูล','ชื่อกิจกรรมในร่าง 74','หมวดกิจกรรม','รหัสชั่วคราว','ระดับแข่งขันเพื่อวางแผน','จำนวนกรรมการคาดการณ์','จำนวนห้องคาดการณ์','ความจุคาดการณ์ต่อห้อง (คน)','ธงให้ตรวจ (ไม่ใช่คำวินิจฉัย)','หลักฐานที่มาของกิจกรรม'];
     const cell=v=>{let s=String(v??'');if(/^\s*[=+\-@]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"'};
     const list=[header,...rows.map(f=>{
       const p=store.get(f.key,stage);
       return ['แผนในเครื่องนี้ ไม่ใช่แต่งตั้ง/จัดสนาม',f.draftTitle,f.groupName,f.key,
-        stage==='cluster'?'ระดับกลุ่ม':'ระดับเขต',p.judges??'',p.rooms??'',
+        stage==='cluster'?'ระดับกลุ่ม':'ระดับเขต',p.judges??'',p.rooms??'',p.capacity??'',
         RISKS.filter(r=>p.flags[r.key]).map(r=>r.label).join('; '),
         'ร่างครั้งที่ 74 / อ้างอิง '+f.historyCycle];
     })];
@@ -174,7 +176,8 @@
         '<span class="ia5-status">'+(Object.values(p.flags).some(Boolean)?'มีประเด็นให้ตรวจ':'ยังไม่รับรอง')+'</span></div>'+
         '<p class="ia5-history">ภาพรวมกลุ่มครั้งที่ 73: '+(h?e(h.judges)+' คนเคยเป็นกรรมการ · '+e(h.events)+' รายการ':'— ไม่พบข้อมูลย้อนหลังของกลุ่มที่จับคู่ได้')+' · <b>ไม่ใช่รายชื่อเสนอแต่งตั้ง</b></p>'+
         '<div class="ia5-fields"><label>กรรมการที่คาดว่าต้องเตรียม <small>(แผน)</small><input type="number" min="1" max="999" inputmode="numeric" placeholder="—" data-ia5-field="judges" data-key="'+e(f.key)+'" value="'+(p.judges??'')+'"></label>'+
-        '<label>ห้องที่คาดว่าต้องเตรียม <small>(แผน)</small><input type="number" min="1" max="999" inputmode="numeric" placeholder="—" data-ia5-field="rooms" data-key="'+e(f.key)+'" value="'+(p.rooms??'')+'"></label></div>'+
+        '<label>ห้องที่คาดว่าต้องเตรียม <small>(แผน)</small><input type="number" min="1" max="999" inputmode="numeric" placeholder="—" data-ia5-field="rooms" data-key="'+e(f.key)+'" value="'+(p.rooms??'')+'"></label>'+ 
+        '<label>ความจุที่คาดว่าต้องรองรับ <small>(คน/ห้อง · แผน)</small><input type="number" min="1" max="999" inputmode="numeric" placeholder="—" data-ia5-field="capacity" data-key="'+e(f.key)+'" value="'+(p.capacity??'')+'"></label></div>'+
         '<details class="ia5-risks"><summary>ตรวจประเด็นก่อนเสนอกรรมการ/จัดสนาม <span>'+RISKS.filter(r=>p.flags[r.key]).length+' ข้อที่ทำเครื่องหมาย</span></summary>'+
         '<p>ทำเครื่องหมายเมื่อพบประเด็นที่ต้องตรวจต่อ ไม่ใช่ข้อยุติว่ามีผลประโยชน์ทับซ้อนหรือแต่งตั้งแล้ว</p>'+
         RISKS.map(r=>'<label><input type="checkbox" data-ia5-risk="'+e(r.key)+'" data-key="'+e(f.key)+'"'+(p.flags[r.key]?' checked':'')+'><span>'+e(r.label)+'</span></label>').join('')+'</details>'+
@@ -211,7 +214,7 @@
       '<h2>กรรมการและสนามแข่งขัน</h2><p>ใช้ข้อมูลกรรมการครั้งที่ 73 เพื่อดูรูปแบบย้อนหลัง วางจำนวนคน/ห้องที่คาดว่าจะใช้กับกิจกรรมในร่างครั้งที่ 74 และจดประเด็นที่ต้องตรวจต่อโดยไม่กรอกรายชื่อบุคคล</p></div>'+
       '<p class="ia5-caution">สถานะครั้งที่ 74: <b>ยังไม่มีประกาศแต่งตั้งกรรมการ ตารางสนาม ห้อง ความจุ และช่วงเวลารายกิจกรรมที่รับรอง</b> ช่วง 21–24 ธ.ค. 2569 เป็นกำหนดระดับเขตเบื้องต้น ไม่ใช่วัน/ห้องที่จัดสรรแล้ว</p>'+
       '<div class="ia5-kpis" id="ia5Kpi"></div><p class="ia5-source" id="ia5Source"></p>'+
-      '<section class="ia5-work"><div class="ia5-work-title"><h3>โต๊ะวางแผนกำลังคนและสนาม</h3><p>จำนวนที่กรอกเป็น <b>ประมาณการในเครื่อง</b> เท่านั้น ไม่ใช่จำนวนที่ผู้จัดรับรอง</p></div>'+
+      '<section class="ia5-work"><div class="ia5-work-title"><h3>โต๊ะวางแผนกำลังคนและสนาม</h3><p>จำนวนที่กรอกเป็น <b>ประมาณการในเครื่อง</b> เท่านั้น ไม่ใช่จำนวนที่ผู้จัดรับรอง การเลือกระดับกลุ่ม/เขตไม่ใช่การยืนยันว่ารายการนั้นเปิดแข่งขันในระดับดังกล่าว</p></div>'+
       '<div class="ia5-controls"><label>ระดับแข่งขันที่กำลังวางแผน<select id="ia5Stage">'+option('district','ระดับเขต')+option('cluster','ระดับกลุ่มเครือข่าย')+'</select></label>'+
       '<label>กลุ่มกิจกรรม<select id="ia5Group">'+option('all','ทุกกลุ่ม')+
       [...new Set(families.map(f=>f.groupName))].map(g=>option(g,g)).join('')+'</select></label>'+
