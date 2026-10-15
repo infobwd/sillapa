@@ -24,8 +24,10 @@ assert.ok(!draftCSV.includes('สมมติ กรรมการ'));
 const coverage=()=>({activities:'complete',obligations:'complete',teams:'complete',
  judges:'complete',venues:'complete',issues:'complete'});
 const stage=stage_scope=>({
- stage_scope,coverage:coverage(),activities_confirmed:20,
- obligations_required:10,obligations_submitted:6,obligations_verified:4,
+ stage_scope,coverage:stage_scope==='cluster'?{...coverage(),obligations:'missing'}:coverage(),activities_confirmed:20,
+ obligations_required:stage_scope==='cluster'?null:10,
+ obligations_submitted:stage_scope==='cluster'?null:6,
+ obligations_verified:stage_scope==='cluster'?null:4,
  teams_verified:14,judges_required:30,judges_available:33,
  venues_required:6,venues_confirmed:3,issues_open:2
 });
@@ -39,6 +41,10 @@ const published={
 };
 const assertBad=release=>assert.equal(validateRelease(release).ok,false,'reject invalid authorized release');
 assert.equal(validateRelease(published).ok,true);
+assert.equal(validateRelease({...published,stage_summaries:[{
+ ...stage('cluster'),coverage:coverage(),obligations_required:5,
+ obligations_submitted:3,obligations_verified:2
+}]}).ok,false,'cluster rows must never create a district representative obligation');
 assert.equal(validateRelease({...published,stage_summaries:[stage('district')]}).ok,true,'single scoped release permitted');
 assert.equal(validateRelease({...published,stage_summaries:[stage('cluster'),stage('cluster')]}).ok,false);
 for(const mutation of [
