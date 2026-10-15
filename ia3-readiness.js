@@ -12,9 +12,9 @@
   const SUBMISSION = ['not_started', 'drafting', 'submitted'];
   const REVIEW = ['not_reviewed', 'pending', 'needs_revision', 'verified', 'locked'];
   const LABEL = {
-    not_started:'ยังไม่เริ่มดำเนินการ', drafting:'กำลังเตรียมข้อมูล',
-    submitted:'ส่งข้อมูลแล้ว', not_reviewed:'ยังไม่รับตรวจ',
-    pending:'รอตรวจสอบ', needs_revision:'ต้องแก้ไข',
+    not_started:'ยังไม่เริ่มเตรียมงาน', drafting:'กำลังเตรียมข้อมูล',
+    submitted:'กลุ่มส่งข้อมูลแล้ว', not_reviewed:'ยังไม่ได้ส่งให้ตรวจ',
+    pending:'รอเขตตรวจสอบ', needs_revision:'ต้องแก้ไข',
     verified:'ตรวจสอบแล้ว', locked:'ยืนยันเรียบร้อยแล้ว',
     representative_only:'ส่งตัวแทนจากกลุ่ม',
     open:'สมัครตรงตามระดับที่เปิด',
@@ -85,7 +85,7 @@
         return fail('ข้อมูลการส่งตัวแทนไม่ถูกต้อง');
       if (r.obligation_state === 'required' && (r.stage_scope !== 'district' ||
           ['closed','open'].includes(policyOf.get(activityKey(r.activity_id,r.stage_scope)))))
-        return fail('ข้อมูลภาระส่งตัวแทนขัดกับนโยบายกิจกรรม');
+        return fail('ข้อมูลเรื่องการส่งตัวแทนไม่ตรงกับกติกาการแข่งขัน');
       if ((reviewed(r) && !isTime(r.verified_at)) ||
           (r.qualified_teams !== null && (!reviewed(r) || r.obligation_state !== 'required')))
         return fail('ข้อมูลทีมผ่านเกณฑ์ยังไม่ได้รับรองหรือไม่มีเวลาตรวจรับ');
@@ -160,24 +160,24 @@
   function makeTemplate() {
     const tiles = [
       ['confirmedActivities','รายการแข่งขันยืนยันจัด','รายการย่อยระดับเขตที่อนุมัติ'],
-      ['requiredGroups','กลุ่มที่มีหน้าที่ส่งตัวแทน','กลุ่มที่มีภาระตามกิจกรรม'],
+      ['requiredGroups','กลุ่มที่ต้องส่งตัวแทน','นับเฉพาะกลุ่มและกิจกรรมที่ต้องส่งตัวแทนตามเกณฑ์'],
       ['submittedGroups','กลุ่มที่ส่งข้อมูลครบแล้ว','ต้องส่งครบทุกกิจกรรมที่รับผิดชอบ'],
-      ['verifiedRecords','ข้อมูลที่เขตตรวจสอบแล้ว','นับเป็นคู่กิจกรรม–กลุ่ม'],
-      ['qualifiedTeams','ทีมผ่านเกณฑ์เข้าระดับเขต','จำนวนทีมที่รับรองในข้อมูลสาธารณะ'],
+      ['verifiedRecords','ข้อมูลที่เขตตรวจแล้ว','นับแต่ละกิจกรรมของแต่ละกลุ่มที่ตรวจแล้ว'],
+      ['qualifiedTeams','ทีมที่ได้รับสิทธิ์แข่งระดับเขต','นับเฉพาะทีมที่เขตรับรองแล้ว'],
       ['openIssues','ประเด็นที่ต้องติดตาม','เฉพาะประเด็นที่อนุมัติให้เผยแพร่']
     ];
-    return '<div class="ia3-head"><span class="ia-eyebrow">IA-3 · ความพร้อมครั้งที่ 74</span><h2>ติดตามการเตรียมงานระดับเขต</h2>'+
-      '<p>แยกข้อมูลการวางแผน การส่งตัวแทน และการตรวจรับออกจากกัน ไม่ใช่ระบบรับสมัครหรือรายงานผลการแข่งขัน</p></div>'+
+    return '<div class="ia3-head"><span class="ia-eyebrow">ความพร้อมการจัดการแข่งขันครั้งที่ 74</span><h2>ติดตามความพร้อมของกลุ่มเครือข่ายและเขตพื้นที่</h2>'+
+      '<p>แยกข้อมูลการวางแผน การส่งตัวแทน และการตรวจสอบของเขตออกจากกัน ไม่ใช่ระบบรับสมัครหรือรายงานผลการแข่งขัน</p></div>'+
       '<div class="ia3-source" id="ia3Source" role="status" aria-live="polite"></div>'+
       '<div class="ia3-kpis" id="ia3Kpis">'+tiles.map(([k,t,s])=>
-        '<article class="ia3-kpi"><span>'+t+'</span><strong data-kpi="'+k+'">—</strong><small>'+s+'</small><em class="ia3-kpi-source" data-kpi-source="'+k+'">แหล่งข้อมูล: — · ยืนยัน: — · เวลา: —</em></article>').join('')+'</div>'+
-      '<div class="ia3-section-head"><h3>ความพร้อมรายกลุ่มเครือข่าย</h3><small>แสดงข้อมูลเฉพาะที่อนุมัติเผยแพร่</small></div>'+
+        '<article class="ia3-kpi"><span>'+t+'</span><strong data-kpi="'+k+'">—</strong><small>'+s+'</small><em class="ia3-kpi-source" data-kpi-source="'+k+'">ข้อมูลจาก: ยังไม่ประกาศ · วันที่ตรวจสอบ: —</em></article>').join('')+'</div>'+
+      '<div class="ia3-section-head"><h3>กลุ่มเครือข่ายส่งข้อมูลถึงขั้นตอนไหนแล้ว</h3><small>แสดงเฉพาะข้อมูลที่เขตอนุญาตให้แสดง</small></div>'+
       '<div class="ia3-filters" id="ia3Filters">'+
       '<label>กลุ่มเครือข่าย<select id="ia3Cluster"><option value="all">ทุกกลุ่ม</option></select></label>'+
       '<label>หมวดหมู่<select id="ia3Category"><option value="all">ทุกหมวด</option></select></label>'+ 
       '<label>กิจกรรม<select id="ia3Activity"><option value="all">ทุกกิจกรรม</option></select></label>'+
       '<label>ระดับการแข่งขัน<select id="ia3Stage">'+option('all','ทุกระดับ')+option('district','ระดับเขต')+option('cluster','ระดับกลุ่ม')+'</select></label>'+
-      '<label>สถานะข้อมูล<select id="ia3Status">'+option('all','ทุกสถานะ')+
+      '<label>ขั้นตอนการดำเนินงาน<select id="ia3Status">'+option('all','ทุกสถานะ')+
          [...new Set([...PLANNING,...SUBMISSION,...REVIEW])].map(v=>option(v,LABEL[v])).join('')+'</select></label></div>'+
       '<div id="ia3Result" class="ia3-result" role="status" aria-live="polite"></div>'+
       '<div id="ia3Rows" class="ia3-rows"></div>'+
@@ -186,7 +186,7 @@
       '<div class="ia3-section-head"><h3>กำหนดการสำหรับวางแผน</h3></div>'+
       '<div class="ia3-schedule"><p><b>4 ธ.ค. 2569</b> · กำหนดส่งข้อมูลตัวแทนจากกลุ่มสู่เขต ไม่ใช่วันปิดรับสมัครทุกกิจกรรม</p>'+
       '<p><b>21–24 ธ.ค. 2569</b> · ช่วงแข่งขันระดับเขตเบื้องต้น รอประกาศยืนยันจริง</p></div>'+
-      '<p class="ia3-caution">แหล่งอ้างอิง: ระบบแข่งขันหลัก AcademicCompetitionManager (ยังไม่มีชุดเผยแพร่ที่อนุมัติ) · ข้อมูลย้อนหลังครั้งที่ 73 ไม่ใช่ความพร้อมครั้งที่ 74</p>';
+      '<p class="ia3-caution">ข้อมูลอย่างเป็นทางการต้องมาจากระบบจัดการแข่งขันของเขต (ยังไม่ได้รับอนุญาตให้แสดง) · ข้อมูลย้อนหลังครั้งที่ 73 ไม่ใช่ความพร้อมครั้งที่ 74</p>';
   }
   function mount(args) {
     if (typeof document === 'undefined') return false;
@@ -212,13 +212,13 @@
       const offline = typeof navigator !== 'undefined' && navigator.onLine === false;
       if (!approved) {
         source.textContent = snap ?
-          'ข้อผิดพลาดข้อมูล: ชุดเผยแพร่ไม่ผ่านการตรวจสอบ ('+validation.reason+')' :
-          (offline?'ออฟไลน์ · ':'')+'ยังไม่มีชุดข้อมูลความพร้อมครั้งที่ 74 ที่อนุมัติเผยแพร่ · แหล่งข้อมูล: AcademicCompetitionManager · ปรับปรุงล่าสุด: —';
-        rows.innerHTML = '<div class="ia3-empty"><b>ยังไม่มีข้อมูลความพร้อมที่ยืนยันแล้ว</b><p>ข้อมูลกลุ่มที่ส่งแล้ว การตรวจรับ และยอดทีมจะแสดงเมื่อมีชุดข้อมูลสาธารณะที่ได้รับอนุมัติเท่านั้น ไม่ใช้สถิติครั้งที่ 73 แทน</p></div>';
-        issues.innerHTML = '<div class="ia3-empty"><b>ยังไม่มีข้อมูลประเด็นที่เผยแพร่ได้</b><p>ไม่ถือว่าปัญหาเป็นศูนย์จนกว่าจะตรวจสอบข้อมูลครบ</p></div>';
-        pick('ia3Result').textContent='ยังไม่มีรายการที่ตรวจสอบได้';
+          'ข้อผิดพลาดข้อมูล: ข้อมูลที่ได้รับมายังไม่ผ่านการตรวจสอบ ('+validation.reason+')' :
+          (offline?'ออฟไลน์ · ':'')+'ยังไม่มีข้อมูลการส่งงานและความพร้อมครั้งที่ 74 ที่เขตรับรองให้แสดง · วันที่อัปเดต: —';
+        rows.innerHTML = '<div class="ia3-empty"><b>ยังไม่มีข้อมูลความพร้อมที่ยืนยันแล้ว</b><p>เมื่อเขตตรวจและอนุญาตให้เผยแพร่แล้ว จึงจะแสดงว่ากลุ่มใดส่งแล้ว ตรวจผ่านหรือยัง และมีทีมกี่ทีม ขณะนี้ยังไม่ใช้ตัวเลขครั้งที่ 73 แทนข้อมูลครั้งที่ 74</p></div>';
+        issues.innerHTML = '<div class="ia3-empty"><b>ยังไม่มีเรื่องที่ต้องติดตามซึ่งเขตอนุญาตให้แสดง</b><p>ยังบอกไม่ได้ว่าไม่มีปัญหา เพราะยังไม่มีข้อมูลที่ตรวจครบ</p></div>';
+        pick('ia3Result').textContent='ยังไม่มีข้อมูลที่เขตยืนยัน';
         el.querySelectorAll('[data-kpi]').forEach(x=>x.textContent=UNKNOWN);
-        el.querySelectorAll('[data-kpi-source]').forEach(x=>x.textContent='แหล่งข้อมูล: — · ยืนยัน: — · เวลา: —');
+        el.querySelectorAll('[data-kpi-source]').forEach(x=>x.textContent='ข้อมูลจาก: ยังไม่ประกาศ · วันที่ตรวจสอบ: —');
         el.querySelectorAll('select').forEach(x=>x.disabled=true);
         return;
       }
@@ -236,7 +236,7 @@
       });
       pick('ia3Result').textContent = 'รายการที่ตรงตัวกรอง '+model.rows.length.toLocaleString('th-TH')+' รายการ (ข้อมูลที่เผยแพร่)';
       if (!model.rows.length) {
-        rows.innerHTML='<div class="ia3-empty"><b>ไม่มีรายการในตัวกรองนี้</b><p>ไม่ใช่หลักฐานว่ากลุ่มหรือกิจกรรมไม่มีหน้าที่ส่งตัวแทน โปรดตรวจขอบเขตชุดข้อมูล</p></div>';
+        rows.innerHTML='<div class="ia3-empty"><b>ไม่มีรายการในตัวกรองนี้</b><p>ไม่พบรายการตามที่เลือก แต่ยังสรุปไม่ได้ว่ากลุ่มนั้นไม่ต้องส่งตัวแทน</p></div>';
       } else {
         const names=new Map(snap.clusters.map(g=>[g.cluster_id,g.label]));
         const acts=new Map(snap.activity_catalog.map(a=>[activityKey(a.activity_id,a.stage_scope),a]));
@@ -246,22 +246,22 @@
             stage:escapeHTML(r.stage_scope==='district'?'เขตพื้นที่':'กลุ่มเครือข่าย'),
             policy:escapeHTML(LABEL[a.competition_mode]),planning:escapeHTML(LABEL[r.planning_state]||'ยังไม่มีข้อมูลยืนยัน'),submission:escapeHTML(LABEL[r.submission_state]||'ยังไม่มีข้อมูลยืนยัน'),
             review:escapeHTML(LABEL[r.verification_state]||'ยังไม่มีข้อมูลยืนยัน'),
-            qualification:escapeHTML(r.obligation_state==='required'?'ต้องส่งตัวแทน':'ไม่ต้องส่งตัวแทน'),
+            qualification:escapeHTML(r.obligation_state==='required'?'ต้องส่งตัวแทน':'ไม่ต้องส่งตัวแทนตามข้อมูลที่รับรอง'),
             teams:num(r.qualified_teams),date:escapeHTML(fmtDate(r.source_as_of))};
         });
         rows.innerHTML='<div class="ia3-table-wrap"><table class="ia3-table"><thead><tr>'+
-          ['กลุ่มเครือข่าย','กิจกรรม','ระดับ','นโยบาย','ภาระส่งตัวแทน','การเตรียม','การส่ง','การตรวจรับ','ทีมผ่านเกณฑ์','ข้อมูล ณ'].map(s=>'<th>'+s+'</th>').join('')+
+          ['กลุ่มเครือข่าย','กิจกรรม','ระดับ','นโยบาย','ต้องส่งตัวแทนหรือไม่','การเตรียม','การส่ง','การตรวจรับ','ทีมผ่านเกณฑ์','ข้อมูล ณ'].map(s=>'<th>'+s+'</th>').join('')+
           '</tr></thead><tbody>'+values.map(v=>'<tr>'+[v.group,v.activity,v.stage,v.policy,v.qualification,v.planning,v.submission,v.review,v.teams,v.date].map(s=>'<td>'+s+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>'+
           '<div class="ia3-mobile-rows">'+values.map(v=>'<article class="ia3-row-card"><h4>'+v.group+'</h4>'+
           '<p>'+v.activity+'</p><dl><div><dt>ระดับ</dt><dd>'+v.stage+'</dd></div><div><dt>นโยบาย</dt><dd>'+v.policy+'</dd></div>'+
-          '<div><dt>ภาระ</dt><dd>'+v.qualification+'</dd></div>'+
+          '<div><dt>ต้องส่งตัวแทนหรือไม่</dt><dd>'+v.qualification+'</dd></div>'+
           '<div><dt>การเตรียม</dt><dd>'+v.planning+'</dd></div><div><dt>ส่งข้อมูล</dt><dd>'+v.submission+'</dd></div><div><dt>การตรวจรับ</dt><dd>'+v.review+'</dd></div>'+
           '<div><dt>ทีมผ่านเกณฑ์</dt><dd>'+v.teams+'</dd></div><div><dt>ข้อมูล ณ</dt><dd>'+v.date+'</dd></div></dl></article>').join('')+'</div>';
       }
       issues.innerHTML=model.issues.length?'<ul>'+model.issues.map(i=>'<li><b>'+escapeHTML(i.title)+
         '</b><small>กิจกรรม '+escapeHTML(i.activity_id)+' · ระดับ '+escapeHTML(i.stage_scope==='district'?'เขตพื้นที่':'กลุ่มเครือข่าย')+' · แหล่ง '+escapeHTML(i.source_reference)+'</small></li>').join('')+'</ul>':
         '<div class="ia3-empty"><b>ไม่มีประเด็นที่เผยแพร่ในตัวกรองนี้</b><p>'+
-        (snap.coverage.issues==='complete'?'ตรวจสอบครบตามขอบเขตชุดข้อมูล':'ข้อมูลประเด็นยังไม่ครบ ไม่สามารถยืนยันว่าไม่มีประเด็น')+'</p></div>';
+        (snap.coverage.issues==='complete'?'ข้อมูลส่วนนี้ได้รับการตรวจครบแล้ว':'ข้อมูลยังไม่ครบ จึงยังบอกไม่ได้ว่าไม่มีเรื่องต้องติดตาม')+'</p></div>';
     }
     ['Cluster','Category','Activity','Stage','Status'].forEach(name=>{
       pick('ia3'+name).addEventListener('change',e=>{filters[name.toLowerCase()]=e.target.value;draw();});

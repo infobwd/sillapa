@@ -137,14 +137,14 @@
     });
   }
   function exportCSV(rows,store,stage){
-    const header=['ชนิดข้อมูล','ชื่อกิจกรรมในร่าง 74','หมวดกิจกรรม','รหัสชั่วคราว','ระดับแข่งขันเพื่อวางแผน','จำนวนกรรมการคาดการณ์','จำนวนห้องคาดการณ์','ความจุคาดการณ์ต่อห้อง (คน)','ธงให้ตรวจ (ไม่ใช่คำวินิจฉัย)','หลักฐานที่มาของกิจกรรม'];
+    const header=['ชนิดข้อมูล','ชื่อกิจกรรมในร่าง 74','หมวดกิจกรรม','รหัสชั่วคราว','ระดับแข่งขันเพื่อวางแผน','จำนวนกรรมการที่คาดว่าต้องใช้','จำนวนห้องที่คาดว่าต้องใช้','จำนวนคนที่คาดว่ารองรับได้ต่อห้อง','เรื่องที่ต้องตรวจเพิ่ม (ยังไม่ได้สรุปผล)','หลักฐานที่มาของกิจกรรม'];
     const cell=v=>{let s=String(v??'');if(/^\s*[=+\-@]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"'};
     const list=[header,...rows.map(f=>{
       const p=store.get(f.key,stage);
       return ['แผนในเครื่องนี้ ไม่ใช่แต่งตั้ง/จัดสนาม',f.draftTitle,f.groupName,f.key,
         stage==='cluster'?'ระดับกลุ่ม':'ระดับเขต',p.judges??'',p.rooms??'',p.capacity??'',
         RISKS.filter(r=>p.flags[r.key]).map(r=>r.label).join('; '),
-        'ร่างครั้งที่ 74 / อ้างอิง '+f.historyCycle];
+        'แผนครั้งที่ 74 / '+(f.historyCycle==='unresolved'?'ยังเทียบรายการเดิมไม่ได้':'ใช้รายการครั้งที่ '+f.historyCycle+' เทียบ')];
     })];
     return '\ufeff'+list.map(r=>r.map(cell).join(',')).join('\r\n');
   }
@@ -156,32 +156,32 @@
     const known=ctx.historyByGroup;
     const sg=store.info();
     root.querySelector('#ia5Kpi').innerHTML=[
-      ['กิจกรรมในร่าง 74',families.length+'','ข้อมูลร่าง ไม่ใช่รายการยืนยัน'],
+      ['กิจกรรมในร่าง 74',families.length+'','รายการที่กำลังวางแผน ยังไม่ประกาศยืนยัน'],
       ['กรรมการแต่งตั้งจริง ครั้งที่ 74','—','ยังไม่มีข้อมูลประกาศที่ได้รับอนุมัติ'],
       ['สนาม/ห้องที่ยืนยันแล้ว ครั้งที่ 74','—','ยังไม่มีตารางจัดสนามที่ยืนยัน'],
-      ['ระบุประมาณการกรรมการ · '+(stage==='cluster'?'ระดับกลุ่ม':'ระดับเขต'),tot.judgeKnown+'/'+tot.activities,'แผนในเครื่องนี้เท่านั้น'],
-      ['กรรมการคาดการณ์ (รวม)',count(tot.judges),tot.judges===null?'ยังกรอกไม่ครบทุกกิจกรรมในร่าง':'รวมร่างในเครื่องนี้ ไม่ใช่ยอดที่อนุมัติ'],
-      ['ห้องคาดการณ์ (รวม)',count(tot.rooms),tot.rooms===null?'ยังกรอกไม่ครบทุกกิจกรรมในร่าง':'รวมร่างในเครื่องนี้ ไม่ใช่ห้องที่จัดสรรจริง']
+      ['กิจกรรมที่กรอกจำนวนกรรมการแล้ว · '+(stage==='cluster'?'ระดับกลุ่ม':'ระดับเขต'),tot.judgeKnown+'/'+tot.activities,'แผนในเครื่องนี้เท่านั้น'],
+      ['รวมกรรมการที่คาดว่าต้องใช้',count(tot.judges),tot.judges===null?'ยังกรอกไม่ครบทุกกิจกรรมที่วางแผน':'รวมร่างในเครื่องนี้ ไม่ใช่ยอดที่อนุมัติ'],
+      ['รวมห้องที่คาดว่าต้องใช้',count(tot.rooms),tot.rooms===null?'ยังกรอกไม่ครบทุกกิจกรรมที่วางแผน':'รวมร่างในเครื่องนี้ ไม่ใช่ห้องที่จัดสรรจริง']
     ].map(t=>'<div class="ia5-kpi"><small>'+e(t[0])+'</small><strong>'+e(t[1])+'</strong><span>'+e(t[2])+'</span></div>').join('');
     root.querySelector('#ia5Source').textContent=
-      'แหล่งข้อมูล: ร่างกิจกรรมครั้งที่ 74 (IA-2) + ภาพรวมกรรมการครั้งที่ 73 จากข้อมูลย้อนหลังที่มีอยู่ในเว็บ · ไม่ใช่คำสั่งแต่งตั้งครั้งที่ 74';
+      'ข้อมูลจาก: รายการที่กำลังวางแผนสำหรับครั้งที่ 74 และจำนวนกรรมการที่เคยทำหน้าที่ครั้งที่ 73 · ไม่ใช่รายชื่อแต่งตั้งครั้งที่ 74';
     root.querySelector('#ia5Local').textContent=sg.lastSaved
-      ?'แผนประมาณการในเบราว์เซอร์เครื่องนี้เท่านั้น · ไม่ส่งไปยังระบบแข่งขันหลัก · การสลับระดับกลุ่ม/เขตเก็บแยก'
+      ?'ตัวเลขที่กรอกเก็บในอุปกรณ์นี้เท่านั้น ไม่ส่งให้เขตหรือระบบแข่งขัน · แผนระดับกลุ่มและระดับเขตแยกกัน'
       :'บันทึกแผนในเครื่องไม่สำเร็จ · โปรดส่งออก CSV เก็บสำรอง (ข้อมูลที่เห็นอาจหายเมื่อรีเฟรช)';
     root.querySelector('#ia5Local').setAttribute('role',sg.lastSaved?'note':'alert');
-    root.querySelector('#ia5Found').textContent='แสดง '+visible.length+' จาก '+families.length+' กิจกรรมในร่าง · '+(stage==='cluster'?'ระดับกลุ่ม':'ระดับเขต')+' (แผนเฉพาะเครื่อง)';
+    root.querySelector('#ia5Found').textContent='แสดง '+visible.length+' จาก '+families.length+' กลุ่มกิจกรรมที่กำลังวางแผน · '+(stage==='cluster'?'ระดับกลุ่ม':'ระดับเขต')+' (แผนเฉพาะเครื่อง)';
     const shown=visible.slice(0,filters.limit);
     root.querySelector('#ia5Rows').innerHTML=shown.length?shown.map(f=>{
       const p=store.get(f.key,stage),h=known.get(f.groupName);
       return '<article class="ia5-row" data-family="'+e(f.key)+'">'+
         '<div class="ia5-row-head"><div><strong>'+e(f.draftTitle)+'</strong><small>'+e(f.groupName)+' · '+e(f.key)+' (รหัสในร่าง) · อ้างอิง '+e(f.historyCycle==='unresolved'?'ยังไม่มีข้อมูลตรงตัว': 'ครั้งที่ '+f.historyCycle)+'</small></div>'+
-        '<span class="ia5-status">'+(Object.values(p.flags).some(Boolean)?'มีประเด็นให้ตรวจ':'ยังไม่รับรอง')+'</span></div>'+
+        '<span class="ia5-status">'+(Object.values(p.flags).some(Boolean)?'มีเรื่องต้องตรวจเพิ่ม':'ยังไม่รับรอง')+'</span></div>'+
         '<p class="ia5-history">ภาพรวมกลุ่มครั้งที่ 73: '+(h?e(h.judges)+' คนเคยเป็นกรรมการ · '+e(h.events)+' รายการ':'— ไม่พบข้อมูลย้อนหลังของกลุ่มที่จับคู่ได้')+' · <b>ไม่ใช่รายชื่อเสนอแต่งตั้ง</b></p>'+
         '<div class="ia5-fields"><label>กรรมการที่คาดว่าต้องเตรียม <small>(แผน)</small><input type="number" min="1" max="999" inputmode="numeric" placeholder="—" data-ia5-field="judges" data-key="'+e(f.key)+'" value="'+(p.judges??'')+'"></label>'+
         '<label>ห้องที่คาดว่าต้องเตรียม <small>(แผน)</small><input type="number" min="1" max="999" inputmode="numeric" placeholder="—" data-ia5-field="rooms" data-key="'+e(f.key)+'" value="'+(p.rooms??'')+'"></label>'+ 
         '<label>ความจุที่คาดว่าต้องรองรับ <small>(คน/ห้อง · แผน)</small><input type="number" min="1" max="999" inputmode="numeric" placeholder="—" data-ia5-field="capacity" data-key="'+e(f.key)+'" value="'+(p.capacity??'')+'"></label></div>'+
-        '<details class="ia5-risks"><summary>ตรวจประเด็นก่อนเสนอกรรมการ/จัดสนาม <span>'+RISKS.filter(r=>p.flags[r.key]).length+' ข้อที่ทำเครื่องหมาย</span></summary>'+
-        '<p>ทำเครื่องหมายเมื่อพบประเด็นที่ต้องตรวจต่อ ไม่ใช่ข้อยุติว่ามีผลประโยชน์ทับซ้อนหรือแต่งตั้งแล้ว</p>'+
+        '<details class="ia5-risks"><summary>ตรวจสิ่งที่อาจมีปัญหาก่อนจัดกรรมการและสนาม <span>'+RISKS.filter(r=>p.flags[r.key]).length+' ข้อที่ทำเครื่องหมาย</span></summary>'+
+        '<p>ติ๊กเมื่อมีเรื่องต้องตรวจเพิ่มเติม เช่น กรรมการอาจเป็นผู้ควบคุมทีมด้วย การติ๊กไม่ได้แปลว่าบุคคลนั้นทำผิดหรือได้รับแต่งตั้งแล้ว</p>'+
         RISKS.map(r=>'<label><input type="checkbox" data-ia5-risk="'+e(r.key)+'" data-key="'+e(f.key)+'"'+(p.flags[r.key]?' checked':'')+'><span>'+e(r.label)+'</span></label>').join('')+'</details>'+
         '</article>';
     }).join(''):'<p class="ia5-empty">ไม่พบกิจกรรมตามตัวกรอง · ลองเลือกกลุ่มอื่นหรือกดล้างตัวกรอง</p>';
@@ -212,29 +212,29 @@
     }}
     const store=makeStore(storage,families),ctx={families,historical,historyByGroup,store};
     const filters={stage:'district',group:'all',risk:'all',query:'',limit:12};
-    root.innerHTML='<div class="ia5-lead"><p class="ia5-chip">IA-5 · เครื่องมือช่วยเตรียมงาน ไม่ใช่คำสั่งแต่งตั้ง</p>'+
+    root.innerHTML='<div class="ia5-lead"><p class="ia5-chip">วางแผนก่อนประกาศแต่งตั้ง · ยังไม่ใช่ข้อมูลทางการ</p>'+
       '<h2>กรรมการและสนามแข่งขัน</h2><p>ใช้ข้อมูลกรรมการครั้งที่ 73 เพื่อดูรูปแบบย้อนหลัง วางจำนวนคน/ห้องที่คาดว่าจะใช้กับกิจกรรมในร่างครั้งที่ 74 และจดประเด็นที่ต้องตรวจต่อโดยไม่กรอกรายชื่อบุคคล</p></div>'+
       '<p class="ia5-caution">สถานะครั้งที่ 74: <b>ยังไม่มีประกาศแต่งตั้งกรรมการ ตารางสนาม ห้อง ความจุ และช่วงเวลารายกิจกรรมที่รับรอง</b> ช่วง 21–24 ธ.ค. 2569 เป็นกำหนดระดับเขตเบื้องต้น ไม่ใช่วัน/ห้องที่จัดสรรแล้ว</p>'+
       '<div class="ia5-kpis" id="ia5Kpi"></div><p class="ia5-source" id="ia5Source"></p>'+
-      '<section class="ia5-work"><div class="ia5-work-title"><h3>โต๊ะวางแผนกำลังคนและสนาม</h3><p>จำนวนที่กรอกเป็น <b>ประมาณการในเครื่อง</b> เท่านั้น ไม่ใช่จำนวนที่ผู้จัดรับรอง การเลือกระดับกลุ่ม/เขตไม่ใช่การยืนยันว่ารายการนั้นเปิดแข่งขันในระดับดังกล่าว</p></div>'+
-      '<div class="ia5-controls"><label>ระดับแข่งขันที่กำลังวางแผน<select id="ia5Stage">'+option('district','ระดับเขต')+option('cluster','ระดับกลุ่มเครือข่าย')+'</select></label>'+
+      '<section class="ia5-work"><div class="ia5-work-title"><h3>วางแผนจำนวนกรรมการและห้องแข่งขัน</h3><p>จำนวนที่กรอกเป็น <b>ประมาณการในเครื่อง</b> เท่านั้น ไม่ใช่จำนวนที่ผู้จัดรับรอง การเลือกระดับกลุ่ม/เขตไม่ใช่การยืนยันว่ารายการนั้นเปิดแข่งขันในระดับดังกล่าว</p></div>'+
+      '<div class="ia5-controls"><label>เลือกระดับที่ต้องการวางแผน<select id="ia5Stage">'+option('district','ระดับเขต')+option('cluster','ระดับกลุ่มเครือข่าย')+'</select></label>'+
       '<label>กลุ่มกิจกรรม<select id="ia5Group">'+option('all','ทุกกลุ่ม')+
       [...new Set(families.map(f=>f.groupName))].map(g=>option(g,g)).join('')+'</select></label>'+
-      '<label>รายการที่ต้องดู<select id="ia5Risk">'+option('all','ทั้งหมด')+option('attention','มีธงประเด็นที่ต้องตรวจ')+
-      option('pending','ยังไม่ได้ใส่ประมาณการครบ')+'</select></label>'+
+      '<label>แสดงกิจกรรม<select id="ia5Risk">'+option('all','ทั้งหมด')+option('attention','มีเรื่องที่ต้องตรวจเพิ่ม')+
+      option('pending','ยังกรอกจำนวนคนหรือห้องไม่ครบ')+'</select></label>'+
       '<label>ค้นหากิจกรรม<input id="ia5Query" type="search" placeholder="ชื่อกิจกรรมหรือหมวด"></label></div>'+
       '<div class="ia5-actions"><button type="button" id="ia5Reset">ล้างตัวกรอง</button>'+
-      '<button type="button" id="ia5Export">ส่งออกแผน CSV (ไม่รวมข้อมูลบุคคล)</button></div>'+
+      '<button type="button" id="ia5Export">บันทึกแผนเป็นไฟล์ CSV (ไม่มีข้อมูลส่วนบุคคล)</button></div>'+
       '<p class="ia5-local" id="ia5Local" aria-live="polite"></p><p class="ia5-found" id="ia5Found"></p>'+
       '<div id="ia5Rows" class="ia5-list"></div><button class="ia5-more" id="ia5More" type="button" hidden>ดูเพิ่ม</button></section>'+
-      '<section class="ia5-historical"><h3>ภาพรวมอ้างอิงครั้งที่ 73 เทียบรายการในร่างครั้งที่ 74</h3>'+
+      '<section class="ia5-historical"><h3>ดูจำนวนกรรมการครั้งที่ 73 เพื่อช่วยวางแผนครั้งที่ 74</h3>'+
       '<p>นับกรรมการไม่ซ้ำภายในกลุ่มในครั้งที่ 73 เท่านั้น คนเดียวอาจอยู่หลายกลุ่ม จึงไม่ควรรวมคอลัมน์นี้ข้ามกลุ่มเป็นจำนวนคนทั้งหมด สัญญาณโรงเรียนร่วมแข่งขันในครั้งที่ 73 เป็นเพียงเรื่องควรตรวจ ไม่ใช่คำวินิจฉัยความขัดแย้งหรือฐานการแต่งตั้งครั้งที่ 74</p>'+
-      '<div class="ia5-table-wrap"><table><thead><tr><th scope="col">กลุ่มกิจกรรม</th><th scope="col">กิจกรรมในร่าง 74</th><th scope="col">รายการแข่ง 73 ที่มีกรรมการ</th><th scope="col">กรรมการในกลุ่ม 73</th><th scope="col">ตำแหน่ง 73</th><th scope="col">สัญญาณโรงเรียนร่วมแข่ง 73</th><th scope="col">แต่งตั้งจริง 74</th><th scope="col">สนามยืนยัน 74</th></tr></thead>'+
+      '<div class="ia5-table-wrap"><table><thead><tr><th scope="col">กลุ่มกิจกรรม</th><th scope="col">กิจกรรมในร่าง 74</th><th scope="col">รายการแข่ง 73 ที่มีกรรมการ</th><th scope="col">กรรมการในกลุ่ม 73</th><th scope="col">ตำแหน่ง 73</th><th scope="col">กรณีโรงเรียนของกรรมการส่งแข่งขันครั้งที่ 73</th><th scope="col">แต่งตั้งจริง 74</th><th scope="col">สนามยืนยัน 74</th></tr></thead>'+
       '<tbody id="ia5HistoricRows"></tbody></table></div></section>'+
-      '<section class="ia5-next"><h3>เงื่อนไขก่อนแต่งตั้งและจัดสนามจริง</h3>'+
+      '<section class="ia5-next"><h3>เรื่องที่ต้องตรวจให้ครบก่อนประกาศกรรมการและสนาม</h3>'+
       '<p>ตรวจผู้ควบคุมทีม, โรงเรียนที่ส่งแข่งขัน, ภาระซ้อน/วันเวลา, ความพร้อมมาปฏิบัติงาน และความจุห้องจากผู้รับผิดชอบ ก่อนออกคำสั่ง/ประกาศ โดยต้องทำในระบบแข่งขันหลักที่กำหนดสิทธิ์ ไม่ใช้ข้อมูลในเครื่องเป็นหลักฐานยืนยัน</p>'+
       '<button type="button" data-go="judges" class="ia5-archive-link">ดูกรรมการย้อนหลังครั้งที่ 73 ›</button>'+
-      '<p>การเพิ่มข้อมูลการแต่งตั้งจริงหรือการจัดสนามที่ยืนยันแล้วต้องผ่าน Data Owner/PDPA Gate และมีชุดข้อมูลสาธารณะซึ่งตรวจสอบได้เป็น PR แยกต่างหาก</p></section>';
+      '<p>การเผยแพร่รายชื่อกรรมการหรือสนามที่ยืนยันแล้ว ต้องให้ผู้รับผิดชอบข้อมูลตรวจความถูกต้องและความเป็นส่วนตัวก่อน จึงจะนำมาแสดงได้</p></section>';
     const redraw=()=>draw(root,ctx,filters);
     const id=k=>root.querySelector('#'+k);
     id('ia5Stage').addEventListener('change',ev=>{filters.stage=ev.target.value;filters.limit=12;redraw()});
@@ -256,12 +256,12 @@
         if(row){
           const n=RISKS.filter(r=>p.flags[r.key]).length;
           row.querySelector('.ia5-risks summary span').textContent=n+' ข้อที่ทำเครื่องหมาย';
-          row.querySelector('.ia5-status').textContent=n?'มีประเด็นให้ตรวจ':'ยังไม่รับรอง';
+          row.querySelector('.ia5-status').textContent=n?'มีเรื่องต้องตรวจเพิ่ม':'ยังไม่รับรอง';
         }
         const notice=id('ia5Local');
         notice.textContent=store.info().lastSaved
-          ?'บันทึกธงประเด็นในเครื่องนี้แล้ว · ไม่ใช่การตรวจรับหรือคำวินิจฉัยทางการ'
-          :'บันทึกธงประเด็นไม่สำเร็จ · โปรดส่งออก CSV เก็บสำรอง';
+          ?'บันทึกเรื่องที่ต้องตรวจในเครื่องแล้ว · ไม่ใช่การตรวจรับหรือคำวินิจฉัยทางการ'
+          :'บันทึกเรื่องที่ต้องตรวจไม่สำเร็จ · โปรดส่งออก CSV เก็บสำรอง';
         notice.setAttribute('role',store.info().lastSaved?'note':'alert');
         if(filters.risk==='attention')redraw();
       }

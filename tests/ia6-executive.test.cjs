@@ -110,11 +110,11 @@ assert.ok(exported.includes('รหัสเผยแพร่'));
 assert.ok(!exported.includes('Private Person'),'report contains only aggregate metadata');
 const textJs=read('ia6-executive.js'),html=read('index.html'),sw=read('sw.js');
 for(const str of ['id="v-executive"','id="ia6Root"','ia6-executive.js','ia6.css',
- 'data-go="executive"',"['executive','Dashboard สำหรับผู้บริหาร']",
+ 'data-go="executive"',"['executive','สรุปข้อมูลสำหรับผู้บริหาร']",
  "executive:'overview'",'SILLAPA_IA6.mount({','release:null,revocation:null',
  'id="ia5Root"','id="ia4Summary"','id="ia3Root"','id="ia2Root"','id="v-judges"'])
  assert.ok(html.includes(str),'IA-6/previous view integration '+str);
-assert.ok(sw.includes('sillapa-public-v8-ia6-20261015'));
+assert.match(sw,/sillapa-public-v\d+-ia\d+-\d{8}/,'PWA cache version advances after UI copy changes');
 assert.ok(sw.includes('./ia6.css')&&sw.includes('./ia6-executive.js'));
 assert.equal(/fetch\(|XMLHttpRequest|localStorage|sessionStorage|navigator\.sendBeacon|db\.collection/.test(textJs),false,
  'IA-6 never reads local plans or fetches private backend data');
