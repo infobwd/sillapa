@@ -9,7 +9,7 @@
 
 - Replaced only `#readiness` placeholder with a distinct, **read-only** IA-3 dashboard; existing 6-section navigation, mobile 4-button bottom bar, More sheet, historic `#groups`, 70/73 registry, saved school plan, PWA install and historical views are not removed.
 - Six planning KPIs render **—** without approved input. Cards explain the unit and denominator (distinct groups, distinct cluster–activity pairs and count of verified teams).
-- Controls for group, activity, stage, readiness status; approved activity/group options only appear if a validated public snapshot exists. With no release, filters are visibly disabled, not filled with fictitious names.
+- Controls for group, category, activity, stage, readiness status; approved activity/group options only appear if a validated public snapshot exists. With no release, filters are visibly disabled, not filled with fictitious names.
 - Distinct submission vs verification labels, responsive desktop table / mobile stacked cards, source+timestamp+publication metadata panel, sanctioned issues list, empty and rejected-data states.
 - Shows 4 Dec 2569 representatives deadline and **tentative** 21–24 Dec 2569 district schedule; retains explicit caveat that this is not a registration closing date.
 - Contract validator rejects cycle != 74, unpublished release, unknown stages/policies, unexpected fields, duplicate keys/pairs, inconsistent approval times, and fabricated/open-only cluster obligations.
