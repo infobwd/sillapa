@@ -29,3 +29,10 @@ Google Maps เป็นข้อมูลอ้างอิงเพื่อ�
 
 ## Acceptance
 ไม่มีตำแหน่งอาคารที่แต่งขึ้นในหน้าแผนผังจริง; ไม่มีข้อมูล 73 อ้างว่าเป็น 74; ลิงก์แผนที่ถูกต้อง; ข้อมูลห้องต้องมี source และ approval; DEMO เก่าต้องไม่เสีย; ไม่เปิดเผยข้อมูลส่วนบุคคล.
+
+## Repo survey (15 Oct 2026)
+- `infobwd/sillapa` main Git tree currently contains `ia5-judge-venue.js`, IA-5 acceptance docs and the demo, but **no imported 73 venue schedule file** visible in the main tree at survey time. Newly imported data may be on a branch/PR not yet merged.
+- `infobwd/AcademicCompetitionManager` branch `stabilize/73-prod` contains `components/VenuesView.tsx`; it renders `venue.scheduledActivities` and uses `activityName`, `building`, `floor`, `room`, `date`, `timeRange`, `level`, `imageUrl`, `note`. This is a **UI schema observation**, not evidence that any particular venue/room has been verified.
+- The same UI exposes `venue.locationUrl`; it can be a reference link but is not sufficient to determine building footprints.
+- Import adapter must explicitly map these fields into historical `edition:73` records, sanitize text and URLs, strip personal data, and preserve provenance; do not publish live API keys or private schedule data.
+- Next source audit: identify actual data exports/files/PR from owner, inspect records, compare names against the two venues, report unmatched buildings/rooms, then request verified site plans.
