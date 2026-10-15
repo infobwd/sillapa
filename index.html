@@ -1393,6 +1393,15 @@ const lvOf=a=>{const m=a.match(LVRX);return m?m[1]:''};
 function bases(acts){const g={};acts.forEach(a=>{const b=baseOf(a);(g[b]??={b,acts:[],lv:[]});g[b].acts.push(a);g[b].lv.push(lvOf(a))});
   return Object.values(g).map(x=>({...x,lv:x.lv.sort((p,q)=>LVLS.indexOf(p)-LVLS.indexOf(q)),rows:D.filter(d=>x.acts.includes(d.act))}))}
 const CAT2G={0:9,1:11,2:7,3:6,4:13,5:8,6:16,7:12,8:5,9:16,10:10};
+const S70=window.SILLAPA70_CATALOG?.families||{};
+const round70Rows=it=>!it.a.length?(S70[it.t]||[]):[];
+const round70Levels=it=>[...new Set(round70Rows(it).map(x=>x.level))].sort((a,b)=>LVLS.indexOf(a)-LVLS.indexOf(b));
+const round70Html=it=>{
+  if(it.a.length)return '';
+  const rows=round70Rows(it);
+  if(!rows.length)return '<div class="s70-refs"><b>รายการย่อยครั้งที่ 70: รอตรวจสอบชื่อกิจกรรมและระดับชั้น</b><small class="s70-note">ยังไม่พบชื่อรายการตรงตัวในแหล่งข้อมูลอ้างอิง ห้ามสมมติระดับชั้น</small></div>';
+  return `<div class="s70-refs"><b>รายการย่อยครั้งที่ 70 · ${rows.length} รายการตามระดับชั้น</b>${rows.map(x=>`<div class="s70-row"><span class="s70-grade">${esc(x.level)}</span><span>${esc(x.title)}</span><span class="s70-id">#${esc(x.id)}</span></div>`).join('')}<small class="s70-note">ใช้ประกอบการเตรียมจัดครั้งที่ 74 เท่านั้น · ยังไม่ใช่ประกาศรายการและระดับชั้นของครั้งที่ 74</small></div>`;
+};
 const NXI=[];NX.groups.forEach((g,gi)=>g.i.forEach(it=>{it.g=gi;it.rows=D.filter(d=>it.a.includes(d.act));it.b=bases(it.a);NXI.push(it)}));
 const CUT=bases(NX.drop).map(x=>({...x,g:CAT2G[x.rows[0].cat],cat:x.rows[0].cat}));
 const NKEEP=NXI.filter(it=>it.a.length).length,NNEW=NXI.length-NKEEP;
@@ -1519,10 +1528,10 @@ function nxRender(){
     if(show('cut'))cuts.forEach(({c,k})=>{if(q&&!(g.g+' '+c.b).includes(q))return;
       rows.push(`<button class="dr cut" type="button" data-cut="${k}"><span class="mk cut">−</span><span class="c c73"><b>${esc(c.b)}</b><br>${lvChips(c.lv)}<span class="go">ดูผลครั้งที่ 73 ›</span></span><span class="c c74"><span class="gone">ตัดออก</span><small>ไม่พบในร่างครั้งที่ 74</small></span></button>`)});
     g.i.forEach(it=>{const s=it.a.length?'keep':'new';if(!show(s))return;
-      if(q&&!(g.g+' '+it.t+' '+it.s.join(' ')+' '+it.b.map(x=>x.b).join(' ')).includes(q))return;
+      if(q&&!(g.g+' '+it.t+' '+it.s.join(' ')+' '+it.b.map(x=>x.b).join(' ')+' '+round70Rows(it).map(x=>x.title+' '+x.level).join(' ')).includes(q))return;
       const k=NXI.indexOf(it);
       const c73=s==='keep'?it.b.map(x=>`<div class="ln"><b>${esc(x.b)}</b><br>${lvChips(x.lv)}</div>`).join('')+`<span class="go">ดูผลครั้งที่ 73 ›</span>`:'<span class="none">—</span>';
-      const c74=`<b>${esc(it.t)}</b>${it.s.length?`<span class="nx-sub">${it.s.map(x=>`<span>${esc(x)}</span>`).join('')}</span>`:''}${s==='new'?critLink(it.t,1):''}`;
+      const c74=`<b>${esc(it.t)}</b>${it.s.length?`<span class="nx-sub">${it.s.map(x=>`<span>${esc(x)}</span>`).join('')}</span>`:''}${s==='new'?round70Html(it)+critLink(it.t,1):''}`;
       rows.push(s==='keep'?`<button class="dr keep" type="button" data-nx-i="${k}"><span class="mk keep">=</span><span class="c c73">${c73}</span><span class="c c74">${c74}</span></button>`
         :`<div class="dr new"><span class="mk new">+</span><span class="c c73">${c73}</span><span class="c c74">${c74}</span></div>`)});
     if(!rows.length)return '';
@@ -1643,10 +1652,11 @@ function bmTable(it,only){const r=bmRows(only?{...it,a:it.a.filter(a=>only.inclu
   return `<table class="bm"><thead><tr><th>ครั้งที่ 73</th><th>ทีม</th><th>ชนะเลิศ</th><th>ตัวแทนต่ำสุด</th><th>ทองต่ำสุด</th></tr></thead><tbody>${r.map(x=>`<tr><td>${esc(x.lv)}</td><td>${x.n}</td><td class="w">${f2(x.w)}</td><td class="rp">${f2(x.rp)}</td><td>${f2(x.g)}</td></tr>`).join('')}</tbody></table>`}
 const inPlan=t=>Object.prototype.hasOwnProperty.call(PLAN.items,t);
 const addBtn=t=>`<button class="addb" type="button" data-add="${esc(t)}" aria-pressed="${inPlan(t)}">${inPlan(t)?'✓ อยู่ในแผน':'+ เพิ่มในแผน'}</button>`;
-const lv73=it=>{const s=[...new Set(it.a.map(lvOf).filter(Boolean))].sort((p,q)=>LVLS.indexOf(p)-LVLS.indexOf(q));
-  return `<div class="lv74">${s.length?`ระดับในครั้งที่ 73: ${lvChips(s)}`:'ระดับชั้น: รอประกาศ'}${s.length?' · <span>ครั้งที่ 74 รอประกาศ</span>':''}</div>`};
+const lv73=it=>{const old=[...new Set(it.a.map(lvOf).filter(Boolean))].sort((p,q)=>LVLS.indexOf(p)-LVLS.indexOf(q));
+  const prev=round70Levels(it);
+  return `<div class="lv74">${old.length?`ระดับในครั้งที่ 73: ${lvChips(old)}`:prev.length?`ระดับอ้างอิงครั้งที่ 70: ${lvChips(prev)}`:'ระดับชั้น: รอการตรวจสอบ'} · <span>ครั้งที่ 74 รอประกาศยืนยัน</span></div>`};
 function itemCard(it,extra='',only=null){const sub=it.s.length?`<span class="nx-sub">${it.s.map(s=>`<span>${esc(s)}</span>`).join('')}</span>`:'';
-  return `<div class="pc"><div class="pc-h"><div class="main"><b>${esc(it.t)}</b><small>${esc(NX.groups[it.g].g)} · ${it.a.length?'มีในครั้งที่ 73':'<span style="color:var(--new);font-weight:600">กิจกรรมใหม่</span>'}${distN(it.t)?` · ${distN(it.t)} โรงเรียนวางแผนส่ง`:''}</small>${sub}</div>${addBtn(it.t)}</div>${lv73(it)}${it.a.length?'':`<div class="crit-row">${critLink(it.t)}</div>`}${extra}${it.a.length?bmTable(it,only):''}</div>`}
+  return `<div class="pc"><div class="pc-h"><div class="main"><b>${esc(it.t)}</b><small>${esc(NX.groups[it.g].g)} · ${it.a.length?'มีในครั้งที่ 73':'<span style="color:var(--new);font-weight:600">กิจกรรมใหม่</span>'}${distN(it.t)?` · ${distN(it.t)} โรงเรียนวางแผนส่ง`:''}</small>${sub}</div>${addBtn(it.t)}</div>${lv73(it)}${it.a.length?'':round70Html(it)+`<div class="crit-row">${critLink(it.t)}</div>`}${extra}${it.a.length?bmTable(it,only):''}</div>`}
 
 /* ----- school picker ----- */
 function setSchoolUI(){$('#ppPickT').textContent=PLAN.school||'แตะเพื่อค้นหาโรงเรียน';$('#ppPick').querySelector('em').textContent=PLAN.school?'เปลี่ยน':'เลือก'}
@@ -1696,7 +1706,7 @@ function planText(){const ks=Object.keys(PLAN.items);return [`แผนส่ง
   ...NX.groups.flatMap(g=>g.i.filter(it=>inPlan(it.t)).map(it=>`- [${g.g}] ${it.t}${PLAN.items[it.t].length?' ('+PLAN.items[it.t].join(', ')+')':''}`))].join('\n')}
 function renderPlan(){const ks=Object.keys(PLAN.items);$('#ppCnt').textContent=ks.length?`(${ks.length})`:'';
   if(!ks.length){$('#ppPlan').innerHTML='<div class="pl-empty">ยังไม่มีกิจกรรมในแผน<br>กด "+ เพิ่มในแผน" ที่กิจกรรมในแท็บอื่น</div>';}
-  else $('#ppPlan').innerHTML=NXI.filter(it=>inPlan(it.t)).map(it=>`<div class="pc"><div class="pc-h"><div class="main"><b>${esc(it.t)}</b><small>${esc(NX.groups[it.g].g)}${distN(it.t)?` · ${distN(it.t)} โรงเรียนในเขตวางแผนส่ง`:''}</small></div><button class="addb" type="button" data-add="${esc(it.t)}" aria-pressed="true">นำออก</button></div>
+  else $('#ppPlan').innerHTML=NXI.filter(it=>inPlan(it.t)).map(it=>`<div class="pc"><div class="pc-h"><div class="main"><b>${esc(it.t)}</b><small>${esc(NX.groups[it.g].g)}${distN(it.t)?` · ${distN(it.t)} โรงเรียนในเขตวางแผนส่ง`:''}</small></div><button class="addb" type="button" data-add="${esc(it.t)}" aria-pressed="true">นำออก</button></div>${round70Rows(it).length?round70Html(it):''}
     <div class="lvpick" role="group" aria-label="ระดับชั้นที่จะส่ง">${PLV.map(l=>`<button class="chip" type="button" data-lv="${l}" data-t="${esc(it.t)}" aria-pressed="${PLAN.items[it.t].includes(l)}">${l}</button>`).join('')}</div></div>`).join('');
   $('#ppSync').className='sync'+(planRef?' ok':'');
   $('#ppSync').textContent=planRef?(PLAN.school?'บันทึกแผนเข้าภาพรวมเขตอัตโนมัติ (แสดงเฉพาะชื่อโรงเรียนและกิจกรรม)':'เลือกโรงเรียนก่อน แผนจึงจะถูกนับในภาพรวมเขต'):'บันทึกไว้ในเบราว์เซอร์เครื่องนี้เท่านั้น (ยังไม่เชื่อมระบบรวมแผนของเขต)';
