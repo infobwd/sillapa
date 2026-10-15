@@ -134,21 +134,21 @@
   function renderSummary(store){
     const p=store.progress(),m=store.info();
     return '<div class="ia4-topline"><span class="ia4-local-tag">แผนในเครื่องนี้ · ไม่ใช่ใบสมัคร</span>'+
-      '<span class="ia4-device">ไม่ซิงก์ข้ามอุปกรณ์</span></div>'+
+      '<span class="ia4-device">ใช้ได้เฉพาะเครื่องนี้ ไม่แสดงบนเครื่องอื่น</span></div>'+
       '<div class="ia4-head"><h2>เตรียมแข่งขันของโรงเรียน</h2>'+
       '<p>เลือกโรงเรียนก่อน แล้วค่อยวางแผนกิจกรรมและตรวจรายการเตรียมงาน ไม่ต้องกรอกข้อมูลส่วนตัวของนักเรียนหรือครู</p></div>'+
       '<div class="ia4-stats">'+
       '<div><strong>'+p.activities+'</strong><small>กิจกรรมในแผนเครื่องนี้</small></div>'+
-      '<div><strong>'+p.complete+'</strong><small>กิจกรรมที่ทำเช็กลิสต์ครบ</small></div>'+
-      '<div><strong>'+p.done+'/'+p.total+'</strong><small>งานเตรียมที่ติ๊กแล้ว</small></div></div>'+
-      (!m.selectedSchool?'<p class="ia4-prompt">เริ่มจากเลือกโรงเรียน เพื่อไม่ให้แผนปะปนกับโรงเรียนอื่น</p>':'')+
-      (m.hasOrphan?'<p class="ia4-warning">พบแผนเก่าที่ยังไม่ได้ระบุโรงเรียน · เลือกโรงเรียนก่อน แล้วกดปุ่มนำแผนเก่ามาใช้ โดยจะไม่ลบข้อมูลเดิม <button type="button" id="ia4Adopt"'+(!m.selectedSchool?' disabled':'')+'>นำแผนเก่ามาใช้กับโรงเรียนนี้</button></p>':'')+
-      (!m.lastSaved?'<p class="ia4-warning" role="alert">บันทึกลงเครื่องไม่สำเร็จ กรุณาตรวจพื้นที่จัดเก็บหรือการตั้งค่าเบราว์เซอร์ และส่งออกแผนเก็บสำรอง</p>':'')+
-      '<p class="ia4-tip">ระดับชั้นและกิจกรรมเป็นเพียงร่างจากข้อมูลครั้งที่ 70/73 · สถานะสมัครจริงและผลตรวจสอบต้องดูจากระบบแข่งขันหลักเมื่อเปิดใช้อย่างเป็นทางการ</p>';
+      '<div><strong>'+p.complete+'</strong><small>กิจกรรมที่ตรวจรายการเตรียมงานครบ</small></div>'+
+      '<div><strong>'+p.done+'/'+p.total+'</strong><small>ขั้นตอนเตรียมงานที่ทำแล้ว</small></div></div>'+
+      (!m.selectedSchool?'<p class="ia4-prompt">กรุณาเลือกโรงเรียนก่อนเริ่มวางแผน เพื่อให้ข้อมูลของแต่ละโรงเรียนแยกกัน</p>':'')+
+      (m.hasOrphan?'<p class="ia4-warning">พบแผนเดิมที่ยังไม่ได้เลือกโรงเรียน · เลือกโรงเรียนก่อน แล้วกดปุ่มนำแผนเดิมมาใช้ ระบบจะเก็บแผนเก่าไว้ด้วย <button type="button" id="ia4Adopt"'+(!m.selectedSchool?' disabled':'')+'>นำแผนเดิมมาใช้กับโรงเรียนนี้</button></p>':'')+
+      (!m.lastSaved?'<p class="ia4-warning" role="alert">ไม่สามารถบันทึกแผนในเครื่องได้ กรุณาตรวจพื้นที่ว่างหรือการตั้งค่าเบราว์เซอร์ และส่งออกไฟล์ไว้สำรอง</p>':'')+
+      '<p class="ia4-tip">ระดับชั้นและกิจกรรมในหน้านี้ใช้ข้อมูลการแข่งขันครั้งก่อนช่วยวางแผน ยังไม่ใช่รายการเปิดสมัครจริง ให้ตรวจประกาศและสถานะจากระบบแข่งขันหลักเมื่อเปิดใช้งาน</p>';
   }
   function renderChecks(store,title){
     const checks=store.getChecks(title);
-    return '<fieldset class="ia4-checklist"><legend>เช็กลิสต์เตรียมงาน · สำหรับครูบันทึกเอง</legend>'+
+    return '<fieldset class="ia4-checklist"><legend>รายการตรวจความพร้อม · ครูทำเครื่องหมายเมื่อเตรียมเสร็จ</legend>'+
       STEPS.map(s=>'<label><input type="checkbox" data-ia4-check="'+s.id+'" data-ia4-title="'+html(title)+'"'+
         (checks[s.id]?' checked':'')+'><span>'+html(s.label)+'</span></label>').join('')+'</fieldset>';
   }
