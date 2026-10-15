@@ -36,7 +36,7 @@ const fixture=()=>({
      planning_state:'not_started',submission_state:'not_started',verification_state:'not_reviewed',
      qualified_teams:null,verified_at:null,source_as_of:iso}
   ],
-  public_issues:[{issue_id:'i1',activity_id:'a2',cluster_id:'g1',title:'ประเด็นสมมติ',
+  public_issues:[{issue_id:'i1',activity_id:'a2',stage_scope:'district',cluster_id:'g1',title:'ประเด็นสมมติ',
     state:'open',source_reference:'fixture'}]
 });
 function invalid(mut,reason){
@@ -96,6 +96,18 @@ assert.equal(derive(base,{cluster:'all',category:'หมวดสมมติอ
 const partial=fixture();partial.coverage.obligations='partial';partial.coverage.catalog='partial';
 assert.equal(derive(partial).kpis.requiredGroups,null);
 assert.equal(derive(partial).kpis.confirmedActivities,null);
+// Same child ID may exist at both competition stages; never collapse their policies.
+const stages=fixture();
+stages.activity_catalog.push({...stages.activity_catalog[0],stage_scope:'cluster',competition_mode:'open'});
+stages.public_readiness_aggregates.push({
+  ...stages.public_readiness_aggregates[2],record_id:'r4',activity_id:'a1',stage_scope:'cluster',
+  obligation_state:'not_applicable',planning_state:'drafting',submission_state:'drafting'
+});
+assert.equal(validateSnapshot(stages).ok,true,'same activity ID at another stage is valid');
+assert.equal(selectRows(stages,{cluster:'all',category:'all',activity:'all',stage:'cluster',status:'all'}).length,1);
+assert.equal(derive(stages).kpis.confirmedActivities,4,'district KPI excludes cluster-stage catalog');
+assert.equal(derive(stages).kpis.requiredGroups,2,'cluster-stage rows do not create representative obligations');
+invalid(x=>{x.public_issues[0].stage_scope='cluster'},'issues must reference canonical activity stage');
 const zero=fixture();zero.public_readiness_aggregates=[];zero.public_issues=[];
 assert.equal(derive(zero).kpis.requiredGroups,0,'confirmed empty + full coverage = real zero');
 const html=read('index.html'),sw=read('sw.js');
