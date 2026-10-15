@@ -732,6 +732,7 @@ body{overscroll-behavior-y:auto}
 
 </style>
 <link rel="stylesheet" href="./ia1.css">
+<link rel="stylesheet" href="./ia2.css">
 </head>
 <body>
 
@@ -969,8 +970,71 @@ body{overscroll-behavior-y:auto}
   </section>
 
   <!-- Next round (74) draft -->
-  <section class="view" id="v-next" aria-label="เทียบครั้งที่ 73 กับ 74" data-loading="true" aria-busy="true">
+  <section class="view" id="v-next" aria-label="ทะเบียนรายการแข่งขันครั้งที่ 74 (ร่าง)" data-loading="true" aria-busy="true">
 <div class="view-skeleton" aria-hidden="true"><div class="sk-line short"></div><div class="sk-tile hero"></div><div class="sk-stats"><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div></div><div class="sk-cards"><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div><div class="sk-tile"></div></div><div class="sk-chart"></div></div>
+    <!-- IA-2: the draft registry is the primary content; comparison below remains accessible. -->
+    <div class="ia2-registry" id="ia2Root" data-ready="false">
+      <div class="ia2-intro">
+        <span class="ia2-eyebrow">ทะเบียนเพื่อวางแผน · ยังไม่ใช่ประกาศรับสมัคร</span>
+        <h2>ทะเบียนรายการแข่งขัน ครั้งที่ 74</h2>
+        <p>สำรวจกลุ่มกิจกรรมในร่าง แสดงรายการย่อยและระดับชั้นของการแข่งขันครั้งที่ 70/73 ที่ใช้อ้างอิงเพื่อเตรียมงาน สพป.กาญจนบุรี เขต 4</p>
+        <p><strong>รายการและระดับชั้นที่แสดงเป็นข้อมูลย้อนหลัง</strong> ไม่ใช่รายการหรือเกณฑ์เปิดรับสมัครครั้งที่ 74 ที่ผ่านการอนุมัติแล้ว</p>
+      </div>
+      <div class="ia2-context" role="note"><b>สถานะครั้งที่ 74: ร่าง / รอประกาศ</b> · ยังไม่มีรหัสกิจกรรม ระดับแข่งขัน (กลุ่ม/เขต) โควตาตัวแทน หรือกติกาสมัครที่รับรองจากระบบหลัก การค้นหาในหน้านี้ใช้ข้อมูลร่างและประวัติเท่านั้น</div>
+      <div class="ia2-stats" id="ia2Stats" aria-label="จำนวนรายการร่างและแหล่งอ้างอิงย้อนหลัง"></div>
+      <div class="ia2-tools" aria-label="ตัวกรองรายการแข่งขัน">
+        <label class="ia2-filter ia2-search" for="ia2Search">ค้นหากิจกรรม รายการย่อย ระดับชั้น หรือรหัสต้นทาง
+          <input id="ia2Search" type="search" autocomplete="off" placeholder="เช่น คัดลายมือ ป.4-ป.6 หรือ 030">
+        </label>
+        <label class="ia2-filter" for="ia2Group">หมวดหมู่
+          <select id="ia2Group"><option value="all">ทุกกลุ่มกิจกรรม</option></select>
+        </label>
+        <label class="ia2-filter" for="ia2Grade">ระดับชั้น (ข้อมูลย้อนหลัง)
+          <select id="ia2Grade"><option value="all">ทุกระดับชั้น</option></select>
+        </label>
+        <label class="ia2-filter" for="ia2Source">ชุดข้อมูลอ้างอิง
+          <select id="ia2Source">
+            <option value="all">ทั้งหมด</option>
+            <option value="70">มีรายการอ้างอิงครั้งที่ 70</option>
+            <option value="73">มีรายการอ้างอิงครั้งที่ 73</option>
+            <option value="unresolved">รอตรวจสอบรายการต้นทาง</option>
+          </select>
+        </label>
+        <label class="ia2-filter" for="ia2Status">สถานะอนุมัติครั้งที่ 74
+          <select id="ia2Status">
+            <option value="all">ทุกสถานะที่มีข้อมูล</option>
+            <option value="draft">ร่าง / ยังไม่รับรอง</option>
+            <option value="confirmed">ยืนยันแล้ว (ยังไม่มีข้อมูล)</option>
+          </select>
+        </label>
+        <label class="ia2-filter" for="ia2Stage">ระดับการแข่งขันครั้งที่ 74
+          <select id="ia2Stage">
+            <option value="all">ทั้งหมด (ยังไม่ประกาศ)</option>
+            <option value="unknown">ยังไม่ประกาศระดับแข่งขัน</option>
+            <option value="cluster">ระดับกลุ่ม (ยังไม่มีข้อมูลยืนยัน)</option>
+            <option value="district">ระดับเขต (ยังไม่มีข้อมูลยืนยัน)</option>
+          </select>
+        </label>
+      </div>
+      <div class="ia2-controls">
+        <p id="ia2Count" role="status" aria-live="polite">กำลังเตรียมรายการอ้างอิง…</p>
+        <button type="button" class="ia2-btn" id="ia2Reset">ล้างตัวกรอง</button>
+        <button type="button" class="ia2-btn" id="ia2Expand">ขยายรายการย่อยทั้งหมด</button>
+        <button type="button" class="ia2-btn primary" id="ia2Export">ดาวน์โหลด CSV</button>
+      </div>
+      <div id="ia2List" aria-label="รายการกิจกรรมในร่างครั้งที่ 74"></div>
+      <div class="ia2-empty" id="ia2Empty" hidden></div>
+      <div class="ia2-data-source">
+        <b>แหล่งข้อมูล:</b> กลุ่มกิจกรรมครั้งที่ 74 มาจากร่างที่บันทึกไว้ในเว็บไซต์นี้;
+        รายการย่อยครั้งที่ 70 อ้างอิงฐานรายการย้อนหลังของ <b>สพป.ร้อยเอ็ด เขต 3</b>
+        (<a href="https://sillapa65.vichakan.net/sp-ret3/?cat=7&amp;file=view_all&amp;name=category" target="_blank" rel="noopener noreferrer">เปิดรายการต้นทาง ↗</a>);
+        ข้อมูลครั้งที่ 73 มาจากฐานย้อนหลังของเว็บไซต์นี้ กลุ่มที่จับคู่ไม่ได้จะแสดง “รอตรวจสอบ”
+        และเลขรหัสร่างภายในไฟล์ CSV ไม่ใช่รหัสกิจกรรมทางการครั้งที่ 74
+      </div>
+    </div>
+    <details class="ia2-compare" id="ia2LegacyCompare">
+      <summary>ดูการวิเคราะห์เปรียบเทียบครั้งที่ 73 ↔ ร่างครั้งที่ 74 (ข้อมูลเดิม)</summary>
+      <div>
     <div class="card nx-hero">
       <span class="badge">ร่าง</span>
       <h2>ครั้งที่ 73 เทียบกับครั้งที่ 74 ปีการศึกษา 2569</h2>
@@ -1028,6 +1092,8 @@ body{overscroll-behavior-y:auto}
     <div id="dList"></div>
     <p class="hint" style="margin-top:14px">เทียบตามชื่อกิจกรรม ร่างครั้งที่ 74 ยังไม่ระบุระดับชั้น จึงเทียบได้เฉพาะว่ามีกิจกรรมหรือไม่ ไม่ได้เทียบระดับชั้น ร่างอาจยังเปลี่ยนแปลง</p>
     </div>
+      </div>
+    </details>
   </section>
 
   <!-- Teacher prep (74) -->
@@ -1132,6 +1198,7 @@ body{overscroll-behavior-y:auto}
 </div>
 
 <script src="./round70-catalog.js"></script>
+<script src="./ia2-registry.js"></script>
 <script>
 /* Shared schedule: shown on Overview, comparison, and teacher planning views. */
 const scheduleTemplate=document.querySelector('#s74-calendar-template');
@@ -1923,6 +1990,15 @@ function openExport(){const np=Object.keys(PLAN.items).length,nd=new Set(PLANS.f
     `<div class="ex-msg" id="exMsg">${PLAN.school?'':'เลือกโรงเรียนก่อนเพื่อส่งออกรายงานของโรงเรียน'}</div>`);
   $('#shBody').onclick=e=>{const b=e.target.closest('[data-ex]');if(b&&!b.disabled)doExport(b.dataset.ex)}}
 window.__tiles=true;drawTiles();
+// IA-2 registry is populated from the same embedded draft and historical references.
+// No official 74 IDs, approvals or stages are inferred from these records.
+try {
+  window.SILLAPA_IA2.mount({draftGroups:NX.groups,round70:window.SILLAPA70_CATALOG});
+} catch (error) {
+  console.error('IA-2 registry initialization failed:',error);
+  const root=document.getElementById('ia2Root');
+  if(root)root.innerHTML='<div class="ia2-empty">ไม่สามารถแสดงทะเบียนรายการอ้างอิงได้ กรุณาลองรีเฟรชหน้าเว็บ</div>';
+}
 
 render();go(location.hash.slice(1)||'overview',false);_markMore();
 /* Embedded data: release each section only after the full first render succeeds. */
