@@ -234,9 +234,44 @@ function decorateDistrict(){
  }
  const carportRoof=new THREE.Mesh(new THREE.BoxGeometry(4.8,.24,7.8),mat('#607b89'));
  carportRoof.position.set(scX,3.04,scZ);sideCarport.add(carportRoof);
+ decorateCarportRoof(sideCarport,scX,scZ,4.8,7.8,3.04);
  const fascia=new THREE.Mesh(new THREE.BoxGeometry(4.8,.35,.16),mat('#466270'));
  fascia.position.set(scX,2.94,scZ+3.87);sideCarport.add(fascia);
  g.add(sideCarport);
+ // D3D-R3: roof-only ornamental end trims, ridge caps and fascia on Thai pavilions.
+ function decoratePavilionRoof(parent,x,z,halfWidth,halfLength,ridgeHeight){
+  const trim=mat('#e2b66b'),edge=mat('#7c382e');
+  for(const side of [-1,1]){
+   const lip=new THREE.Mesh(new THREE.BoxGeometry(.14,.13,halfLength*2+.2),edge);
+   lip.position.set(x+side*halfWidth,3.03,z);parent.add(lip);
+   for(const end of [-1,1]){
+    const gable=new THREE.Mesh(new THREE.BoxGeometry(halfWidth+.2,.12,.13),trim);
+    gable.rotation.z=-side*.54;
+    gable.position.set(x+side*halfWidth*.5,3.32,end*(halfLength+.05)+z);
+    parent.add(gable);
+   }
+  }
+  for(const end of [-1,1]){
+   const cap=new THREE.Mesh(new THREE.BoxGeometry(.38,.19,.24),trim);
+   cap.position.set(x,ridgeHeight,z+end*(halfLength+.14));parent.add(cap);
+  }
+ }
+ // D3D-R3: roof edge caps and seam lines on open-sided carports.
+ function decorateCarportRoof(parent,x,z,w,l,y){
+  const fasciaMat=mat('#466270'),seamMat=mat('#91a6ad');
+  for(const side of [-1,1]){
+   const edge=new THREE.Mesh(new THREE.BoxGeometry(.12,.26,l+.08),fasciaMat);
+   edge.position.set(x+side*w/2,y,z);parent.add(edge);
+  }
+  for(const end of [-1,1]){
+   const edge=new THREE.Mesh(new THREE.BoxGeometry(w+.1,.26,.12),fasciaMat);
+   edge.position.set(x,y,z+end*l/2);parent.add(edge);
+  }
+  for(const xx of [-w/4,0,w/4]){
+   const seam=new THREE.Mesh(new THREE.BoxGeometry(.055,.045,l-.25),seamMat);
+   seam.position.set(x+xx,y+.15,z);parent.add(seam);
+  }
+ }
  // Additional Thai pavilion at the user-marked front-right corner of Building 1.
  // Keep the existing pavilion by Building 2 and leave the east vehicle road clear.
  {
@@ -252,6 +287,7 @@ function decorateDistrict(){
   }
   const ridge=new THREE.Mesh(new THREE.BoxGeometry(.18,.22,3.85),mat('#e2b66b'));
   ridge.position.set(x,3.83,z);pavilion.add(ridge);
+  decoratePavilionRoof(pavilion,x,z,1.65,1.825,3.83);
   const seat=new THREE.Mesh(new THREE.BoxGeometry(2.25,.18,1.2),mat('#b68a55'));
   seat.position.set(x,.74,z);pavilion.add(seat);
   g.add(pavilion);
@@ -312,6 +348,7 @@ function decorateDistrict(){
  }
  const ridge=new THREE.Mesh(new THREE.BoxGeometry(.18,.22,4.2),mat('#e2b66b'));
  ridge.position.set(salaX,3.88,salaZ);sala.add(ridge);
+ decoratePavilionRoof(sala,salaX,salaZ,1.85,1.975,3.88);
  const bench=new THREE.Mesh(new THREE.BoxGeometry(2.5,.18,1.25),mat('#b68a55'));
  bench.position.set(salaX,.74,salaZ);sala.add(bench);
  const salaLabel=makeBuildingLabel('ศาลานั่งเล่น',4.75);
@@ -334,6 +371,7 @@ function decorateDistrict(){
  slab(cp.width+2,cp.length+1,cp.x,cp.z,'#9da09b',.12);
  const roof=new THREE.Mesh(new THREE.BoxGeometry(cp.width,.28,cp.length),mat('#5f7881'));
  roof.position.set(cp.x,3.1,cp.z);g.add(roof);
+ decorateCarportRoof(g,cp.x,cp.z,cp.width,cp.length,3.1);
  for(const x of [-cp.width/2+.45,cp.width/2-.45])for(const z of [-cp.length/2+.45,cp.length/2-.45]){
   const post=new THREE.Mesh(new THREE.BoxGeometry(.18,3,.18),mat('#d3d6d2'));
   post.position.set(cp.x+x,1.55,cp.z+z);g.add(post);
