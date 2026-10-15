@@ -9,9 +9,9 @@
   const KEY='sillapa74:school-workspace:v1';
   const LEGACY='plan74'; // read-only migration input; never overwrite or delete it.
   const STEPS=[
-    {id:'criteria',label:'ตรวจประกาศและเกณฑ์การแข่งขันฉบับที่ผู้จัดยืนยัน'},
-    {id:'levels',label:'ทบทวนระดับชั้นและความพร้อมของทีมกับครู'},
-    {id:'documents',label:'เตรียมเอกสารที่จำเป็นตามประกาศจริง'}
+    {id:'criteria',label:'อ่านประกาศและตรวจเกณฑ์การแข่งขันฉบับล่าสุด'},
+    {id:'levels',label:'ตรวจระดับชั้นและความพร้อมของนักเรียนกับครูผู้รับผิดชอบ'},
+    {id:'documents',label:'เตรียมเอกสารตามที่ผู้จัดประกาศ'}
   ];
   const maxName=120;
   const own=(x,k)=>Object.prototype.hasOwnProperty.call(x,k);
