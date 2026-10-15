@@ -2,6 +2,17 @@
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.SILLAPA_IA6=api;})(typeof window!=='undefined'?window:null,function(){
 'use strict';
 const UNKNOWN='—',STAGES=['district','cluster'],COV=['activities','obligations','teams','judges','venues','issues'];
+const STAGE_STATUSES={
+ disconnected:'ยังไม่ได้รับข้อมูลทางการ',
+ invalid:'ข้อมูลที่ได้รับยังตรวจไม่ผ่าน',
+ hold:'รอตรวจสอบการยกเลิกประกาศ',
+ revoked:'ข้อมูลฉบับนี้ถูกยกเลิก',
+ cached_unverified:'ข้อมูลที่เก็บไว้ในอุปกรณ์ อาจไม่ใช่ฉบับล่าสุด',
+ stale:'ข้อมูลเก่า ต้องตรวจประกาศล่าสุด',
+ published_snapshot:'ข้อมูลเผยแพร่แล้ว แต่ไม่ใช่สถานะสด'
+};
+const COVERAGE_NAMES={activities:'รายการแข่งขัน',obligations:'การส่งตัวแทน',
+ teams:'ทีมแข่งขัน',judges:'กรรมการ',venues:'สนามและห้องแข่งขัน',issues:'เรื่องที่ต้องติดตาม'};
 const METRICS=[
 {id:'activities',label:'รายการแข่งขันที่ประกาศยืนยันแล้ว',field:'activities_confirmed',cover:'activities'},
 {id:'representatives',label:'รายการที่เขตตรวจรับการส่งตัวแทนแล้ว',field:'obligations_verified',denom:'obligations_required',cover:'obligations'},
@@ -102,7 +113,7 @@ function quality(state,families,stage){
  if(state.ok){
   const row=state.release.stage_summaries.find(x=>x.stage_scope===stage);
   if(!row)alerts.push({id:'stage',label:'ยังไม่มีข้อมูลรับรองสำหรับระดับที่เลือก'});
-  else COV.filter(k=>row.coverage[k]!=='complete').forEach(k=>alerts.push({id:'partial_'+k,label:'ข้อมูล '+k+' ยังไม่ครบ · จึงยังไม่แสดงยอด'}));
+  else COV.filter(k=>row.coverage[k]!=='complete').forEach(k=>alerts.push({id:'partial_'+k,label:'ข้อมูล'+COVERAGE_NAMES[k]+'ยังไม่ครบ · จึงยังแสดงยอดที่รับรองไม่ได้'}));
   if(state.state==='stale')alerts.push({id:'stale',label:'ข้อมูลต้นทางเก่ากว่า 7 วัน · ต้องตรวจประกาศใหม่'});
  }
  if(state.offline)alerts.push({id:'offline',label:'เปิดแบบออฟไลน์ · ยังตรวจสอบการเผยแพร่ล่าสุดหรือคำสั่งเพิกถอนไม่ได้'});
@@ -113,7 +124,7 @@ function meetingCSV({state,families,stage}){
  const rows=[
  ['ประเภทเอกสาร','IA-6 สรุปเพื่อประชุม ไม่ใช่การรับรองการแข่งขันครั้งที่ 74'],
  ['ขอบเขต',stage==='district'?'ระดับเขต':'ระดับกลุ่มเครือข่าย'],
- ['สถานะการเผยแพร่',state.state],
+ ['สถานะการเผยแพร่',STAGE_STATUSES[state.state]||'ต้องตรวจสอบกับผู้จัด'],
  ['รหัสเผยแพร่',state.ok?state.release.publication_id:UNKNOWN],
  ['ข้อมูลฉบับที่',state.ok?state.release.data_version:UNKNOWN],
  ['แหล่งข้อมูล',state.ok?state.release.source_reference:UNKNOWN],
@@ -131,7 +142,7 @@ function meetingCSV({state,families,stage}){
 function draw(root,ctx,stage){
  const {state,families}=ctx,d=draftAudit(families),metrics=scorecard(state,stage);
  root.querySelector('#ia6Status').textContent=state.ok?
-  'ข้อมูลฉบับ '+state.release.data_version+' · '+(state.state==='published_snapshot'?'ข้อมูลที่เผยแพร่แล้ว (ไม่ใช่ข้อมูลสด)':state.state==='stale'?'ข้อมูลอาจไม่เป็นปัจจุบัน':'ข้อมูลที่บันทึกไว้ในเครื่อง')+' · ข้อมูล ณ '+state.release.source_as_of:
+  'ข้อมูลฉบับ '+state.release.data_version+' · '+(STAGE_STATUSES[state.state]||'ตรวจสอบสถานะ')+' · ข้อมูล ณ '+state.release.source_as_of:
   'ยังไม่มีตัวเลขครั้งที่ 74 ที่เขตตรวจสอบและอนุญาตให้แสดง';
  root.querySelector('#ia6Source').textContent=state.ok?
   'ที่มา '+state.release.source_system+' · '+state.release.source_reference+
@@ -143,7 +154,7 @@ function draw(root,ctx,stage){
  root.querySelector('#ia6Kpis').innerHTML=metrics.map(m=>'<div class="ia6-kpi"><small>'+h(m.label)+'</small>'+
   '<strong>'+format(m.value)+'</strong><span>'+
   h(m.value===null?'ยังไม่มีข้อมูลที่ผ่านการตรวจครบ จึงยังแสดงตัวเลขไม่ได้':'ข้อมูลจาก '+m.source+' · ตรวจสอบ ณ '+m.sourceAsOf)+'</span>'+
-  (m.denom!==null?'<p>จากยอดที่รับรอง '+format(m.denom)+'</p>':'')+'</div>').join('');
+  (m.denom!==null?'<p>จากทั้งหมดที่เขตยืนยัน '+format(m.denom)+'</p>':'')+'</div>').join('');
  root.querySelector('#ia6Draft').innerHTML=[
   ['กลุ่มกิจกรรมในร่างครั้งที่ 74',d.families,'ร่าง ไม่ใช่รายการย่อยที่รับรอง'],
   ['กลุ่มอ้างอิงครั้งที่ 70',d.from70,'แหล่งประวัติการแข่งขันครั้งที่ 70'],
