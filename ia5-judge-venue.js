@@ -39,7 +39,7 @@
         !STAGES.includes(row.stage))return {ok:false,reason:'missing canonical id or stage'};
       for(const k of ['available_judges','required_judges','confirmed_rooms','confirmed_slots','conflict_count'])
         if(!Number.isSafeInteger(row[k])||row[k]<0)return {ok:false,reason:'not verified counts'};
-      if(row.available_judges>row.required_judges)return {ok:false,reason:'available exceeds requirement'};
+      // Availability may legitimately exceed minimum staffing requirement.
       const id=row.activity_id+'|'+row.stage;
       if(keys.has(id))return {ok:false,reason:'duplicate canonical activity-stage'};
       keys.add(id);
