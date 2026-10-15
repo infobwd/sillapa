@@ -1,0 +1,73 @@
+/* IA-5: judge / venue readiness, compact and accessible on iPhone, iPad and desktop.
+   Inherits the main six-section IA-1 layout; no theme/font overrides. */
+.ia5-app{display:grid;gap:18px;color:var(--ink);margin:0 auto;padding-bottom:18px}
+.ia5-app h2,.ia5-app h3,.ia5-app p{margin-top:0}
+.ia5-lead,.ia5-work,.ia5-historical,.ia5-next{border:1px solid var(--line);background:var(--surface);
+  border-radius:18px;padding:clamp(14px,2.2vw,22px);min-width:0}
+.ia5-lead{background:linear-gradient(135deg,var(--surface),var(--surface-2))}
+.ia5-chip{display:inline-block;border-radius:18px;padding:5px 10px;
+  background:var(--rep-soft);color:var(--rep);font-size:11px;font-weight:800}
+.ia5-lead h2{font-size:clamp(20px,3vw,27px);line-height:1.4;margin-bottom:8px}
+.ia5-lead>p:last-child,.ia5-next p,.ia5-work-title p,.ia5-historical>p{font-size:12.5px;line-height:1.75;color:var(--ink-2);margin-bottom:0}
+.ia5-caution{background:var(--new-soft);border:1px solid var(--line);border-radius:12px;
+  padding:13px 15px;font-size:12.5px;line-height:1.8;margin:0}
+.ia5-kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ia5-kpi{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;min-width:0}
+.ia5-kpi small,.ia5-kpi span{display:block;color:var(--ink-2);font-size:11px;line-height:1.55}
+.ia5-kpi strong{display:block;color:var(--rep);font-size:clamp(20px,3vw,26px);font-weight:800;margin:7px 0;line-height:1.3;font-variant-numeric:tabular-nums}
+.ia5-source,.ia5-local,.ia5-found{font-size:11.5px;line-height:1.75;color:var(--ink-2);margin:0}
+.ia5-source{padding:2px 4px}
+.ia5-work-title h3,.ia5-historical h3,.ia5-next h3{font-size:17px;line-height:1.5;margin-bottom:4px}
+.ia5-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:17px}
+.ia5-controls label{min-width:0;display:grid;gap:6px;color:var(--ink-2);font-size:12px;font-weight:600}
+.ia5-controls select,.ia5-controls input{display:block;width:100%;min-width:0;min-height:45px;
+  border:1px solid var(--line);border-radius:10px;padding:9px 11px;background:var(--surface-2);
+  font:inherit;font-size:13px;color:var(--ink)}
+.ia5-actions{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0}
+.ia5-actions button,.ia5-more,.ia5-archive-link{min-height:43px;border:1px solid var(--line);
+  border-radius:11px;background:var(--surface-2);color:var(--ink);padding:10px 15px;font:600 12.5px/1.5 inherit;cursor:pointer}
+.ia5-actions button:last-child,.ia5-archive-link{border-color:var(--rep);color:var(--rep)}
+.ia5-local{padding:11px 13px;border-radius:10px;background:var(--surface-2)}
+.ia5-local[role="alert"]{border:1px solid var(--new)}
+.ia5-found{margin:14px 0 10px;font-weight:700}
+.ia5-list{display:grid;gap:12px}
+.ia5-row{min-width:0;border:1px solid var(--line);border-radius:13px;
+  background:var(--surface-2);padding:14px}
+.ia5-row-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.ia5-row-head strong{display:block;font-size:14px;line-height:1.6;overflow-wrap:anywhere}
+.ia5-row-head small{display:block;color:var(--ink-2);font-size:11px;line-height:1.6;margin-top:4px}
+.ia5-status{flex:none;font-size:10.5px;color:var(--rep);background:var(--rep-soft);
+  border-radius:16px;padding:5px 9px;white-space:nowrap}
+.ia5-history{font-size:11.5px;color:var(--ink-2);line-height:1.65;margin:10px 0}
+.ia5-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin:8px 0 12px}
+.ia5-fields label{display:grid;gap:5px;font-size:11.5px;line-height:1.5;color:var(--ink)}
+.ia5-fields label small{color:var(--ink-2)}
+.ia5-fields input{width:100%;min-width:0;min-height:44px;background:var(--surface);border:1px solid var(--line);
+  padding:8px 10px;border-radius:9px;color:var(--ink);font:inherit;font-size:14px}
+.ia5-risks{border-top:1px solid var(--line);padding-top:10px;margin-top:4px}
+.ia5-risks summary{cursor:pointer;font-size:12px;color:var(--ink);font-weight:700;line-height:1.6;min-height:34px}
+.ia5-risks summary span{color:var(--ink-2);font-size:11px}
+.ia5-risks p{font-size:11.5px;line-height:1.7;color:var(--ink-2);margin:8px 0}
+.ia5-risks label{display:flex;gap:10px;align-items:flex-start;min-height:43px;padding:10px 2px;
+  font-size:12px;line-height:1.65;color:var(--ink-2);border-top:1px solid var(--line);cursor:pointer}
+.ia5-risks input{flex:none;width:19px;height:19px;margin:1px 0 0;accent-color:var(--rep)}
+.ia5-more{display:block;margin:13px auto 0}
+.ia5-more[hidden]{display:none}
+.ia5-table-wrap{overflow-x:auto;max-width:100%;border:1px solid var(--line);border-radius:12px;margin-top:13px}
+.ia5-table-wrap table{width:100%;min-width:760px;border-collapse:collapse;font-size:12px;line-height:1.55}
+.ia5-table-wrap thead{background:var(--surface-2)}
+.ia5-table-wrap th,.ia5-table-wrap td{padding:11px 12px;border-bottom:1px solid var(--line);
+  text-align:left;vertical-align:top;color:var(--ink)}
+.ia5-table-wrap th{font-weight:700}
+.ia5-table-wrap th:first-child{min-width:160px}
+.ia5-table-wrap td small{color:var(--ink-2)}
+.ia5-table-wrap tr:last-child th,.ia5-table-wrap tr:last-child td{border-bottom:none}
+.ia5-next .ia5-archive-link{margin-top:11px;margin-bottom:10px}
+.ia5-empty{padding:20px 13px;color:var(--ink-2);font-size:13px;line-height:1.7;text-align:center}
+.ia5-app button:focus-visible,.ia5-app input:focus-visible,.ia5-app select:focus-visible,.ia5-app summary:focus-visible{outline:2px solid var(--rep);outline-offset:3px}
+@media (min-width:760px){.ia5-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.ia5-controls{grid-template-columns:repeat(4,minmax(0,1fr))}.ia5-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:420px){.ia5-lead,.ia5-work,.ia5-historical,.ia5-next{padding:13px}.ia5-kpi{padding:12px 10px}
+  .ia5-row-head{flex-direction:column}.ia5-status{align-self:flex-start}
+  .ia5-controls{grid-template-columns:1fr}.ia5-fields{gap:8px}
+  .ia5-actions button{width:100%}}
+@media (prefers-reduced-motion:reduce){.ia5-app *{scroll-behavior:auto!important}}
