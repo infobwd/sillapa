@@ -78,7 +78,7 @@ Open `http://localhost:8000/#prep`. On phone, use the **same Wi-Fi** and `python
 
 ### Evidence accurately separated
 
-- **In-tool V8 replay:** PASS for new IA-4 synthetic contract test and parsing of inline page scripts; this is **not a real Node process**.
+- **In-tool V8 replay:** PASS for all three repository test scripts (IA-2 registry/mount/CSV, IA-3 publication/KPI, IA-4 school isolation/migration/checklist), plus parsing of the inline page scripts. This is **not a real Node process**.
 - **Owner exact-HEAD Node and `git diff --check`: NOT RUN**; above commands must be run in VS Code and recorded with OS / Node version and exact commit SHA.
 - **Device/UI/PWA acceptance:** NOT RUN. A successful JS parser does not prove browser/iPhone/iPad interactions.
 - **Actions:** NOT REQUIRED for new test workflow under LOCAL_FIRST; not CI PASS.
