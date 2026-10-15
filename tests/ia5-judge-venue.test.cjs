@@ -87,12 +87,14 @@ const published={
   available_judges:2,confirmed_rooms:0,confirmed_slots:0,conflict_count:1}]
 };
 assert.equal(validatePublicSnapshot(published).ok,true);
+assert.equal(validatePublicSnapshot({...published,rows:[{...published.rows[0],available_judges:5}]}).ok,true,
+  'available staffing can legitimately exceed minimum required');
 for(const edit of [
  {cycle:73},{publication_status:'draft'},{source_system:'Other'},
  {coverage:{...published.coverage,venues:'partial'}},{source_as_of:'2026-12-99'},
  {published_at:'2026-10-14T01:00:00+07:00'},
  {rows:[{...published.rows[0],judge_name:'Private Person'}]},
- {rows:[{...published.rows[0],available_judges:5}]},
+ {rows:[{...published.rows[0],available_judges:1.5}]},
  {rows:[published.rows[0],published.rows[0]]},
  {rows:[{...published.rows[0],conflict_count:-1}]}
 ])assert.equal(validatePublicSnapshot({...published,...edit}).ok,false,'reject unsafe/unapproved release');
