@@ -110,7 +110,7 @@ assert.ok(exported.includes('รหัสเผยแพร่'));
 assert.ok(!exported.includes('Private Person'),'report contains only aggregate metadata');
 const textJs=read('ia6-executive.js'),html=read('index.html'),sw=read('sw.js');
 for(const str of ['id="v-executive"','id="ia6Root"','ia6-executive.js','ia6.css',
- 'data-go="executive"',"['executive','Dashboard สำหรับผู้บริหาร']",
+ 'data-go="executive"',"['executive','สรุปข้อมูลสำหรับผู้บริหาร']",
  "executive:'overview'",'SILLAPA_IA6.mount({','release:null,revocation:null',
  'id="ia5Root"','id="ia4Summary"','id="ia3Root"','id="ia2Root"','id="v-judges"'])
  assert.ok(html.includes(str),'IA-6/previous view integration '+str);
