@@ -127,7 +127,34 @@ function building(label,i,total,isDistrict,competitionCount=0){const key=label.n
   add(new THREE.BoxGeometry(.09,1.05,1.25),'#8db6ca',2.55,floor,j);
  }
  add(new THREE.BoxGeometry(.18,.2,14),'#e7edf2',2.6,2.5,0);
-}else if(dome){add(new THREE.BoxGeometry(8.5,.25,14),'#b6b8a9',0,.14,0);const roof=add(new THREE.CylinderGeometry(4.3,4.3,14.2,40,1,true,0,Math.PI),'#d9e3e9',0,3.35,0);roof.rotation.z=Math.PI/2;roof.rotation.y=Math.PI/2;
+}else if(dome){// D3D-R8: photograph-informed dark steel dome, terracotta floor and visible arched trusses.
+ // Dimensions/details remain schematic; the reference photograph is not a surveyed plan.
+ add(new THREE.BoxGeometry(8.5,.25,14),'#ba7756',0,.14,0);
+ const roof=add(new THREE.CylinderGeometry(4.3,4.3,14.2,40,1,true,0,Math.PI),'#303b43',0,3.35,0);
+ roof.rotation.z=Math.PI/2;roof.rotation.y=Math.PI/2;
+ const steel=new THREE.MeshStandardMaterial({color:'#586772',metalness:.28,roughness:.67});
+ for(const zz of [-6.25,-3.15,0,3.15,6.25]){
+  const points=[];
+  for(let k=0;k<=24;k++){
+   const angle=Math.PI*k/24;
+   points.push(new THREE.Vector3(4.16*Math.cos(angle),3.35+4.16*Math.sin(angle),zz));
+  }
+  const arch=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points),24,.075,6,false),steel);
+  group.add(arch);
+ }
+ for(const xx of [-3.65,3.65]){
+  const beam=new THREE.Mesh(new THREE.BoxGeometry(.10,.12,13.8),steel);
+  beam.position.set(xx,3.15,0);group.add(beam);
+ }
+ const tileMat=new THREE.MeshStandardMaterial({color:'#e7a782',roughness:.95});
+ for(let xx=-4;xx<=4;xx+=1.5){
+  const seam=new THREE.Mesh(new THREE.BoxGeometry(.018,.01,13.5),tileMat);
+  seam.position.set(xx,.281,0);group.add(seam);
+ }
+ for(let zz=-6.5;zz<=6.5;zz+=1.5){
+  const seam=new THREE.Mesh(new THREE.BoxGeometry(8.25,.01,.018),tileMat);
+  seam.position.set(0,.284,zz);group.add(seam);
+ }
  // Dome roof remains clean: remove D3D-R2 ribs and longitudinal purlins.
  // Stage moved to the OPPOSITE end from the previous placement.
  // Local -Z maps to world +X after the dome rotation; stage faces the dome center.
@@ -145,6 +172,54 @@ function building(label,i,total,isDistrict,competitionCount=0){const key=label.n
   for(const y of [1.56,2.16]){
    const cone=new THREE.Mesh(new THREE.CircleGeometry(.22,20),new THREE.MeshStandardMaterial({color:'#525963',side:THREE.DoubleSide}));
    cone.position.set(xx,y,-4.26);group.add(cone);
+  }
+ }
+ // Photo-referenced welcome backdrop: a readable banner with floral decoration.
+ const welcomeCanvas=document.createElement('canvas');
+ welcomeCanvas.width=1024;welcomeCanvas.height=512;
+ const ctx=welcomeCanvas.getContext('2d');
+ ctx.fillStyle='#08bed3';ctx.fillRect(0,0,1024,512);
+ for(let i=0;i<30;i++){
+  const x=72+(i*91)%880,y=35+(i*59)%420;
+  const r=12+(i%4)*4;
+  ctx.fillStyle=['#ffde6d','#ff79aa','#f8f6c8','#fff4f2'][i%4];
+  for(let j=0;j<5;j++){
+   const a=2*Math.PI*j/5;
+   ctx.beginPath();ctx.arc(x+Math.cos(a)*r,y+Math.sin(a)*r,r*.62,0,Math.PI*2);ctx.fill();
+  }
+  ctx.fillStyle='#f4b847';ctx.beginPath();ctx.arc(x,y,r*.4,0,Math.PI*2);ctx.fill();
+ }
+ ctx.fillStyle='rgba(34,119,77,.94)';ctx.fillRect(90,192,844,170);
+ ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#fff8ea';
+ ctx.font='700 86px Kanit, sans-serif';ctx.fillText('ยินดีต้อนรับ',512,255,795);
+ ctx.font='600 49px Kanit, sans-serif';ctx.fillText('WELCOME',512,326,700);
+ const bannerTex=new THREE.CanvasTexture(welcomeCanvas);bannerTex.colorSpace=THREE.SRGBColorSpace;
+ const banner=new THREE.Mesh(new THREE.PlaneGeometry(5.4,2.6),
+  new THREE.MeshBasicMaterial({map:bannerTex,side:THREE.DoubleSide}));
+ banner.position.set(0,2.05,-6.54);group.add(banner);
+ // Two stylized green welcome-tree decorations like those flanking the sign in the photo.
+ for(const side of [-1,1]){
+  const x=side*3.55,z=-3.2;
+  const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.37,.55,3.1,10),
+   new THREE.MeshStandardMaterial({color:'#22d56e',roughness:.9}));
+  trunk.position.set(x,1.63,z);group.add(trunk);
+  for(const dx of [-.43,0,.43]){
+   const crown=new THREE.Mesh(new THREE.IcosahedronGeometry(.66,1),
+    new THREE.MeshStandardMaterial({color:dx===0?'#effa9d':'#cced79',roughness:.9}));
+   crown.position.set(x+dx,3.35+(dx===0?.16:0),z);group.add(crown);
+  }
+ }
+ // Red audience chairs are stationary furnishings, not a count of attendees.
+ const seatMat=new THREE.MeshStandardMaterial({color:'#bd3232',roughness:.84});
+ const frameMat=new THREE.MeshStandardMaterial({color:'#39434b'});
+ for(const zz of [-1.0,.6,2.2])for(const xx of [-2.6,-1.3,0,1.3,2.6]){
+  const seat=new THREE.Mesh(new THREE.BoxGeometry(.63,.12,.6),seatMat);
+  seat.position.set(xx,.68,zz);group.add(seat);
+  const back=new THREE.Mesh(new THREE.BoxGeometry(.63,.75,.12),seatMat);
+  back.position.set(xx,1.12,zz+.30);group.add(back);
+  for(const dx of [-.23,.23]){
+   const leg=new THREE.Mesh(new THREE.BoxGeometry(.07,.6,.09),frameMat);
+   leg.position.set(xx+dx,.36,zz);group.add(leg);
   }
  }
  for(const side of [-1,1])for(const zz of [-6,-3,0,3,6])add(new THREE.BoxGeometry(.18,3.25,.18),'#637d88',side*4.15,1.65,zz)}else{add(new THREE.BoxGeometry(4,2.3,3.6),color,0,1.15,0);const roof=add(new THREE.ConeGeometry(3.5,1.1,4),'#8b6965',0,2.8,0);roof.rotation.y=Math.PI/4}if(isDistrict&&[ 'อาคาร1','อาคาร2','อาคารโดม'].includes(key))group.add(makeBuildingLabel(key==='อาคารโดม'?'อาคารโดม':key==='อาคาร1'?'อาคาร 1':'อาคาร 2',office?7.5:8));if(competitionCount>0)group.add(makeCompetitionBadge(competitionCount,isDistrict?(office?9.45:9.95):5.7));scene.add(group);objects.push(group)}
