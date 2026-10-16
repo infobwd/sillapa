@@ -33,8 +33,65 @@ function makeCompetitionBadge(count,y){
  return sprite;
 }
 function building(label,i,total,isDistrict,competitionCount=0){const key=label.normalize('NFKC').replace(/\s+/g,'').toLowerCase();let x,z;const districtLayout={'อาคาร1':[0,8],'อาคาร2':[0,-11.5],'อาคารโดม':[0,-4]};if(isDistrict&&districtLayout[key]){[x,z]=districtLayout[key]}else{const cols=Math.ceil(Math.sqrt(total));x=(i%cols-(cols-1)/2)*6;z=(Math.floor(i/cols)-(Math.ceil(total/cols)-1)/2)*7}const group=new THREE.Group();group.position.set(x,0,z);if(isDistrict&&['อาคาร1','อาคาร2','อาคารโดม'].includes(key)){group.rotation.y=Math.PI/2;group.scale.z=.78}const office=isDistrict&&(key==='อาคาร1'||key==='อาคาร2'),dome=isDistrict&&key==='อาคารโดม';const color=['#e7d5b4','#d7e3ef','#d2b6bd','#a8d2c4'][i%4];function add(geo,mat,px,py,pz,clickable=true){const mesh=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:mat,side:THREE.DoubleSide,roughness:.82}));mesh.position.set(px,py,pz);group.add(mesh);if(clickable){mesh.userData.label=label;meshes.push(mesh)}return mesh}if(office){
- // Both office buildings retain two storeys and expose room fronts behind an open corridor.
- add(new THREE.BoxGeometry(4.1,4.8,14),color,.45,2.4,0);
+ // Building 1 has an open-top upper meeting room under the roof-toggle,
+ // while Building 2 preserves the original full office block.
+ if(key==='อาคาร1'){
+  add(new THREE.BoxGeometry(4.1,2.42,14),color,.45,1.21,0);
+  const meet=new THREE.Group();group.add(meet);
+  const roomMat=c=>new THREE.MeshStandardMaterial({color:c,roughness:.85});
+  function roomBox(w,h,l,x,y,z,material){
+   const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,l),material);
+   mesh.position.set(x,y,z);meet.add(mesh);return mesh;
+  }
+  const wood=roomMat('#775845'),woodLite=roomMat('#b99872'),curtain=roomMat('#e79cb4');
+  const desk=roomMat('#d98b54'),chair=roomMat('#24384c'),frame=roomMat('#445161');
+  roomBox(4.02,.14,13.8,.45,2.50,0,roomMat('#ccb898')); // meeting-room floor
+  roomBox(.13,2.05,13.85,2.45,3.58,0,wood); // rear wall
+  for(const zz of [-6.95,6.95])roomBox(4.05,2.05,.11,.45,3.58,zz,wood);
+  // Timber wainscot on both long sides, with separate pink curtains above.
+  for(const xx of [-1.50,2.34]){
+   roomBox(.06,.72,13.3,xx,2.97,0,woodLite);
+   for(let zz=-5.65;zz<=5.7;zz+=.47){
+    roomBox(.065,1.18,.31,xx,4.00,zz,curtain);
+   }
+  }
+  // A U-shaped orange conference table, open towards the projection/screen end.
+  for(const xx of [-.70,1.50]){
+   roomBox(.81,.12,7.3,xx,3.32,.45,desk);
+   for(const zz of [-2.7,2.65])roomBox(.11,.71,.11,xx,2.92,zz,wood);
+  }
+  roomBox(2.98,.12,.85,.40,3.32,-3.50,desk);
+  for(const xx of [-.72,1.52])roomBox(.11,.71,.11,xx,2.92,-3.50,wood);
+  for(const xx of [-1.30,2.04]){
+   for(const zz of [-2.45,-1.15,.15,1.45,2.75]){
+    const chairG=new THREE.Group();
+    const seat=new THREE.Mesh(new THREE.BoxGeometry(.36,.10,.40),chair);
+    seat.position.set(0,3.02,0);chairG.add(seat);
+    const back=new THREE.Mesh(new THREE.BoxGeometry(.36,.57,.09),chair);
+    back.position.set(0,3.32,.18);chairG.add(back);
+    const stem=new THREE.Mesh(new THREE.CylinderGeometry(.045,.045,.37,7),frame);
+    stem.position.set(0,2.80,0);chairG.add(stem);
+    chairG.position.set(xx,0,zz);meet.add(chairG);
+   }
+  }
+  // Black gooseneck microphones on a subset of table positions.
+  for(const xx of [-.70,1.50])for(const zz of [-2.1,.0,2.0]){
+   const mic=new THREE.Mesh(new THREE.CylinderGeometry(.018,.018,.24,6),frame);
+   mic.position.set(xx,3.47,zz);meet.add(mic);
+  }
+  // Front drape and a compact crest / presentation screen.
+  roomBox(2.9,1.55,.06,.40,3.97,-6.81,curtain);
+  roomBox(1.66,1.08,.085,.40,4.01,-6.70,wood);
+  const crest=new THREE.Mesh(new THREE.OctahedronGeometry(.34),roomMat('#cfb367'));
+  crest.position.set(.40,4.08,-6.62);meet.add(crest);
+  // Ceiling projector, lights and wall air conditioning.
+  roomBox(.36,.17,.48,.40,4.68,-.65,roomMat('#d7dde0'));
+  for(const zz of [-3.8,0,3.8])roomBox(1.13,.07,.27,.40,4.71,zz,roomMat('#f2efe3'));
+  roomBox(.14,.32,1.25,2.19,4.20,3.18,roomMat('#e8eaec'));
+  // Objects are static representations, not event-specific participant counts.
+ }else{
+  add(new THREE.BoxGeometry(4.1,4.8,14),color,.45,2.4,0);
+ }
  // D3D: end walls with open upper stair landings on BOTH office buildings.
  // Keep the lower-storey masonry; leave an upper-storey opening so the stair exit is visible.
  for(const end of [-1,1]){
