@@ -323,7 +323,7 @@ function decorateDistrict(){
   upper-=height;
  }
  // Short coloured welcome flags flank the pole without blocking either driveway.
- for(const [x,color] of [[-8,'#e2b33f'],[-6,'#5b98ce'],[6,'#d66e82'],[8,'#6bb88d']]){
+ for(const [x,color] of [[-6,'#e2b33f'],[-4.5,'#5b98ce'],[4.5,'#d66e82'],[6,'#6bb88d']]){
   const pole=new THREE.Mesh(new THREE.CylinderGeometry(.025,.03,2.7,6),mat('#d7d9d5'));
   pole.position.set(x,1.55,40);g.add(pole);
   const pennant=new THREE.Mesh(new THREE.PlaneGeometry(.72,.47),
