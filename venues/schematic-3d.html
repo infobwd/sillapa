@@ -274,19 +274,59 @@ function decorateDistrict(){
    shrub.position.set(px,.57,18.4);g.add(shrub);
   }
  }
- // Low masonry monument and readable Thai sign, facing the road/front approach.
- slab(10,.85,0,12.6,'#e9e1cd',.65);
- const signBase=new THREE.Mesh(new THREE.BoxGeometry(10,1.7,.48),mat('#eee9df'));
- signBase.position.set(0,1.55,12.6);g.add(signBase);
- const signCanvas=document.createElement('canvas');signCanvas.width=1024;signCanvas.height=256;
+ // D3D-R9: Building 1 "ศึกษากาญจน์ 4" forecourt sign, referencing owner's photograph.
+ // This is the BUILDING FRONT sign at z=12.6, separate from the road entrance sign z=44.
+ const signBrick=new THREE.Mesh(new THREE.BoxGeometry(11.3,1.05,.72),mat('#80574a'));
+ signBrick.position.set(0,.63,12.6);g.add(signBrick);
+ const signWood=new THREE.Mesh(new THREE.BoxGeometry(11.0,2.25,.39),mat('#ba986d'));
+ signWood.position.set(0,2.20,12.6);g.add(signWood);
+ // Narrow vertical wood slats lend texture without downloading user photographs into repo.
+ for(let x=-5.28;x<=5.28;x+=.29){
+  const slat=new THREE.Mesh(new THREE.BoxGeometry(.018,2.16,.05),mat('#907556'));
+  slat.position.set(x,2.2,12.84);g.add(slat);
+ }
+ const signCanvas=document.createElement('canvas');
+ signCanvas.width=1280;signCanvas.height=440;
  const signCtx=signCanvas.getContext('2d');
- signCtx.fillStyle='#173c63';signCtx.fillRect(0,0,1024,256);
- signCtx.fillStyle='#ffffff';signCtx.textAlign='center';signCtx.textBaseline='middle';
- signCtx.font='700 105px Kanit, sans-serif';
- signCtx.fillText('ยินดีต้อนรับ',512,128,970);
+ signCtx.clearRect(0,0,1280,440);
+ signCtx.textBaseline='middle';
+ signCtx.textAlign='center';
+ signCtx.font='700 119px Kanit, sans-serif';
+ signCtx.fillStyle='#188155';signCtx.fillText('✿',115,145,118);
+ signCtx.fillStyle='#ef6096';signCtx.fillText('ศึกษา',342,145,360);
+ signCtx.fillStyle='#2d538c';signCtx.fillText('กาญจน์ 4',815,145,620);
+ signCtx.strokeStyle='#b72a3e';signCtx.lineWidth=15;
+ signCtx.beginPath();signCtx.moveTo(1083,123);
+ signCtx.bezierCurveTo(1045,82,1002,118,1050,166);
+ signCtx.bezierCurveTo(1083,198,1114,221,1118,223);
+ signCtx.bezierCurveTo(1150,190,1217,144,1169,115);
+ signCtx.bezierCurveTo(1139,97,1108,111,1083,123);signCtx.stroke();
+ signCtx.fillStyle='#f7f5ec';signCtx.font='700 74px Kanit, sans-serif';
+ signCtx.shadowColor='#3b2a20';signCtx.shadowBlur=6;
+ signCtx.fillText('สพป.กาญจนบุรี เขต 4',640,350,1200);
  const signTex=new THREE.CanvasTexture(signCanvas);signTex.colorSpace=THREE.SRGBColorSpace;
- const signFace=new THREE.Mesh(new THREE.PlaneGeometry(9.6,1.55),new THREE.MeshBasicMaterial({map:signTex,side:THREE.DoubleSide}));
- signFace.position.set(0,1.55,12.88);g.add(signFace);
+ const signFace=new THREE.Mesh(new THREE.PlaneGeometry(10.8,3.65),
+  new THREE.MeshBasicMaterial({map:signTex,transparent:true,side:THREE.DoubleSide,depthWrite:false}));
+ signFace.position.set(0,1.90,12.88);g.add(signFace);
+ // Stone plinth, small water jets and decorative urns across the front lawn.
+ const fountainStone=mat('#7f5e52'),waterMat=new THREE.MeshStandardMaterial({
+  color:'#a5e9ed',transparent:true,opacity:.78,roughness:.2,emissive:'#276e76',emissiveIntensity:.12
+ });
+ for(const x of [-4.25,-2.85,2.85,4.25]){
+  const basin=new THREE.Mesh(new THREE.BoxGeometry(.9,.22,.65),fountainStone);
+  basin.position.set(x,.35,13.55);g.add(basin);
+  const jetPath=new THREE.QuadraticBezierCurve3(
+   new THREE.Vector3(x,.47,13.53),new THREE.Vector3(x+.22,1.8,13.65),
+   new THREE.Vector3(x+.37,.55,13.85));
+  const jet=new THREE.Mesh(new THREE.TubeGeometry(jetPath,14,.045,5,false),waterMat);
+  g.add(jet);
+ }
+ for(const x of [-5.5,5.5]){
+  const urn=new THREE.Mesh(new THREE.CylinderGeometry(.3,.39,.68,10),mat('#ba9f7c'));
+  urn.position.set(x,.55,13.9);g.add(urn);
+  const bush=new THREE.Mesh(new THREE.IcosahedronGeometry(.45,1),mat('#4d8b59'));
+  bush.position.set(x,1.16,13.9);g.add(bush);
+ }
  // Frontage monument: straight sides, ONLY its upper edge is arched.
  // It stands in the central island, with the separate LEFT entry and RIGHT exit unobstructed.
  const signShape=new THREE.Shape();
