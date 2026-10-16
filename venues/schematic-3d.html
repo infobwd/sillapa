@@ -294,15 +294,21 @@ function decorateDistrict(){
   slab(.08,5.6,x,36,'#f4efe0',.255);
  }
  slab(18,.09,0,39,'#f4efe0',.256);
- for(const x of [d.gate.entryX,d.gate.exitX])slab(5,17,x,43,'#777f83',.18); // separate entry/exit
+ // External road is a distinct continuous surface: inner edge at z=47.5.
+ // Gate stubs end at that edge, never overlap road 3342 or cover its lanes.
  slab(94,d.road3342.width,0,d.road3342.z,'#515962',.16);
  for(let x=-43;x<=43;x+=8)slab(3,.14,x,d.road3342.z,'#f0d982',.25);
  // Two continuous side roads; ONLY one transverse road in front of อาคาร 1.
  for(const x of d.sideRoadsX)slab(5,83,x,-1.5,'#777f83',.19);
  for(const z of d.frontRoadsZ)slab(38,4,0,z,'#81888a',.2);
  slab(38,4,0,-27,'#81888a',.2); // road between rear extension and parking
- // Gate joins the internal network through the front arrival yard.
- for(const x of [d.gate.entryX,d.gate.exitX])slab(5,16,x,35,'#81888a',.22);
+ // Internal gate approaches connect to the highway edge (z=47.5) without stacking slabs.
+ // Roads already reach z=40, so only the 7.5-unit extension is needed.
+ for(const x of [d.gate.entryX,d.gate.exitX]){
+  slab(5,7.5,x,43.75,'#81888a',.19);
+  // Give way marking before joining the public road.
+  slab(4.5,.12,x,46.2,'#f5efdd',.275);
+ }
  // Direction arrows: entrance LEFT travels toward buildings (-Z); exit RIGHT travels toward road 3342 (+Z).
  // These are decorative road markings, not clickable meshes or vehicle simulation.
  const arrowShape=new THREE.Shape();
@@ -453,6 +459,8 @@ function decorateDistrict(){
  // Right-hand road: x=13, edge=15.5; shelter sits between road and east boundary x=21.
  const sideCarport=new THREE.Group(),scX=18.15,scZ=3.3;
  slab(4.8,7.8,scX,scZ,'#c8c6c0',.19);
+ // Two side-by-side nose-in bays under the shelter, not an end-to-end queue.
+ for(const x of [scX-2.2,scX,scX+2.2])slab(.09,6.9,x,scZ,'#f5efe0',.278);
  for(const xx of [-2.05,2.05])for(const zz of [-3.3,3.3]){
   const post=new THREE.Mesh(new THREE.BoxGeometry(.15,2.8,.15),mat('#657983'));
   post.position.set(scX+xx,1.55,scZ+zz);sideCarport.add(post);
@@ -601,7 +609,8 @@ function decorateDistrict(){
   const post=new THREE.Mesh(new THREE.BoxGeometry(.18,3,.18),mat('#d3d6d2'));
   post.position.set(cp.x+x,1.55,cp.z+z);g.add(post);
  }
- for(const x of [-3.5,0,3.5])slab(.1,cp.length-1,cp.x+x,cp.z,'#e8e6de',.22);
+ // Three bays facing the rear access lane. Stripes are BETWEEN car centres.
+ for(const x of [-5.15,-1.7,1.7,5.15])slab(.1,cp.length-1,cp.x+x,cp.z,'#e8e6de',.22);
  // Rear carport restroom blocks: male LEFT, female RIGHT when viewed from frontage (+Z).
  // Rotate both blocks 90 degrees: long axes now run X, perpendicular to the carport's Z orientation.
  function parkingRestroom(x,sex,genderSymbol){
@@ -767,8 +776,10 @@ function addDistrictVehicles(activityCount){
   model.position.set(x,.24,z);model.rotation.y=Math.PI;root.add(model);
  }
  // Keep parked vehicles in the existing side and rear carports.
- const parked=[{x:18.15,z:1.45,angle:0},{x:18.15,z:4.75,angle:0},
-  {x:-3.4,z:-35,angle:Math.PI/2},{x:0,z:-35,angle:Math.PI/2},{x:3.4,z:-35,angle:Math.PI/2}];
+ const parked=[
+  {x:16.95,z:3.3,angle:0},{x:19.35,z:3.3,angle:0},
+  {x:-3.4,z:-35,angle:0},{x:0,z:-35,angle:0},{x:3.4,z:-35,angle:0}
+ ];
  for(let i=0;i<parked.length;i++){
   const p=parked[i],model=makeDistrictCar(colors[(i+2)%colors.length],i===3);
   model.position.set(p.x,.24,p.z);model.rotation.y=p.angle;root.add(model);
