@@ -196,7 +196,7 @@ function building(label,i,total,isDistrict,competitionCount=0){const key=label.n
  const bannerTex=new THREE.CanvasTexture(welcomeCanvas);bannerTex.colorSpace=THREE.SRGBColorSpace;
  const banner=new THREE.Mesh(new THREE.PlaneGeometry(5.4,2.6),
   new THREE.MeshBasicMaterial({map:bannerTex,side:THREE.DoubleSide}));
- banner.position.set(0,2.05,-6.54);group.add(banner);
+ banner.position.set(0,2.05,-6.24);group.add(banner);
  // Two stylized green welcome-tree decorations like those flanking the sign in the photo.
  for(const side of [-1,1]){
   const x=side*3.55,z=-3.2;
@@ -296,6 +296,40 @@ function decorateDistrict(){
  frontageSign.position.set(0,.25,44);g.add(frontageSign);
  const archLabel=makeBuildingLabel('สพป.กาญจนบุรี เขต 4',2);
  archLabel.position.set(0,1.8,44.16);archLabel.scale.set(7.5,1.15,1);g.add(archLabel);
+ // D3D-R8: Thai national flag behind the road-facing monument, as in the supplied photo.
+ // Frontage is +Z (road 3342 is at z=52), so z=40 is behind the sign at z=44.
+ // It is centered to avoid both separate vehicle gates at x=-13 and x=+13.
+ const flagX=0,flagZ=40.0;
+ const pedestal=new THREE.Mesh(new THREE.CylinderGeometry(.56,.74,.65,12),mat('#cfd4d5'));
+ pedestal.position.set(flagX,.4,flagZ);g.add(pedestal);
+ const pedestalTop=new THREE.Mesh(new THREE.CylinderGeometry(.38,.48,.22,12),mat('#eeeeeb'));
+ pedestalTop.position.set(flagX,.83,flagZ);g.add(pedestalTop);
+ const flagpole=new THREE.Mesh(new THREE.CylinderGeometry(.075,.11,12.0,12),mat('#c6cdd3'));
+ flagpole.position.set(flagX,6.9,flagZ);g.add(flagpole);
+ const finial=new THREE.Mesh(new THREE.SphereGeometry(.16,10,8),mat('#d9b45d'));
+ finial.position.set(flagX,12.99,flagZ);g.add(finial);
+ let upper=12.10;
+ const stripes=[['#c8323d',.28],['#fffefa',.28],['#213d86',.56],['#fffefa',.28],['#c8323d',.28]];
+ for(const [color,height] of stripes){
+  const geo=new THREE.PlaneGeometry(2.45,height,12,1);
+  const pos=geo.attributes.position;
+  for(let i=0;i<pos.count;i++){
+   const vx=pos.getX(i)+1.225;
+   pos.setXYZ(i,pos.getX(i),pos.getY(i),.10*Math.sin(vx*2.1+height*3));
+  }
+  geo.computeVertexNormals();
+  const cloth=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color,side:THREE.DoubleSide,roughness:.85}));
+  cloth.position.set(flagX+1.225,upper-height/2,flagZ);g.add(cloth);
+  upper-=height;
+ }
+ // Short coloured welcome flags flank the pole without blocking either driveway.
+ for(const [x,color] of [[-8,'#e2b33f'],[-6,'#5b98ce'],[6,'#d66e82'],[8,'#6bb88d']]){
+  const pole=new THREE.Mesh(new THREE.CylinderGeometry(.025,.03,2.7,6),mat('#d7d9d5'));
+  pole.position.set(x,1.55,40);g.add(pole);
+  const pennant=new THREE.Mesh(new THREE.PlaneGeometry(.72,.47),
+   new THREE.MeshStandardMaterial({color,side:THREE.DoubleSide}));
+  pennant.position.set(x+.38,2.59,40);g.add(pennant);
+ }
  // Pedestrian bands are separate from the vehicle corridors.
  for(const x of [-11,11])slab(1,63,x,-8,'#d9d6c9',.2);
  // Full-width single-storey office annex directly behind อาคาร 1, adjoining the dome.
