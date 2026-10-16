@@ -1037,7 +1037,7 @@ function animateWalkers(t){
 }
 // Camera framing follows the selected building on either pointer/touch or list selection.
 function flyToBuilding(label){
- const key=label.normalize('NFKC').replace(/\\s+/g,'').toLowerCase();
+ const key=label.normalize('NFKC').replace(/\s+/g,'').toLowerCase();
  const entry=buildingTargets.get(key);
  if(!entry)return;
  const center=entry.center;
