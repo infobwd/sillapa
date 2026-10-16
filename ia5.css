@@ -200,3 +200,7 @@
  #v-venue .venue-3d-shortcut__actions{grid-template-columns:repeat(2,minmax(0,1fr))}
  #v-venue .venue-3d-shortcut{padding:22px}
 }
+
+#v-venue .venue-directory-link{display:inline-flex;align-items:center;gap:8px;margin-top:12px;min-height:40px;padding:9px 12px;border:1px solid var(--line);border-radius:11px;background:var(--surface);color:var(--rep);font-size:12px;font-weight:700;text-decoration:none}
+#v-venue .venue-directory-link:hover{border-color:var(--rep)}
+#v-venue .venue-directory-link:focus-visible{outline:3px solid var(--focus);outline-offset:3px}

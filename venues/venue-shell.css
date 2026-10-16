@@ -1,0 +1,37 @@
+/* Shared visual shell for /venues and 3D. Mirrors main Sillapa design tokens. */
+:root{--bg:#eef1f5;--surface:#fff;--surface-2:#f6f8fa;--ink:#17233b;--ink-2:#4a5568;--ink-3:#7a8496;--line:#dfe4ea;--rep:#0f6b66;--rep-soft:#dcefec;--focus:#2f5bd3;--sans:"Anuphan","Leelawadee UI",system-ui,sans-serif}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1220;--surface:#152035;--surface-2:#1b283f;--ink:#e7ebf2;--ink-2:#b3bccb;--ink-3:#8590a3;--line:#28344c;--rep:#4fc2b8;--rep-soft:#173b3b;--focus:#8aa8ff}}
+:root[data-theme="dark"]{--bg:#0b1220;--surface:#152035;--surface-2:#1b283f;--ink:#e7ebf2;--ink-2:#b3bccb;--ink-3:#8590a3;--line:#28344c;--rep:#4fc2b8;--rep-soft:#173b3b;--focus:#8aa8ff}
+body.venue-shell{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased}
+.venue-shell header{background:var(--surface);border-bottom:1px solid var(--line);padding:16px clamp(16px,3vw,34px)}
+.venue-shell header h1{color:var(--ink);font-size:clamp(20px,2.2vw,27px);line-height:1.4;margin:9px 0 4px}
+.venue-shell header small{color:var(--ink-2)}
+.venue-shell header>a{display:inline-flex;align-items:center;min-height:36px;color:var(--rep);text-decoration:none;font-size:13px;font-weight:700}
+.venue-shell header>a:hover{text-decoration:underline}
+.venue-shell main{max-width:1240px;margin:auto;padding:22px clamp(14px,2.8vw,32px) 80px}
+.venue-shell .intro,.venue-shell p,.venue-shell small,.venue-shell .result p,.venue-shell .subtle{color:var(--ink-2)}
+.venue-shell .card{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:18px;box-shadow:none;padding:clamp(16px,2vw,24px)}
+.venue-shell .card h2,.venue-shell .card h3{color:var(--ink)}
+.venue-shell .tag{background:var(--rep-soft);color:var(--rep);font-weight:700}
+.venue-shell .links a{background:var(--surface-2);color:var(--rep);border:1px solid var(--line);padding:11px 14px;min-height:44px;display:inline-flex;align-items:center}
+.venue-shell .links a:hover{border-color:var(--rep)}
+.venue-shell .field,.venue-shell select,.venue-shell button{background:var(--surface-2);border-color:var(--line);color:var(--ink)}
+.venue-shell .field{min-height:46px}
+.venue-shell .stats{color:var(--ink)}
+.venue-shell .result,.venue-shell .building-group{border-color:var(--line)}
+.venue-shell .building-group summary{background:var(--surface-2);color:var(--ink)}
+.venue-shell footer{color:var(--ink-3)}
+.venue-shell a{color:var(--rep)}
+.venue-shell a:focus-visible,.venue-shell button:focus-visible,.venue-shell input:focus-visible,.venue-shell select:focus-visible,.venue-shell summary:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.venue-shell .venue-nav{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0}
+.venue-shell .venue-nav a{display:inline-flex;align-items:center;min-height:40px;padding:8px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2);text-decoration:none;font-size:12px;font-weight:700;color:var(--ink)}
+.venue-shell .venue-nav a[aria-current="page"]{background:var(--rep-soft);color:var(--rep);border-color:var(--rep)}
+.venue-shell #scene{border:1px solid var(--line)}
+.venue-shell #scene .model-panel{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+.venue-shell #scene .model-panel p{color:var(--ink-2)}
+.venue-shell #scene .map-tags button{background:var(--surface);color:var(--ink)}
+.venue-shell .scene-tools button{background:var(--surface);color:var(--ink)}
+.venue-shell .note{background:var(--surface);color:var(--ink-2);border:1px solid var(--line)}
+.venue-shell #list button{background:var(--surface-2);color:var(--ink)}
+@media(min-width:900px){.venue-shell.venue-index .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.venue-shell.venue-index .cards .card{margin:12px 0}}
+@media(max-width:680px){.venue-shell header{padding:12px 16px}.venue-shell main{padding-top:14px}.venue-shell .venue-nav{gap:6px}.venue-shell .venue-nav a{font-size:11px;padding:7px 9px}.venue-shell #scene .note{font-size:11px}}
