@@ -762,7 +762,7 @@ function addDistrictVehicles(activityCount){
  const bays=[[-7,36],[-3.5,36],[0,36],[3.5,36],[7,36]];
  for(let i=2;i<bays.length;i++){
   const [x,z]=bays[i],model=makeDistrictCar(colors[i%colors.length],i%3===1);
-  model.position.set(x,.24,z);model.rotation.y=0;root.add(model);
+  model.position.set(x,.24,z);model.rotation.y=Math.PI;root.add(model);
  }
  // Keep parked vehicles in the existing side and rear carports.
  const parked=[{x:18.15,z:1.45,angle:0},{x:18.15,z:4.75,angle:0},
@@ -822,14 +822,14 @@ function animateDistrictVehicles(t){
    const travelled=(t*b.speed+b.phase*b.travel)%b.travel;
    const x=b.direction===1?-b.travel/2+travelled:b.travel/2-travelled;
    b.model.position.set(x,.20,b.lane);
-   b.model.rotation.y=b.direction*Math.PI/2;
+   b.model.rotation.y=-b.direction*Math.PI/2;
    // Outside the modelled road, vehicles remain hidden until their next pass.
    b.model.visible=Math.abs(x)<49;
    continue;
   }
   if(b.route==='rear-loop'){
    const q=(t*b.speed+b.phase)%1,point=b.curve.getPointAt(q),dir=b.curve.getTangentAt(q);
-   b.model.position.set(point.x,.24,point.z);b.model.rotation.y=Math.atan2(dir.x,dir.z);
+   b.model.position.set(point.x,.24,point.z);b.model.rotation.y=Math.atan2(dir.x,dir.z)+Math.PI;
    continue;
   }
   if(b.route!=='front-dropoff')continue;
@@ -839,17 +839,17 @@ function animateDistrictVehicles(t){
    const u=q/.30,point=b.arrive.getPointAt(u);
    const tangent=b.arrive.getTangentAt(Math.min(.999,u));
    b.model.position.set(point.x,.24,point.z);
-   b.model.rotation.y=Math.atan2(tangent.x,tangent.z);
+   b.model.rotation.y=Math.atan2(tangent.x,tangent.z)+Math.PI;
   }else if(stopped||reversing){
    const reverseAmount=reversing?(q-.52)/.10:0;
    b.model.position.set(b.bay[0],.24,b.bay[1]-reverseAmount*5.3);
    // The vehicle's nose stays inward while it slowly backs out of its slot.
-   b.model.rotation.y=0;
+   b.model.rotation.y=Math.PI;
   }else{
    const u=Math.min(1,(q-.62)/.38);
    const point=b.depart.getPointAt(u),tangent=b.depart.getTangentAt(Math.min(.999,u));
    b.model.position.set(point.x,.24,point.z);
-   b.model.rotation.y=Math.atan2(tangent.x,tangent.z);
+   b.model.rotation.y=Math.atan2(tangent.x,tangent.z)+Math.PI;
   }
   // Drop-off: unload to the curb on the side AWAY from each car's driving path.
   // Walk to a safe waiting spot, stop, then fade only after arriving, never mid-stride.
