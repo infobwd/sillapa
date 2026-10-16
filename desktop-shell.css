@@ -1,0 +1,43 @@
+/* Desktop shell: use available space and keep long Thai navigation labels readable.
+   Tablet and phone navigation remain unchanged. */
+@media (min-width:1200px){
+ :root{--rail-w:272px}
+ .nav{
+  padding:18px 14px 24px;
+  gap:5px;overflow-y:auto;overflow-x:hidden;
+  scrollbar-width:thin;align-items:stretch;
+ }
+ .nav .brand-mark{
+  display:flex;justify-content:flex-start;align-items:center;
+  height:auto;min-height:62px;margin:0 0 12px;padding:8px 9px;
+  gap:9px;font-size:20px;line-height:1.4;white-space:normal;
+ }
+ .nav .brand-mark .wide-only{
+  display:inline;min-width:0;font-family:var(--sans);
+  font-size:14px;line-height:1.45;font-weight:800;overflow-wrap:anywhere;
+ }
+ .nav button{
+  display:flex;flex-direction:row;align-items:center;justify-content:flex-start;
+  width:100%;height:auto;min-height:52px;
+  padding:11px 12px;gap:12px;border-radius:13px;
+  text-align:left;font-size:13px;font-weight:650;line-height:1.5;
+  white-space:normal;overflow-wrap:anywhere;word-break:normal;
+ }
+ .nav button .pill-i{flex:none;display:grid;place-items:center;width:25px;min-width:25px;height:25px}
+ .nav button .pill-i svg{width:21px;height:21px}
+ .shell{width:calc(100% - var(--rail-w));margin-left:var(--rail-w)}
+ .appbar{margin-left:var(--rail-w)}
+ .shell>.view{width:100%;max-width:1540px;padding:24px clamp(24px,2.7vw,46px) 70px}
+ .shell>.ltitle{max-width:1540px;margin-left:auto;margin-right:auto;padding-left:clamp(24px,2.7vw,46px);padding-right:clamp(24px,2.7vw,46px)}
+ .shell>.view .ia-hero{width:100%}
+ .shell>.view .ia-stat-grid{width:100%}
+}
+@media (min-width:1600px){
+ .shell>.view{max-width:1660px}
+ .shell>.ltitle{max-width:1660px}
+}
+@media (min-width:1200px) and (max-width:1350px){
+ :root{--rail-w:252px}
+ .nav{padding-left:10px;padding-right:10px}
+ .nav button{font-size:12.5px}
+}
