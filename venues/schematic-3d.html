@@ -301,6 +301,12 @@ function decorateDistrict(){
  // Two continuous side roads; ONLY one transverse road in front of อาคาร 1.
  for(const x of d.sideRoadsX)slab(5,83,x,-1.5,'#777f83',.19);
  for(const z of d.frontRoadsZ)slab(38,4,0,z,'#81888a',.2);
+ // A separate low curb marks the Building 1 student drop-off side of the road.
+ // It is outside the travelled pavement z=20..24, so it does not create a second road layer.
+ slab(6,.75,5.5,19.52,'#ddd7c5',.23);
+ const dropoffMark=makeBuildingLabel('จุดรับ–ส่งนักเรียน',1.85);
+ dropoffMark.position.set(8.35,1.85,19.0);
+ dropoffMark.scale.set(4.2,1.04,1);g.add(dropoffMark);
  slab(38,4,0,-27,'#81888a',.2); // road between rear extension and parking
  // Internal gate approaches connect to the highway edge (z=47.5) without stacking slabs.
  // Roads already reach z=40, so only the 7.5-unit extension is needed.
@@ -1041,12 +1047,15 @@ function flyToBuilding(label){
  const entry=buildingTargets.get(key);
  if(!entry)return;
  const center=entry.center;
- const target=new THREE.Vector3(center.x,entry.office?3.1:entry.dome?3.1:1.9,center.z);
+ // The compact bottom detail sheet can cover the screen centre on phones.
+ // Aim slightly below the facade so the selected building remains above that sheet.
+ const mobile=mount.clientWidth<680;
+ const target=new THREE.Vector3(center.x,mobile?1.25:entry.office?3.1:entry.dome?3.1:1.9,center.z);
  const viewDir=camera.position.clone().sub(controls.target).normalize();
  // Preserve viewing side while leaving enough elevation to see building and courtyard.
  viewDir.y=Math.max(.43,viewDir.y);
  viewDir.normalize();
- const range=entry.office?22:entry.dome?25:15;
+ const range=mobile?(entry.office?28:entry.dome?31:18):entry.office?22:entry.dome?25:15;
  cameraFlight={
   fromCamera:camera.position.clone(),fromTarget:controls.target.clone(),
   toTarget:target,toCamera:target.clone().addScaledVector(viewDir,range),
