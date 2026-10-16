@@ -685,7 +685,7 @@ function animateDistrictVehicles(t){
   // A staged fading exit avoids a person visually popping out at the end of an animation.
   const leftBay=b.bay[0]<-5;
   for(let j=0;j<b.passengers.length;j++){
-   const person=b.passengers[j],start=.295+j*.018;
+   const person=b.passengers[j],start=.295+j*.012;
    const active=peopleVisible&&trafficEnabled&&q>=start&&q<.47;
    person.visible=active;
    if(!active)continue;
