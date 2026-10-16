@@ -604,6 +604,59 @@ function makeDistrictCar(color,pickup=false){
  if(pickup){const bed=new THREE.Mesh(new THREE.BoxGeometry(1.3,.16,1.04),new THREE.MeshStandardMaterial({color:'#424a50'}));bed.position.set(0,.83,1.37);model.add(bed);const tail=new THREE.Mesh(new THREE.BoxGeometry(1.3,.3,.12),paint);tail.position.set(0,.78,1.91);model.add(tail);body.scale.z=.73;body.position.z=-.3;cabin.position.z=-.57;}
  return model;
 }
+// D3D-R9: stylized municipal bus on main road (visual simulation, not live transport).
+function makeRoadBus(color){
+ const vehicle=new THREE.Group();
+ const bodyMat=new THREE.MeshStandardMaterial({color,roughness:.64});
+ const glazing=new THREE.MeshStandardMaterial({color:'#4d7689',roughness:.38,metalness:.12});
+ const bumperMat=new THREE.MeshStandardMaterial({color:'#dde2e3',roughness:.8});
+ const body=new THREE.Mesh(new THREE.BoxGeometry(2.05,1.78,5.7),bodyMat);
+ body.position.y=1.33;vehicle.add(body);
+ const top=new THREE.Mesh(new THREE.BoxGeometry(1.98,.22,5.4),bumperMat);
+ top.position.y=2.33;vehicle.add(top);
+ for(const side of [-1,1]){
+  for(let j=0;j<5;j++){
+   const window=new THREE.Mesh(new THREE.BoxGeometry(.045,.67,.75),glazing);
+   window.position.set(side*1.035,1.65,-1.88+j*.91);vehicle.add(window);
+  }
+  for(const z of [-1.85,1.84]){
+   const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.40,.40,.14,12),
+    new THREE.MeshStandardMaterial({color:'#283037',roughness:.93}));
+   wheel.rotation.z=Math.PI/2;
+   wheel.position.set(side*1.06,.50,z);vehicle.add(wheel);
+  }
+ }
+ for(const z of [-2.88,2.88]){
+  const windshield=new THREE.Mesh(new THREE.BoxGeometry(1.72,.70,.05),glazing);
+  windshield.position.set(0,1.67,z);vehicle.add(windshield);
+ }
+ const band=new THREE.Mesh(new THREE.BoxGeometry(2.08,.22,5.75),
+  new THREE.MeshStandardMaterial({color:'#f0e6ba',roughness:.85}));
+ band.position.y=1.06;vehicle.add(band);
+ return vehicle;
+}
+function makeRoadVan(color){
+ const van=makeDistrictCar(color,false);
+ const top=new THREE.Mesh(new THREE.BoxGeometry(1.15,.62,1.75),
+  new THREE.MeshStandardMaterial({color:'#a9bdc4',roughness:.55}));
+ top.position.set(0,1.26,0);van.add(top);
+ return van;
+}
+function addMainRoadTraffic(root){
+ // Road 3342 runs east-west at z=52. Use fixed spacing and equal speed per lane.
+ const fleet=[
+  {model:makeRoadBus('#f0d49b'),lane:49.25,direction:1,phase:0},
+  {model:makeDistrictCar('#f3f4f3'),lane:49.25,direction:1,phase:1/3},
+  {model:makeDistrictCar('#8cabbc',true),lane:49.25,direction:1,phase:2/3},
+  {model:makeRoadVan('#d5e3ea'),lane:54.75,direction:-1,phase:0},
+  {model:makeRoadBus('#e5a863'),lane:54.75,direction:-1,phase:1/3},
+  {model:makeDistrictCar('#b7d1b9'),lane:54.75,direction:-1,phase:2/3}
+ ];
+ for(const item of fleet){
+  root.add(item.model);
+  buses.push({...item,route:'main-road',speed:2.9,travel:114});
+ }
+}
 // D3D-R7: front open forecourt is a parking and drop-off zone, not grass.
 function addDistrictVehicles(activityCount){
  const root=new THREE.Group(),peopleRoot=new THREE.Group();
@@ -651,6 +704,7 @@ function addDistrictVehicles(activityCount){
   }
   buses.push({model,route:'front-dropoff',phase:i*.5,arrive,depart,passengers,bay:bays[i]});
  }
+ addMainRoadTraffic(root);
  // Additional vehicle follows the rear cross-road marked by the red arrow:
  // west entry -> west side road -> rear transverse road z=-27 -> east side road -> exit.
  const rearRoute=new THREE.CatmullRomCurve3([
@@ -665,6 +719,15 @@ function addDistrictVehicles(activityCount){
 }
 function animateDistrictVehicles(t){
  for(const b of buses){
+  if(b.route==='main-road'){
+   const travelled=(t*b.speed+b.phase*b.travel)%b.travel;
+   const x=b.direction===1?-b.travel/2+travelled:b.travel/2-travelled;
+   b.model.position.set(x,.20,b.lane);
+   b.model.rotation.y=b.direction*Math.PI/2;
+   // Outside the modelled road, vehicles remain hidden until their next pass.
+   b.model.visible=Math.abs(x)<49;
+   continue;
+  }
   if(b.route==='rear-loop'){
    const q=(t*b.speed+b.phase)%1,point=b.curve.getPointAt(q),dir=b.curve.getTangentAt(q);
    b.model.position.set(point.x,.24,point.z);b.model.rotation.y=Math.atan2(dir.x,dir.z);
