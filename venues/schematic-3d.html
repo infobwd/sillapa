@@ -430,7 +430,57 @@ function decorateDistrict(){
  for(const x of [-39,39])for(let z=-45;z<=36;z+=8)slab(20,.25,x,z,'#b5ad83',.025);
  scene.add(g);objects.push(g);
 }
-function addWalkers(isDistrict,activityCount=0){const root=new THREE.Group();const routes=isDistrict?[[[-7,28],[-7,22],[-7,15],[-7,9]],[ [7,22],[7,13],[7,0],[7,-10] ],[[-6,10],[-6,2],[-6,-10]],[[-8,-16],[-8,-22],[-8,-27]],[[8,-18],[8,-25],[8,-29]]]:[[[-8,-8],[-8,8]],[[0,-8],[0,8]],[[8,8],[8,-8]]];const skin=new THREE.MeshStandardMaterial({color:'#d4a27c'}),hair=new THREE.MeshStandardMaterial({color:'#292d35'}),legMat=new THREE.MeshStandardMaterial({color:'#283a59'}),teacherMat=new THREE.MeshStandardMaterial({color:'#b48e67'}),shirtMat=new THREE.MeshStandardMaterial({color:'#f5f6f8'});const geoHead=new THREE.SphereGeometry(.15,8,6),geoBody=new THREE.BoxGeometry(.34,.45,.2),geoLimb=new THREE.BoxGeometry(.105,.43,.12),geoHair=new THREE.SphereGeometry(.155,8,6);for(let i=0;i<Math.min(isDistrict?44:32,Math.max(isDistrict?10:8,Math.round(activityCount*.45)));i++){const teacher=i%6===0;const person=new THREE.Group();const body=new THREE.Mesh(geoBody,teacher?teacherMat:shirtMat);body.position.y=.84;person.add(body);const head=new THREE.Mesh(geoHead,skin);head.position.y=1.23;person.add(head);const cap=new THREE.Mesh(geoHair,hair);cap.scale.y=.42;cap.position.y=1.36;person.add(cap);const limbs=[];for(const x of [-.11,.11]){const pivot=new THREE.Group();pivot.position.set(x,.61,0);const limb=new THREE.Mesh(geoLimb,legMat);limb.position.y=-.2;pivot.add(limb);person.add(pivot);limbs.push(pivot)}for(const x of [-.23,.23]){const pivot=new THREE.Group();pivot.position.set(x,1.04,0);const limb=new THREE.Mesh(geoLimb,teacher?teacherMat:shirtMat);limb.position.y=-.19;pivot.add(limb);person.add(pivot);limbs.push(pivot)}root.add(person);const route=routes[i%routes.length].map(p=>new THREE.Vector3(p[0],0,p[1]));walkers.push({person,route,limbs,speed:.28+(i%5)*.055,phase:i*1.37})}root.visible=peopleVisible;root.userData.people=true;scene.add(root);objects.push(root)}
+// D3D-R8: continuous back-and-forth pedestrian paths, physically separated from vehicle lanes.
+// Small schematic groups are illustrative, never counts of actual visitors.
+function addWalkers(isDistrict,activityCount=0){
+ const root=new THREE.Group();
+ // District walkways stop short of car lanes (x=±13 and z=22/-27) and parking bays.
+ // The right forecourt path stays clear of the side carport (z around 3).
+ const routes=isDistrict?[
+  [[-8.5,19],[-8.5,17],[-7,14],[-7,11.3]],
+  [[18,40],[18,35],[18,30],[18,25]],
+  [[-18,39],[-18,34],[-18,29],[-18,25]],
+  [[-8,-18],[-8,-21],[-8,-24]],
+  [[8,-18],[8,-21],[8,-24]]
+ ]:[
+  [[-8,-8],[-8,8]],[[0,-8],[0,8]],[[8,-8],[8,8]]
+ ];
+ const skin=new THREE.MeshStandardMaterial({color:'#d4a27c'});
+ const hair=new THREE.MeshStandardMaterial({color:'#292d35'});
+ const legMat=new THREE.MeshStandardMaterial({color:'#283a59'});
+ const teacherMat=new THREE.MeshStandardMaterial({color:'#b48e67'});
+ const shirtMat=new THREE.MeshStandardMaterial({color:'#f5f6f8'});
+ const geoHead=new THREE.SphereGeometry(.15,8,6),geoBody=new THREE.BoxGeometry(.34,.45,.2);
+ const geoLimb=new THREE.BoxGeometry(.105,.43,.12),geoHair=new THREE.SphereGeometry(.155,8,6);
+ const totalPeople=Math.min(isDistrict?20:12,Math.max(isDistrict?10:8,Math.round(activityCount*.26)));
+ for(let i=0;i<totalPeople;i++){
+  const teacher=i%6===0,person=new THREE.Group();
+  const body=new THREE.Mesh(geoBody,teacher?teacherMat:shirtMat);
+  body.position.y=.84;person.add(body);
+  const head=new THREE.Mesh(geoHead,skin);head.position.y=1.23;person.add(head);
+  const cap=new THREE.Mesh(geoHair,hair);cap.scale.y=.42;cap.position.y=1.36;person.add(cap);
+  const limbs=[];
+  for(const x of [-.11,.11]){
+   const pivot=new THREE.Group();pivot.position.set(x,.61,0);
+   const limb=new THREE.Mesh(geoLimb,legMat);limb.position.y=-.2;pivot.add(limb);person.add(pivot);limbs.push(pivot);
+  }
+  for(const x of [-.23,.23]){
+   const pivot=new THREE.Group();pivot.position.set(x,1.04,0);
+   const limb=new THREE.Mesh(geoLimb,teacher?teacherMat:shirtMat);
+   limb.position.y=-.19;pivot.add(limb);person.add(pivot);limbs.push(pivot);
+  }
+  const routeIndex=i%routes.length,slot=Math.floor(i/routes.length);
+  const peers=Math.ceil((totalPeople-routeIndex)/routes.length);
+  const lane=(slot-(peers-1)/2)*.68; // separate bodies, including those going opposite directions
+  const points=routes[routeIndex].map(([x,z])=>new THREE.Vector3(x+lane,0,z));
+  const segments=points.slice(1).map((point,j)=>point.distanceTo(points[j]));
+  const length=segments.reduce((a,v)=>a+v,0);
+  root.add(person);
+  walkers.push({person,points,segments,length,limbs,speed:.33+(i%3)*.04,
+   phase:(slot+.25)/peers,stepOffset:i*.73});
+ }
+ root.visible=peopleVisible;root.userData.people=true;scene.add(root);objects.push(root);
+}
 // Illustrative vehicle flow scaled by historic activity rows, not actual team or vehicle counts.
 // D3D-R6: shared vehicle geometry for moving and parked cars.
 function makeDistrictCar(color,pickup=false){
@@ -535,7 +585,27 @@ function animateDistrictVehicles(t){
 }
 function animateBuses(t){if(!trafficEnabled)return;animateDistrictVehicles(t);for(let i=0;i<buses.length;i++){const b=buses[i];if(b.route)continue;const q=(t*.36+b.phase)%48;const start=i===0?-35:35;const dir=i===0?1:-1;let x=start,z=29;if(q<17){x=start+dir*q*1.7}else if(q<23){x=start+dir*28.9;z=29+(q-17)*(-2.2)}else if(q<35){x=start+dir*28.9;z=15.8}else if(q<41){x=start+dir*28.9;z=15.8+(q-35)*2.2}else{x=start+dir*28.9+dir*(q-41)*1.4;z=29}b.model.position.set(x,.28,z);b.model.rotation.y=q>=17&&q<23?(dir===1?Math.PI/2:-Math.PI/2):q>=35&&q<41?(dir===1?-Math.PI/2:Math.PI/2):0;for(let j=0;j<b.passengers.length;j++){const person=b.passengers[j];const dt=q-(23+j*.75);person.visible=dt>=0&&dt<11;if(!person.visible)continue;const u=Math.min(1,dt/9);const a=new THREE.Vector3(x+dir*(j-1.5)*.3,0,15.2);const target=new THREE.Vector3(i===0?-6:6,0,5);person.position.copy(a).lerp(target,u);person.rotation.y=Math.atan2(target.x-a.x,target.z-a.z)}}}
 function animateRoadArrows(t){for(const o of objects){const a=o.userData.roadArrows;if(!a)continue;for(const item of a){const p=(t*.07+item.phase)%1;item.mesh.position.z=item.dir===-1?47-p*78:-31+p*78;item.mesh.material.opacity=.35+.5*Math.sin(Math.PI*p)}}}
-function animateWalkers(t){for(const w of walkers){const count=w.route.length;const progress=(t*w.speed+w.phase)%(count===2?2:count);const segment=Math.floor(progress);const u=progress-segment;const a=w.route[segment%count],b=w.route[(segment+1)%count];if(count===2&&segment===1){w.person.position.copy(b).lerp(a,u);w.person.rotation.y=Math.atan2(a.x-b.x,a.z-b.z)}else{w.person.position.copy(a).lerp(b,u);w.person.rotation.y=Math.atan2(b.x-a.x,b.z-a.z)}const stride=Math.sin(t*7+w.phase)*.43;w.limbs[0].rotation.x=stride;w.limbs[1].rotation.x=-stride;w.limbs[2].rotation.x=-stride*.65;w.limbs[3].rotation.x=stride*.65}}
+function animateWalkers(t){
+ for(const w of walkers){
+  if(w.length<=0)continue;
+  const period=2*w.length;
+  const position=(t*w.speed+w.phase*period)%period;
+  const forward=position<=w.length;
+  let remaining=forward?position:period-position,segment=0;
+  while(segment<w.segments.length-1&&remaining>w.segments[segment]){
+   remaining-=w.segments[segment];segment++;
+  }
+  const a=w.points[segment],b=w.points[segment+1];
+  const u=Math.min(1,remaining/w.segments[segment]);
+  // Reflect at the endpoints instead of linking last -> first (which caused teleports).
+  w.person.position.copy(a).lerp(b,u);
+  const sign=forward?1:-1;
+  w.person.rotation.y=Math.atan2(sign*(b.x-a.x),sign*(b.z-a.z));
+  const stride=Math.sin(t*7+w.stepOffset)*.43;
+  w.limbs[0].rotation.x=stride;w.limbs[1].rotation.x=-stride;
+  w.limbs[2].rotation.x=-stride*.65;w.limbs[3].rotation.x=stride*.65;
+ }
+}
 function show(v){dispose();tags.replaceChildren();const district=v.id==='kanchanaburi-pesa4';const roofToggle=document.querySelector('#toggleRoofs');roofToggle.disabled=!district;roofToggle.title=district?'แสดงหรือซ่อนหลังคาอาคาร 1 และ 2':'ใช้กับผังสำนักงานเขตพื้นที่ฯ';const busToggle=document.querySelector('#toggleTraffic');busToggle.disabled=!district;busToggle.title=district?'เปิดหรือปิดรถจำลอง (ไม่ใช่จำนวนรถจริง)':'ยังไม่มีถนนสำหรับจำลองรถในสนามนี้';busToggle.textContent=district?(trafficEnabled?'🚗 เปิด':'🚗 ปิด'):'🚗 รอผังถนน';if(district){decorateDistrict();camera.position.set(59,78,90);controls.target.set(0,0,0);controls.update()}else{camera.position.set(25,29,33);controls.target.set(0,0,0);controls.update()}const activityCount=v.rows.length;addWalkers(district,activityCount);if(district)addDistrictVehicles(activityCount);panel.classList.remove('open');panel.replaceChildren();list.replaceChildren();details.replaceChildren();heading.textContent='เลือกอาคาร';info.textContent=(v.id==='kanchanaburi-pesa4'?'ผังจำลอง: อาคารเรียงแนวลึก ขนานถนน 3342 (ยังไม่ยืนยันตำแหน่งจริง)':'อาคารในฉากจัดเรียงเพื่อสาธิตเท่านั้น')+' · คนและรถเป็นภาพจำลองตามจำนวนรายการแข่งขันย้อนหลัง '+activityCount+' รายการ ไม่ใช่จำนวนทีม ผู้เข้าร่วม หรือรถจริง';const groups=new Map();for(const row of v.rows){const label=row.building||'ไม่ระบุอาคาร';const key=label.normalize('NFKC').replace(/\s+/g,'').toLowerCase();if(!groups.has(key))groups.set(key,{label,rows:[]});groups.get(key).rows.push(row)}const entries=[...groups.values()];entries.forEach((g,i)=>{building(g.label,i,entries.length,v.id==='kanchanaburi-pesa4',g.rows.length);const btn=document.createElement('button');btn.textContent=g.label+' ('+g.rows.length+' รายการ)';btn.addEventListener('click',()=>choose(g));list.append(btn);if(v.id==='kanchanaburi-pesa4'){const tag=document.createElement('button');tag.textContent=g.label+' · '+g.rows.length+' รายการ';tag.addEventListener('click',()=>choose(g));tags.append(tag)}});function choose(g){heading.textContent=g.label+' — ครั้งที่ 73';info.textContent=g.rows.length+' รายการแข่งขันย้อนหลัง';details.replaceChildren();const ul=document.createElement('ul');for(const x of g.rows){const li=document.createElement('li');li.textContent=x.activity+' · '+[x.floor,x.room].filter(Boolean).join(' / ');ul.append(li)}details.append(ul);panel.replaceChildren();const close=document.createElement('button');close.textContent='ปิด ×';close.setAttribute('aria-label','ปิดรายการแข่งขันบนโมเดล');close.addEventListener('click',()=>panel.classList.remove('open'));const head=document.createElement('h3');head.textContent=g.label+' · '+g.rows.length+' รายการ';const hint=document.createElement('p');hint.textContent='รายการย้อนหลังครั้งที่ 73 (ไม่ใช่กำหนดการครั้งที่ 74)';const modelList=ul.cloneNode(true);panel.append(close,head,hint,modelList);panel.classList.add('open')}active={groups,choose}}
 document.querySelector('#zoomIn').addEventListener('click',()=>{camera.position.multiplyScalar(.82);controls.update()});document.querySelector('#zoomOut').addEventListener('click',()=>{camera.position.multiplyScalar(1.2);controls.update()});document.querySelector('#topView').addEventListener('click',()=>{const district=select.value==='kanchanaburi-pesa4';camera.position.set(0,district?130:55,.01);controls.target.set(0,0,0);controls.update()});document.querySelector('#resetView').addEventListener('click',()=>{const district=select.value==='kanchanaburi-pesa4';camera.position.set(...(district?[59,78,90]:[25,29,33]));controls.target.set(0,0,0);controls.update()});camera.position.set(25,29,33);renderer.domElement.addEventListener('click',e=>{const rect=renderer.domElement.getBoundingClientRect();pointer.set((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);ray.setFromCamera(pointer,camera);const hit=ray.intersectObjects(meshes)[0];if(hit&&active){const label=hit.object.userData.label;const key=label.normalize('NFKC').replace(/\s+/g,'').toLowerCase();active.choose(active.groups.get(key))}});
 document.querySelector('#toggleRoofs').addEventListener('click',e=>{roofVisible=!roofVisible;for(const roof of officeRoofs)roof.visible=roofVisible;e.currentTarget.setAttribute('aria-pressed',String(roofVisible));e.currentTarget.textContent=roofVisible?'🏠 หลังคา':'🏠 ดูชั้น 2'});document.querySelector('#toggleTraffic').addEventListener('click',e=>{trafficEnabled=!trafficEnabled;e.currentTarget.setAttribute('aria-pressed',String(trafficEnabled));e.currentTarget.textContent=trafficEnabled?'🚗 เปิด':'🚗 ปิด';for(const o of objects)if(o.userData.vehicles||o.userData.dropoffPeople)o.visible=trafficEnabled&&(o.userData.dropoffPeople?peopleVisible:true)});document.querySelector('#togglePeople').addEventListener('click',e=>{peopleVisible=!peopleVisible;e.currentTarget.setAttribute('aria-pressed',String(peopleVisible));e.currentTarget.textContent=peopleVisible?'👥 เปิด':'👥 ปิด';for(const o of objects)if(o.userData.people||o.userData.dropoffPeople)o.visible=peopleVisible&&(o.userData.dropoffPeople?trafficEnabled:true)});function resize(){const w=mount.clientWidth,h=mount.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(mount);resize();function loop(){const t=clock.getElapsedTime();if(peopleVisible)animateWalkers(t);animateBuses(t);animateRoadArrows(t);controls.update();updateVenueBadgeVisibility();renderer.render(scene,camera)}renderer.setAnimationLoop(loop);
