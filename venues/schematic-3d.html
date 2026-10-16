@@ -415,6 +415,8 @@ function decorateDistrict(){
    color,side:THREE.DoubleSide,roughness:.85,metalness:0
   }));
   cloth.position.set(flagX+1.225,upper-height/2,flagZ);g.add(cloth);
+  const attr=geo.attributes.position;
+  cloth.userData.originalY=Float32Array.from({length:attr.count},(_,i)=>attr.getY(i));
   flagCloths.push(cloth);
   upper-=height;
  }
@@ -883,12 +885,13 @@ function animateFlag(t){
   const geo=cloth.geometry,pos=geo.attributes.position;
   for(let i=0;i<pos.count;i++){
    const along=pos.getX(i)+1.225; // distance from attachment (0..2.45)
-   const free=along/2.45;
-   const worldY=cloth.position.y+pos.getY(i);
-   const ripple=Math.sin(along*3.8-t*2.3+worldY*.18)*.22
-     +Math.sin(along*7.1-t*3.7+worldY*.11)*.075
-     +Math.sin(t*.65)*.05;
+   const free=along/2.45,baseY=cloth.userData.originalY[i];
+   const worldY=cloth.position.y+baseY;
+   const ripple=Math.sin(along*3.8-t*2.3+worldY*.18)*.38
+     +Math.sin(along*7.1-t*3.7+worldY*.11)*.12
+     +Math.sin(t*.65)*.085;
    pos.setZ(i,free*free*ripple);
+   pos.setY(i,baseY+free*free*.11*Math.sin(along*2.6-t*2.1+worldY*.2));
   }
   pos.needsUpdate=true;
   geo.computeVertexNormals();
