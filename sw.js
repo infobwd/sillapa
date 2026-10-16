@@ -1,5 +1,5 @@
 /* Sillapa standalone public dashboard cache (no private API, names, or school plans separately stored). */
-const CACHE_NAME = 'sillapa-public-v12-ia6-20261015';
+const CACHE_NAME = 'sillapa-public-v13-venue-20261016';
 const CACHE_PREFIX = 'sillapa-public-';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './pwa.css', './pwa.js', './ia1.css', './ia2.css', './ia2-registry.js', './ia3.css', './ia3-readiness.js', './ia4.css', './ia4-workspace.js', './ia5.css', './ia5-judge-venue.js', './ia6.css', './ia6-executive.js',
   './round70-catalog.js', './pull-refresh.js',
@@ -52,6 +52,20 @@ self.addEventListener('fetch', event => {
   const allowed = new Set(SHELL.slice(2).map(path => new URL(path, SCOPE).pathname));
   if (!allowed.has(url.pathname)) return;
   event.respondWith((async () => {
+    // Network-first for code/style assets: deployed UI fixes should reach installed PWAs.
+    // Keep cached assets as offline fallback.
+    if (/\\.(?:css|js)$/.test(url.pathname)) {
+      try {
+        const fresh = await fetch(request, {cache: 'no-store'});
+        if (fresh.ok) {
+          const cache = await caches.open(CACHE_NAME);
+          await cache.put(request, fresh.clone());
+        }
+        return fresh;
+      } catch (_) {
+        return (await caches.match(request, {ignoreSearch: true})) || Response.error();
+      }
+    }
     const cached = await caches.match(request, {ignoreSearch: true});
     if (cached) return cached;
     return fetch(request);
