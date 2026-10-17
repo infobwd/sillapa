@@ -1,8 +1,8 @@
 /* Sillapa standalone public dashboard cache (no private API, names, or school plans separately stored). */
-const CACHE_NAME = 'sillapa-public-v17-3d-r15-20261017';
+const CACHE_NAME = 'sillapa-public-v18-3d-r16-20261017';
 const CACHE_PREFIX = 'sillapa-public-';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './pwa.css', './pwa.js', './ia1.css', './ia2.css', './ia2-registry.js', './ia3.css', './ia3-readiness.js', './ia4.css', './ia4-workspace.js', './ia5.css', './desktop-shell.css', './ia5-judge-venue.js', './ia6.css', './ia6-executive.js',
-  './round70-catalog.js', './pull-refresh.js',
+  './round70-catalog.js', './pull-refresh.js', './venues/traffic-r16.mjs',
   './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 const INDEX = new URL('./index.html', self.registration.scope).href;
 const SCOPE = new URL(self.registration.scope);
@@ -54,7 +54,7 @@ self.addEventListener('fetch', event => {
   event.respondWith((async () => {
     // Network-first for code/style assets: deployed UI fixes should reach installed PWAs.
     // Keep cached assets as offline fallback.
-    if (/\\.(?:css|js)$/.test(url.pathname)) {
+    if (/\.(?:css|m?js)$/.test(url.pathname)) {
       try {
         const fresh = await fetch(request, {cache: 'no-store'});
         if (fresh.ok) {
