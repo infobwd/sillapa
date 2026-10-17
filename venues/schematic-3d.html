@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {computeHighwayProgress,canEnterMainRoad,canAdvanceInboundRoad} from './traffic-r16.mjs';
 import {makeModernSedan,makeModernVan,makeModernBlueBus,makeTenWheelFreightTruck} from './vehicle-models-r16b.mjs';
-import {DROP_OFF_BAY,BUILDING_DROPOFF_TIMING,FRONT_PARK_TIMING,inDropoffZone,shouldHoldDropoffRelease,registrationQueuePoint,toRegistrationWaypoints,fromRegistrationToBuildingWaypoints,registrationPhase} from './dropoff-r17.mjs';
+import {DROP_OFF_BAY,BUILDING_DROPOFF_TIMING,FRONT_PARK_TIMING,SAFE_ALIGHT_Z,fromVanToRegistrationWaypoints,shouldHoldFollowerAtDropoff,inDropoffZone,shouldHoldDropoffRelease,registrationQueuePoint,toRegistrationWaypoints,fromRegistrationToBuildingWaypoints,registrationPhase} from './dropoff-r17.mjs';
 const mount=document.querySelector('#scene'),select=document.querySelector('#venue'),list=document.querySelector('#list'),details=document.querySelector('#details'),heading=document.querySelector('#heading'),info=document.querySelector('#info'),panel=document.querySelector('#modelPanel'),tags=document.querySelector('#mapTags');
 const scene=new THREE.Scene();scene.background=new THREE.Color('#dceeff');const camera=new THREE.PerspectiveCamera(48,1,.1,320);camera.position.set(19,22,27);const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,2));mount.prepend(renderer.domElement);scene.add(new THREE.HemisphereLight(0xffffff,0x91a9a0,2));const sun=new THREE.DirectionalLight(0xffffff,2);sun.position.set(15,25,10);scene.add(sun);const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.maxPolarAngle=Math.PI/2.08;controls.minDistance=10;controls.maxDistance=210;const ground=new THREE.Mesh(new THREE.PlaneGeometry(180,180),new THREE.MeshStandardMaterial({color:'#b9d8af'}));ground.rotation.x=-Math.PI/2;scene.add(ground);const ray=new THREE.Raycaster(),pointer=new THREE.Vector2(),meshes=[],objects=[],walkers=[];let peopleVisible=true,roofVisible=true;const officeRoofs=[];const clock=new THREE.Clock();const buses=[];const flagCloths=[];const registrationStaff=[];const buildingTargets=new Map();let cameraFlight=null;let trafficEnabled=true;let active=null,venues=[];
 function dispose(){venueBadges.length=0;walkers.length=0;buses.length=0;flagCloths.length=0;registrationStaff.length=0;buildingTargets.clear();cameraFlight=null;lastVehicleUpdate=null;for(const o of objects){scene.remove(o);o.traverse(n=>{if(n.geometry)n.geometry.dispose();if(n.material){const mats=Array.isArray(n.material)?n.material:[n.material];for(const mat of mats){if(mat.map&&mat.map.isCanvasTexture)mat.map.dispose();mat.dispose()}}})}objects.length=0;meshes.length=0;officeRoofs.length=0}
@@ -409,8 +409,12 @@ function decorateDistrict(){
  // Front-to-rear: transverse road z=22, lawn immediately before the name sign z=11.2,
  // and the name sign immediately in front of อาคาร 1 (front facade near z=10.5).
  for(const x of [-9.5,0,9.5]){
-  slab(x===0?7:6,7,x===0?0:(x<0?-6.8:6.8),16.2,'#5b9453',.2);
-  for(const px of [(x===0?0:(x<0?-6.8:6.8))-1.7,(x===0?0:(x<0?-6.8:6.8))+1.7]){
+  const rightDropoff=x===9.5;
+  // The right lawn ends BEFORE the bus/van bay and protected walkway.
+  slab(x===0?7:6,rightDropoff?4.2:7,
+   x===0?0:(x<0?-6.8:6.8),rightDropoff?14.7:16.2,'#5b9453',.2);
+  if(rightDropoff)continue; // R17B: remove the two trees inside the drop-off
+  for(const px of [(x===0?0:-6.8)-1.7,(x===0?0:-6.8)+1.7]){
    const shrub=new THREE.Mesh(new THREE.IcosahedronGeometry(.35,1),mat('#3e7541'));
    shrub.position.set(px,.57,18.4);g.add(shrub);
   }
@@ -770,7 +774,8 @@ function addWalkers(isDistrict,activityCount=0){
    [-11.38,5],[-11.38,-7.45],[-6.65,-7.45],[-5.0,-6.9],[-4.3,-6.2]],
   // Building 1: students approach its front entrance from the drop-off curb.
   // Sign spans x=-5.65..5.65 at z=12.6; bypass its east edge.
-  [[5.5,19],[6.12,17],[6.12,14.7],[6.12,11.2],[6.12,9.8]],
+  // No ambient walker may spawn on the vehicle bay z>=17.24.
+  [[6.12,16.42],[6.12,15.3],[6.12,14.7],[6.12,11.2],[6.12,9.8]],
   [[-18,39],[-18,34],[-18,29],[-18,25]],
   [[-8,-18],[-8,-21],[-8,-24]],
   [[8,-18],[8,-21],[8,-24]]
@@ -1000,7 +1005,7 @@ function addDistrictVehicles(activityCount){
   const person=makeDropoffPerson(false,i);
   peopleRoot.add(person);buildingPassengers.push(person);
  }
- buses.push({model:buildingVehicle,route:'building-dropoff',progress:.73,
+ buses.push({model:buildingVehicle,route:'building-dropoff',progress:.31,
   speed:.009,arrive:toBuilding,depart:fromBuilding,passengers:buildingPassengers});
  // The third rear-carport bay is dynamic, beyond Building 2's annex.
  const rearApproach=pointsToCurve([
@@ -1125,11 +1130,16 @@ function animateDropoffPassengers(b,q){
   const offset=(j-1.5)*.38;
   let pose;
   if(building){
-   const bypassX=6.09+j*.055;
-   const route=[[7+offset,16.95],[bypassX,16.15],[bypassX,14.6],
-    [bypassX,11.8],[5.15,10.8],[5.15,10.8,2.6],
-    [3.60,10.8,2.6],[2.70,9.75,2.6]];
-   pose=studentJourneyPoint(route,Math.min(1,Math.max(0,(q-start)/(.84-start))));
+   // All van pupils go from the SAFE sidewalk to the registration dome,
+   // wait at their assigned desk and only then walk to Building 1.
+   const line=j%2,slot=Math.floor(j/2);
+   const phase=registrationPhase(q,start);
+   const enter=fromVanToRegistrationWaypoints(j);
+   const onward=fromRegistrationToBuildingWaypoints(line,slot);
+   if(phase.step==='to-dome')pose=studentJourneyPoint(enter,phase.u);
+   else if(phase.step==='queue')pose=studentJourneyPoint(enter,1);
+   else if(phase.step==='to-building')pose=studentJourneyPoint(onward,phase.u);
+   else pose=studentJourneyPoint(onward,1);
   }else{
    // R17: walk into the dome, visibly queue, then continue towards
    // Building 1 without passing through the restroom or building sign.
