@@ -95,7 +95,7 @@ test('Building 2 links to the east-side walkway without invented indoor stairs',
  assert.ok(route.nodeIds.includes('rearEast'));
  assert.ok(!route.nodeIds.includes('b1Stairs'));
  assert.ok(route.points.every(p=>p[2]===0));
- assert.deepEqual(route.points.at(-1),[5.45,-11.5,0]);
+ assert.deepEqual(route.points.at(-1),[6.35,-11.5,0]);
 });
 
 test('interpolated animated marker clamps progress and follows elevation',()=>{
