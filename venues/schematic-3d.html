@@ -615,8 +615,12 @@ function decorateDistrict(){
   const post=new THREE.Mesh(new THREE.BoxGeometry(.18,3,.18),mat('#d3d6d2'));
   post.position.set(cp.x+x,1.55,cp.z+z);g.add(post);
  }
- // Three bays facing the rear access lane. Stripes are BETWEEN car centres.
+ // Three bays facing the rear access lane. The east bay is used by moving pickup. Stripes are BETWEEN car centres.
  for(const x of [-5.15,-1.7,1.7,5.15])slab(.1,cp.length-1,cp.x+x,cp.z,'#e8e6de',.22);
+ // Approach apron between cross-road z=-27 and carport, behind annex.
+ slab(3.0,5.1,3.4,-31.25,'#8f9693',.15);
+ const rearTag=makeBuildingLabel('ที่จอดรถหลังอาคาร 2',4.6);
+ rearTag.position.set(0,4.6,-35);rearTag.scale.set(6.2,1.05,1);g.add(rearTag);
  // Rear carport restroom blocks: male LEFT, female RIGHT when viewed from frontage (+Z).
  // Rotate both blocks 90 degrees: long axes now run X, perpendicular to the carport's Z orientation.
  function parkingRestroom(x,sex,genderSymbol){
@@ -866,10 +870,10 @@ function addDistrictVehicles(activityCount){
  // the rear carport holds three cars with the same Z-axis orientation.
  const parked=[
   {x:16.95,z:3.3,angle:0},{x:19.35,z:3.3,angle:0},
-  {x:-3.4,z:-35,angle:0},{x:0,z:-35,angle:0},{x:3.4,z:-35,angle:0}
+  {x:-3.4,z:-35,angle:0},{x:0,z:-35,angle:0} // third bay for arriving pickup
  ];
  for(let i=0;i<parked.length;i++){
-  const p=parked[i],model=makeDistrictCar(colors[(i+2)%colors.length],i===3);
+  const p=parked[i],model=makeDistrictCar(colors[(i+2)%colors.length],false);
   model.position.set(p.x,.24,p.z);model.rotation.y=p.angle;root.add(model);
  }
  // Slot entries, single-direction internal circulation and exit via the east gate.
@@ -909,14 +913,20 @@ function addDistrictVehicles(activityCount){
  }
  buses.push({model:buildingVehicle,route:'building-dropoff',progress:.73,
   speed:.009,arrive:toBuilding,depart:fromBuilding,passengers:buildingPassengers});
- // Rear traversal uses interior roads only. It disappears after exiting
- // and later re-enters at the west gate, never driving through the public road.
- const rearRoute=pointsToCurve([
-  [-13,45.8],[-13,26],[-13,5],[-13,-19],[-10,-27],
-  [0,-27],[10,-27],[13,-19],[13,8],[13,28],[13,45.8]
+ // The third rear-carport bay is dynamic, beyond Building 2's annex.
+ const rearApproach=pointsToCurve([
+  [-13,45.8],[-13,18],[-13,-15],[-10,-27],[-4,-27],[1,-27],
+  [3.4,-27],[3.4,-31],[3.4,-35]
  ]);
- const rearCar=makeBlueLowPolyPickup();root.add(rearCar);
- buses.push({model:rearCar,route:'rear-internal',curve:rearRoute,progress:.37,speed:.007});
+ const rearDeparture=pointsToCurve([
+  [3.4,-29.5],[7,-27],[10,-27],[13,-23],[13,5],[13,30],[13,45.8]
+ ]);
+ const rearPickup=makeBlueLowPolyPickup();root.add(rearPickup);
+ buses.push({model:rearPickup,route:'rear-parking',arrive:rearApproach,
+  depart:rearDeparture,bay:[3.4,-35],progress:.37,speed:.008});
+ // Exiting vehicles connect to the eastbound highway lane after the right gate.
+ const exitCurve=pointsToCurve([[13,45.8],[13,47.4],[15.5,49.25],[27,49.25],[49,49.25]]);
+ for(const car of buses)if(car.route!=='main-road')car.exitCurve=exitCurve;
  // Independent highway traffic keeps its lanes and minimum longitudinal spacing.
  addMainRoadTraffic(root);
  root.visible=trafficEnabled;root.userData.vehicles=true;
