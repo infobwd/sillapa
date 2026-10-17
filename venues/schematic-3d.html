@@ -279,6 +279,42 @@ function building(label,i,total,isDistrict,competitionCount=0){const key=label.n
    leg.position.set(xx+dx,.36,zz);group.add(leg);
   }
  }
+ // D3D-R12: reception desks and staff near the entrance end of the dome.
+ // Desks occupy local z>3.9, beyond the audience chairs (last row z=2.2).
+ const reception=new THREE.Group();group.add(reception);
+ const deskWood=new THREE.MeshStandardMaterial({color:'#ad8052',roughness:.86});
+ const deskLight=new THREE.MeshStandardMaterial({color:'#eee0c0',roughness:.9});
+ const uniform=new THREE.MeshStandardMaterial({color:'#c19d72',roughness:.9});
+ const staffSkin=new THREE.MeshStandardMaterial({color:'#d9aa88'});
+ const darkHair=new THREE.MeshStandardMaterial({color:'#28313c'});
+ function receptionBox(w,h,d,x,y,z,material){
+  const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
+  m.position.set(x,y,z);reception.add(m);return m;
+ }
+ for(const x of [-2.25,0,2.25]){
+  receptionBox(1.65,.13,.72,x,.88,4.55,deskLight);
+  receptionBox(1.5,.68,.10,x,.49,4.88,deskWood);
+  for(const dx of [-.71,.71])receptionBox(.09,.76,.09,x+dx,.46,4.44,deskWood);
+  // Attendance sheet and a small colored "check-in" marker.
+  receptionBox(.69,.018,.36,x-.23,.955,4.56,deskLight);
+  const computer=receptionBox(.56,.34,.065,x+.42,1.16,4.45,darkHair);
+  computer.rotation.x=.20;
+  const staff=new THREE.Group();
+  const torso=new THREE.Mesh(new THREE.BoxGeometry(.34,.53,.25),uniform);
+  torso.position.y=.80;staff.add(torso);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(.16,9,7),staffSkin);
+  head.position.y=1.20;staff.add(head);
+  const cap=new THREE.Mesh(new THREE.SphereGeometry(.165,9,7),darkHair);
+  cap.scale.y=.41;cap.position.y=1.33;staff.add(cap);
+  for(const dx of [-.115,.115]){
+   const leg=new THREE.Mesh(new THREE.BoxGeometry(.12,.34,.13),darkHair);
+   leg.position.set(dx,.32,0);staff.add(leg);
+  }
+  staff.position.set(x,0,5.57);reception.add(staff);
+  // Waiting-place marker on the accessible side of each desk.
+  receptionBox(.58,.015,.18,x,.30,3.65,
+   new THREE.MeshStandardMaterial({color:'#e4b448',roughness:.9}));
+ }
  for(const side of [-1,1])for(const zz of [-6,-3,0,3,6])add(new THREE.BoxGeometry(.18,3.25,.18),'#637d88',side*4.15,1.65,zz)}else{add(new THREE.BoxGeometry(4,2.3,3.6),color,0,1.15,0);const roof=add(new THREE.ConeGeometry(3.5,1.1,4),'#8b6965',0,2.8,0);roof.rotation.y=Math.PI/4}if(isDistrict&&[ 'อาคาร1','อาคาร2','อาคารโดม'].includes(key))group.add(makeBuildingLabel(key==='อาคารโดม'?'อาคารโดม':key==='อาคาร1'?'อาคาร 1':'อาคาร 2',office?7.5:8));if(competitionCount>0)group.add(makeCompetitionBadge(competitionCount,isDistrict?(office?9.45:9.95):5.7));buildingTargets.set(key,{center:group.position.clone(),office,dome});scene.add(group);objects.push(group)}
 // D3D-1: provisional scene coordinates only; +Z = frontage, -Z = rear.
 const DISTRICT_LAYOUT=Object.freeze({verified:false,parcel:{width:42,length:116},rearPond:{x:0,z:-46,rx:9,rz:6},buildingCenters:{'อาคาร1':[0,8],'อาคารโดม':[0,-4],'อาคาร2':[0,-16]},rearCarport:{x:0,z:-35,width:12,length:7},sideRoadsX:[-13,13],frontRoadsZ:[22],gate:{entryX:-13,exitX:13,z:43},road3342:{z:52,width:9}});
