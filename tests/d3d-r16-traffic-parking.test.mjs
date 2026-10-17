@@ -63,7 +63,7 @@ test('Building 1 paths bypass the actual sign x ±5.65 at z=12.6',()=>{
   assert.ok(x-.2>5.65,'body clears sign');
   assert.ok(x+.2<6.475,'body stays outside pavilion edge');
  }
- assert.match(scene,/const bypass=isDistrict&&routeIndex===1/);
+ assert.match(scene,/const bypass=isDistrict&&\(routeIndex===0\|\|routeIndex===1\)/);
 });
 
 test('R16B relocation adjoins REAR facade of extension, with road clearance',()=>{
