@@ -38,9 +38,40 @@
  .venue-shell.venue-3d #studentTourStatus{bottom:calc(112px + env(safe-area-inset-bottom));max-width:calc(100% - 24px)}
  .venue-shell.venue-3d #scene .map-tags{max-height:19vh;max-width:46%;top:70px}
 }
-</style><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="./venue-shell.css"></head><body class="venue-shell venue-3d"><header><a href="./">← ข้อมูลสนามแข่งขัน</a><h1>ต้นแบบผังสนาม 3D จากข้อมูลครั้งที่ 73</h1><small>ฉากจำลองเพื่อทดสอบการกดอาคาร · ไม่ใช่ผังอาคารจริงหรือแผนที่นำทาง</small><nav class="venue-nav" aria-label="เมนูสนามแข่งขัน"><a href="../#venue">ภาพรวมสนาม</a><a href="./" >ค้นหาสนามและห้อง</a><a href="./schematic-3d.html" aria-current="page">สนาม 3D</a></nav></header><main><div class="row"><label for="venue">สนาม</label><select id="venue"><option value="kanchanaburi-pesa4">สำนักงานเขตพื้นที่ฯ เขต 4</option><option value="anuban-bophloi">โรงเรียนอนุบาลบ่อพลอย</option></select></div><section id="wayfindingBar" class="wayfinding-bar" aria-label="เส้นทางเดินในฉาก 3D" role="region"><strong>🧭 เส้นทางเดิน (จำลอง)</strong><label for="routeFrom">จาก <select id="routeFrom" aria-label="ต้นทางเดิน"></select></label><label for="routeTo">ไป <select id="routeTo" aria-label="จุดหมายเดิน"></select></label><button id="routeShow" type="button">แสดงเส้นทาง</button><details id="routeMore" class="wayfinding-more" open><summary aria-label="ขยายหรือยุบเครื่องมือนำทาง">⚙ เครื่องมือนำทางเพิ่มเติม</summary><div class="wayfinding-actions"><button id="routeOverview" type="button" disabled>🗺 ภาพรวม</button><button id="routeFollow" type="button" aria-pressed="false" disabled>▶ ติดตามเส้นทาง</button><button id="vehicleFollow" type="button" aria-pressed="false">🚐 ติดตามรถตู้</button><button id="routeLayer" type="button" aria-pressed="true" disabled>🙈 ซ่อนเส้น</button><button id="routeClear" type="button" disabled>✕ ปิดเส้นทาง</button></div></details><output id="routeStatus" role="status" aria-live="polite">เลือกต้นทางและจุดหมาย แล้วกดแสดงเส้นทาง</output><span class="wayfinding-note">ตำแหน่งและเส้นทางเป็นแบบจำลอง ไม่ใช้เดินทางจริง</span></section><div id="scene"><div id="wayfindingTip" class="wayfinding-tip" role="status" hidden></div><div class="overlay"><span class="note">ตำแหน่ง ขนาด ทิศทาง และรูปร่างอาคารเป็นภาพจำลองเท่านั้น ต้องตรวจสอบกับแผนผังต้นฉบับก่อนใช้นำทาง</span></div><div class="map-tags" id="mapTags"></div><div id="modelPanel" class="model-panel" aria-live="polite"></div><div id="studentTourStatus" role="status" aria-live="polite" hidden></div><div class="scene-tools"><button id="studentTour" data-mobile-label="👣 นักเรียน" type="button" aria-pressed="false" title="ติดตามนักเรียนตั้งแต่ลงรถ ผ่านโดมจนถึงอาคาร 1">👣 ดูนักเรียน</button><button id="toggleTraffic" data-mobile-label="🚗 รถ" aria-pressed="true" title="เปิดหรือปิดรถรับส่ง">🚌 เปิด</button><button id="togglePeople" data-mobile-label="👥 คน" aria-pressed="true" title="เปิดหรือปิดนักเรียนและครู">👥 เปิด</button><button id="toggleRoofs" data-mobile-label="🏠 หลังคา" aria-pressed="true" title="ซ่อนหลังคาอาคาร 1 และ 2 เพื่อดูห้องชั้นสอง">🏠 หลังคา</button><button id="zoomIn" data-mobile-label="＋" aria-label="ขยาย">＋</button><button id="zoomOut" data-mobile-label="－" aria-label="ย่อ">－</button><button id="topView" data-mobile-label="▣ บน" aria-label="มุมมองจากด้านบน" title="มุมมองจากด้านบน">▣ บน</button><button id="resetView" data-mobile-label="↺ กลับ" aria-label="กลับมุมมองเริ่มต้น">↺</button></div></div><section class="card"><h2 id="heading">เลือกอาคาร</h2><p id="info">แตะอาคารในฉากหรือเลือกชื่อด้านล่างเพื่อซูมไปยังอาคารนั้นและดูรายการแข่งขันย้อนหลัง</p><div id="list"></div><div id="details"></div></section><p><a href="./">ดูรายการแข่งขันทั้งหมด</a></p></main><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script><script type="module">
+
+/* R19: compact performance bar plus accessible in-scene loading/error status. */
+.venue-shell.venue-3d .performance-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0 10px;padding:10px 12px;border-radius:12px;background:var(--surface);border:1px solid var(--line)}
+.venue-shell.venue-3d .performance-bar label{display:flex;gap:8px;align-items:center;min-height:44px;font-size:13px;font-weight:600}
+.venue-shell.venue-3d .performance-bar select{min-height:44px;font-size:13px}
+.venue-shell.venue-3d .performance-bar button{min-height:44px;padding:8px 12px;font-size:13px;font-weight:600}
+.venue-shell.venue-3d .performance-bar output{font-size:12px;color:var(--ink-2)}
+.venue-shell.venue-3d #sceneHealth{position:absolute;left:12px;right:12px;top:12px;max-width:460px;z-index:12;background:var(--surface);border:2px solid #d18b4f;color:var(--ink);box-shadow:0 5px 20px #0b17233d;border-radius:13px;padding:12px;font-size:13px}
+.venue-shell.venue-3d #sceneHealth[hidden]{display:none}
+.venue-shell.venue-3d #sceneHealth p{color:var(--ink);font-size:13px;margin:4px 0}
+.venue-shell.venue-3d #sceneHealth button{min-height:44px;margin-top:8px;padding:8px 12px;font-size:13px}
+.venue-shell.venue-3d #sceneHealth a{display:inline-block;margin:8px 0 0 10px;font-size:13px}
+.venue-shell.venue-3d #scene .model-panel{overscroll-behavior:contain}
+.venue-shell.venue-3d #scene .model-panel.open{z-index:4}
+@media(max-width:680px){
+ .venue-shell.venue-3d .performance-bar{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:9px}
+ .venue-shell.venue-3d .performance-bar label{min-width:0}
+ .venue-shell.venue-3d .performance-bar select{width:100%;min-width:0}
+ .venue-shell.venue-3d .performance-bar button{width:100%;min-width:0;font-size:12px}
+ .venue-shell.venue-3d .performance-bar output{grid-column:1/-1;line-height:1.4}
+ .venue-shell.venue-3d #scene .model-panel{left:8px;right:8px;bottom:max(8px,env(safe-area-inset-bottom));max-height:min(48%,440px);border-radius:16px 16px 10px 10px;padding-bottom:18px}
+ .venue-shell.venue-3d #scene .model-panel button{position:sticky;top:0;float:right;z-index:2;min-height:44px;padding:8px 14px}
+ .venue-shell.venue-3d #scene .map-tags{overscroll-behavior:contain;max-height:18vh}
+}
+@media(prefers-reduced-motion:reduce){
+ .venue-shell.venue-3d #scene,.venue-shell.venue-3d .performance-bar{scroll-behavior:auto}
+}
+</style><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="./venue-shell.css"></head><body class="venue-shell venue-3d"><header><a href="./">← ข้อมูลสนามแข่งขัน</a><h1>ต้นแบบผังสนาม 3D จากข้อมูลครั้งที่ 73</h1><small>ฉากจำลองเพื่อทดสอบการกดอาคาร · ไม่ใช่ผังอาคารจริงหรือแผนที่นำทาง</small><nav class="venue-nav" aria-label="เมนูสนามแข่งขัน"><a href="../#venue">ภาพรวมสนาม</a><a href="./" >ค้นหาสนามและห้อง</a><a href="./schematic-3d.html" aria-current="page">สนาม 3D</a></nav></header><main><div class="row"><label for="venue">สนาม</label><select id="venue"><option value="kanchanaburi-pesa4">สำนักงานเขตพื้นที่ฯ เขต 4</option><option value="anuban-bophloi">โรงเรียนอนุบาลบ่อพลอย</option></select></div><section id="wayfindingBar" class="wayfinding-bar" aria-label="เส้นทางเดินในฉาก 3D" role="region"><strong>🧭 เส้นทางเดิน (จำลอง)</strong><label for="routeFrom">จาก <select id="routeFrom" aria-label="ต้นทางเดิน"></select></label><label for="routeTo">ไป <select id="routeTo" aria-label="จุดหมายเดิน"></select></label><button id="routeShow" type="button">แสดงเส้นทาง</button><details id="routeMore" class="wayfinding-more" open><summary aria-label="ขยายหรือยุบเครื่องมือนำทาง">⚙ เครื่องมือนำทางเพิ่มเติม</summary><div class="wayfinding-actions"><button id="routeOverview" type="button" disabled>🗺 ภาพรวม</button><button id="routeFollow" type="button" aria-pressed="false" disabled>▶ ติดตามเส้นทาง</button><button id="vehicleFollow" type="button" aria-pressed="false">🚐 ติดตามรถตู้</button><button id="routeLayer" type="button" aria-pressed="true" disabled>🙈 ซ่อนเส้น</button><button id="routeClear" type="button" disabled>✕ ปิดเส้นทาง</button></div></details><output id="routeStatus" role="status" aria-live="polite">เลือกต้นทางและจุดหมาย แล้วกดแสดงเส้นทาง</output><span class="wayfinding-note">ตำแหน่งและเส้นทางเป็นแบบจำลอง ไม่ใช้เดินทางจริง</span></section><section id="performanceBar" class="performance-bar" aria-label="ตั้งค่าประสิทธิภาพฉาก 3D">
+<label for="qualityMode">⚙ คุณภาพ 3D <select id="qualityMode" aria-label="คุณภาพการแสดงผล 3D"><option value="auto">อัตโนมัติ</option><option value="low">ประหยัดเครื่อง</option><option value="balanced">สมดุล</option><option value="high">คมชัด</option></select></label>
+<button id="motionMode" type="button" aria-pressed="false">🌀 ลดการเคลื่อนไหว: ปิด</button>
+<output id="performanceStatus" role="status" aria-live="polite">กำลังตรวจสอบการแสดงผล…</output></section><div id="scene"><div id="sceneHealth" role="alert" hidden><strong id="sceneHealthTitle">ไม่สามารถแสดงฉาก 3D</strong><p id="sceneHealthMessage">จำเป็นต้องเชื่อมต่ออินเทอร์เน็ตเพื่อโหลด Three.js ในครั้งแรก</p><button id="sceneRetry" type="button">↻ ลองโหลดใหม่</button><a href="./">ดูข้อมูลสนามแบบรายการ</a></div><div id="wayfindingTip" class="wayfinding-tip" role="status" hidden></div><div class="overlay"><span class="note">ตำแหน่ง ขนาด ทิศทาง และรูปร่างอาคารเป็นภาพจำลองเท่านั้น ต้องตรวจสอบกับแผนผังต้นฉบับก่อนใช้นำทาง</span></div><div class="map-tags" id="mapTags"></div><div id="modelPanel" class="model-panel" aria-live="polite"></div><div id="studentTourStatus" role="status" aria-live="polite" hidden></div><div class="scene-tools"><button id="studentTour" data-mobile-label="👣 นักเรียน" type="button" aria-pressed="false" title="ติดตามนักเรียนตั้งแต่ลงรถ ผ่านโดมจนถึงอาคาร 1">👣 ดูนักเรียน</button><button id="toggleTraffic" data-mobile-label="🚗 รถ" aria-pressed="true" title="เปิดหรือปิดรถรับส่ง">🚌 เปิด</button><button id="togglePeople" data-mobile-label="👥 คน" aria-pressed="true" title="เปิดหรือปิดนักเรียนและครู">👥 เปิด</button><button id="toggleRoofs" data-mobile-label="🏠 หลังคา" aria-pressed="true" title="ซ่อนหลังคาอาคาร 1 และ 2 เพื่อดูห้องชั้นสอง">🏠 หลังคา</button><button id="zoomIn" data-mobile-label="＋" aria-label="ขยาย">＋</button><button id="zoomOut" data-mobile-label="－" aria-label="ย่อ">－</button><button id="topView" data-mobile-label="▣ บน" aria-label="มุมมองจากด้านบน" title="มุมมองจากด้านบน">▣ บน</button><button id="resetView" data-mobile-label="↺ กลับ" aria-label="กลับมุมมองเริ่มต้น">↺</button></div></div><section class="card"><h2 id="heading">เลือกอาคาร</h2><p id="info">แตะอาคารในฉากหรือเลือกชื่อด้านล่างเพื่อซูมไปยังอาคารนั้นและดูรายการแข่งขันย้อนหลัง</p><div id="list"></div><div id="details"></div></section><p><a href="./">ดูรายการแข่งขันทั้งหมด</a></p></main><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script><script type="module">
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {getQualityProfile,validQualityMode,limitAmbientCount,shouldDrawFrame,boundedSceneDelta,measureQualityDrop,shouldAnimateDecorations} from './performance-r19.mjs';
 import {WAYFINDING_STOPS,WAYFINDING_NODE_COORDINATES,isWayfindingStop,buildingWayfindingStop,planWayfindingRoute,sampleWayfindingRoute,wayfindingHash,parseWayfindingHash} from './wayfinding-r18.mjs';
 import {computeHighwayProgress,canEnterMainRoad,canAdvanceInboundRoad} from './traffic-r16.mjs';
 import {makeModernSedan,makeModernVan,makeModernBlueBus,makeTenWheelFreightTruck} from './vehicle-models-r16b.mjs';
@@ -60,6 +91,44 @@ const wayfindingStatus=document.querySelector('#routeStatus'),wayfindingTip=docu
 const wayfindingShowButton=document.querySelector('#routeShow'),wayfindingOverviewButton=document.querySelector('#routeOverview');
 const wayfindingFollowButton=document.querySelector('#routeFollow'),wayfindingVehicleButton=document.querySelector('#vehicleFollow');
 const wayfindingLayerButton=document.querySelector('#routeLayer'),wayfindingClearButton=document.querySelector('#routeClear');
+const qualitySelector=document.querySelector('#qualityMode');
+const motionModeButton=document.querySelector('#motionMode');
+const performanceStatus=document.querySelector('#performanceStatus');
+const sceneHealth=document.querySelector('#sceneHealth'),sceneHealthTitle=document.querySelector('#sceneHealthTitle');
+const sceneHealthMessage=document.querySelector('#sceneHealthMessage');
+document.querySelector('#sceneRetry').addEventListener('click',()=>location.reload());
+function savedSetting(key){try{return localStorage.getItem(key)}catch(_){return null}}
+function saveSetting(key,value){try{localStorage.setItem(key,value)}catch(_){}}
+const reducedMotionQuery=window.matchMedia('(prefers-reduced-motion: reduce)');
+let savedQuality=savedSetting('sillapa-3d-quality');
+let qualityMode=validQualityMode(savedQuality)?savedQuality:'auto';
+let savedReduced=savedSetting('sillapa-3d-reduced-motion');
+let motionReduced=savedReduced===null?reducedMotionQuery.matches:savedReduced==='true';
+const deviceProfile=()=>({width:window.innerWidth,cores:navigator.hardwareConcurrency||8,
+ memory:navigator.deviceMemory||8,saveData:Boolean(navigator.connection?.saveData),
+ devicePixelRatio:window.devicePixelRatio||1,reducedMotion:motionReduced});
+let qualityProfile=getQualityProfile(qualityMode,deviceProfile());
+let simulationTime=0,lastRenderedMs=null,renderActive=true,sceneInViewport=true;
+let performanceSamples=0,performanceWindowStart=null,slowWindows=0;
+qualitySelector.value=qualityMode;
+function paintMotionButton(){
+ motionModeButton.textContent=motionReduced?'🌀 ลดการเคลื่อนไหว: เปิด':'🌀 ลดการเคลื่อนไหว: ปิด';
+ motionModeButton.setAttribute('aria-pressed',String(motionReduced));
+}
+paintMotionButton();
+function paintPerformanceStatus(observedFps=null){
+ performanceStatus.textContent='คุณภาพ '+qualityProfile.quality+
+  ' · เป้าหมาย '+qualityProfile.fps+' เฟรม/วินาที'+
+  (observedFps===null?'':' · เฉลี่ยที่วัดได้ '+observedFps+' เฟรม/วินาที')+
+  (motionReduced?' · ลดแอนิเมชันตกแต่ง':'')+
+  ' · ไม่ใช่การวัด FPS ที่รับประกัน';
+}
+paintPerformanceStatus();
+function showSceneHealth(title,message){
+ sceneHealthTitle.textContent=title;sceneHealthMessage.textContent=message;
+ sceneHealth.hidden=false;
+}
+function hideSceneHealth(){sceneHealth.hidden=true}
 const mount=document.querySelector('#scene'),select=document.querySelector('#venue'),list=document.querySelector('#list'),details=document.querySelector('#details'),heading=document.querySelector('#heading'),info=document.querySelector('#info'),panel=document.querySelector('#modelPanel'),tags=document.querySelector('#mapTags');
 const scene=new THREE.Scene();scene.background=new THREE.Color('#dceeff');const camera=new THREE.PerspectiveCamera(48,1,.1,320);camera.position.set(19,22,27);const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,2));mount.prepend(renderer.domElement);scene.add(new THREE.HemisphereLight(0xffffff,0x91a9a0,2));const sun=new THREE.DirectionalLight(0xffffff,2);sun.position.set(15,25,10);scene.add(sun);const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.maxPolarAngle=Math.PI/2.08;controls.minDistance=10;controls.maxDistance=210;const ground=new THREE.Mesh(new THREE.PlaneGeometry(180,180),new THREE.MeshStandardMaterial({color:'#b9d8af'}));ground.rotation.x=-Math.PI/2;scene.add(ground);const ray=new THREE.Raycaster(),pointer=new THREE.Vector2(),meshes=[],objects=[],walkers=[];let peopleVisible=true,roofVisible=true;const officeRoofs=[];const clock=new THREE.Clock();const buses=[];const flagCloths=[];const registrationStaff=[];const buildingTargets=new Map();let cameraFlight=null;let studentTourGroup=null,studentTourFigures=[],studentTourOn=false,studentTourStart=0,studentTourRoofWasVisible=true,studentTourStage='';let trafficEnabled=true;let active=null,venues=[];
 let wayfindingGroup=null,wayfindingMarker=null,wayfindingPins=null,wayfindingRoute=null;
