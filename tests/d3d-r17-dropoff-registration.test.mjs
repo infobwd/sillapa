@@ -33,7 +33,7 @@ test('body-based curbside spacing holds approaching vehicles but lets passing ca
 });
 
 test('five-minute repeated curbside pass avoids the parked van and close followers wait',()=>{
- const van=pose(7,18.55),carA={x:-10},carB={x:-18};
+ const van=pose(7,18.55),carA={x:-10},carB={x:-13.5};
  let advancedA=0,advancedB=0,held=0;
  for(let frame=0;frame<300*60;frame++){
   const dt=1/60;
