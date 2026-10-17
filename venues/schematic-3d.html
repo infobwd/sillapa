@@ -900,6 +900,14 @@ function addDistrictVehicles(activityCount){
   model.position.set(p.x,.24,p.z);model.rotation.y=p.angle;root.add(model);
  }
  // Slot entries, single-direction internal circulation and exit via the east gate.
+ // R16D: approach from Road 3342's eastbound lane (+X).
+ // Entry vehicles now arrive from beyond the visible left-hand highway edge,
+ // turn at the western entry gate, then follow the existing parking routes.
+ // Match the highway's eastbound lane at Z=49.25 until the gate turn.
+ const entryCurve=pointsToCurve([
+  [-62,49.25],[-52,49.25],[-36,49.25],[-24,49.25],
+  [-17,49.25],[-13,46.2],[-13,45.8]
+ ]);
  const arrivals=[
   [[-13,45.8],[-13,34],[-10,30.3],[-7,30.7],[-7,33],[-7,36]],
   [[-13,45.8],[-13,33],[-10,29.7],[-5.4,30.0],[-3.5,31],[-3.5,33.4],[-3.5,36]]
@@ -949,7 +957,10 @@ function addDistrictVehicles(activityCount){
   depart:rearDeparture,bay:[3.4,-35],progress:.37,speed:.008});
  // Exiting vehicles connect to the eastbound highway lane after the right gate.
  const exitCurve=pointsToCurve([[13,43.8],[13,47.4],[15.5,49.25],[27,49.25],[49,49.25]]);
- for(const car of buses)if(car.route!=='main-road')car.exitCurve=exitCurve;
+ for(const car of buses)if(car.route!=='main-road'){
+  car.exitCurve=exitCurve;
+  car.entryCurve=entryCurve;
+ }
  // Independent highway traffic keeps its lanes and minimum longitudinal spacing.
  addMainRoadTraffic(root);
  root.visible=trafficEnabled;root.userData.vehicles=true;
@@ -963,14 +974,25 @@ function highwayExitPose(b,q,start){
  const point=b.exitCurve.getPointAt(u),dir=b.exitCurve.getTangentAt(u);
  return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI,onHighway:true};
 }
+// R16D: first segment is visible inbound traffic from the highway, never an
+// unexplained spawn at (-13,45.8). The rest of the original local route stays.
+function inboundArrivalPose(b,q,arrivalEnd){
+ const entryEnd=.15;
+ if(q<entryEnd){
+  const u=Math.max(0,Math.min(.999,q/entryEnd));
+  const point=b.entryCurve.getPointAt(u);
+  const dir=b.entryCurve.getTangentAt(u);
+  return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI,inboundRoad:true};
+ }
+ const u=Math.max(0,Math.min(.999,(q-entryEnd)/(arrivalEnd-entryEnd)));
+ const point=b.arrive.getPointAt(u),dir=b.arrive.getTangentAt(u);
+ return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
+}
 function trafficPose(b,q){
  const hidden={visible:false,point:new THREE.Vector3(-100,0,-100),yaw:0};
  if(q>=.94)return hidden;
  if(b.route==='rear-parking'){
-  if(q<.40){
-   const u=q/.40,point=b.arrive.getPointAt(u),dir=b.arrive.getTangentAt(Math.min(.999,u));
-   return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
-  }
+  if(q<.40)return inboundArrivalPose(b,q,.40);
   if(q<.64){
    const reverse=q<.54?0:(q-.54)/.10;
    return {visible:true,point:new THREE.Vector3(3.4,0,-35+reverse*5.5),yaw:0};
@@ -982,10 +1004,7 @@ function trafficPose(b,q){
   return highwayExitPose(b,q,.78);
  }
  if(b.route==='front-park'){
-  if(q<.29){
-   const u=q/.29,point=b.arrive.getPointAt(u),dir=b.arrive.getTangentAt(Math.min(.999,u));
-   return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
-  }
+  if(q<.29)return inboundArrivalPose(b,q,.29);
   if(q<.62){
    const reverse=q<.52?0:(q-.52)/.10;
    return {visible:true,point:new THREE.Vector3(b.bay[0],0,b.bay[1]-reverse*5.3),yaw:Math.PI};
@@ -997,10 +1016,7 @@ function trafficPose(b,q){
   return highwayExitPose(b,q,.76);
  }
  if(b.route==='building-dropoff'){
-  if(q<.38){
-   const u=q/.38,point=b.arrive.getPointAt(u),dir=b.arrive.getTangentAt(Math.min(.999,u));
-   return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
-  }
+  if(q<.38)return inboundArrivalPose(b,q,.38);
   if(q<.59){
    const point=b.arrive.getPointAt(1),dir=b.arrive.getTangentAt(.999);
    return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
@@ -1092,11 +1108,14 @@ function animateDistrictVehicles(t){
      const current=trafficPose(b,b.progress);
      const otherCurrent=trafficPose(other,other.progress);
      const gap=wanted.point.distanceTo(pose.point);
+     // Shared highway approach needs road-scale headway for arriving traffic.
+     const sameEntry=wanted.inboundRoad&&pose.inboundRoad
+       &&wanted.point.z>45&&pose.point.z>45;
      // The shared exit lane needs body-length headway, not merely a
      // center-to-center point distance for sedan versus long van.
      const sameExit=wanted.point.x>10&&pose.point.x>10
        &&wanted.point.z>34&&pose.point.z>34;
-     const gapLimit=sameExit
+     const gapLimit=sameEntry?10:sameExit
        ?((b.model.userData.vehicleLength||3.9)
         +(other.model.userData.vehicleLength||3.9))/2+1
        :3.6;
@@ -1115,6 +1134,9 @@ function animateDistrictVehicles(t){
   // let the merging car clear it while road traffic follows behind.
   const currentPose=trafficPose(b,b.progress);
   if(!canEnterMainRoad(currentPose,wanted,highway))blocked=true;
+  // Public-road cars have priority; inbound traffic can join the eastbound
+  // lane only with a gap. Afterwards those behind follow the inbound car.
+  if(!canAdvanceInboundRoad(currentPose,wanted,highway))blocked=true;
   if(!blocked)b.progress=next;
   const pose=blocked?trafficPose(b,b.progress):wanted;
   b.model.visible=pose.visible;
@@ -1131,8 +1153,13 @@ function animateDistrictVehicles(t){
  // A car still waiting upstream is never registered as a lane occupant.
  const mergedOccupants=internal
   .map(b=>trafficPose(b,b.progress))
-  .filter(p=>p.visible&&p.onHighway&&p.point.x>=12&&p.point.z>=43.7)
-  .map(p=>({x:p.point.x,z:p.point.z,exitMerge:true}));
+  .filter(p=>p.visible&&(
+   (p.onHighway&&p.point.x>=12&&p.point.z>=43.7)
+    ||(p.inboundRoad&&p.point.z>=45.5&&p.point.x<=-12.8)))
+  .map(p=>({
+   x:p.point.x,z:p.point.z,
+   exitMerge:!!p.onHighway,inboundRoad:!!p.inboundRoad
+  }));
  const updates=computeHighwayProgress(highway,mergedOccupants,dt);
  for(const b of highway){
   b.highwayProgress=updates.get(b);
