@@ -297,3 +297,7 @@ python -m http.server 8000
 - [x] ผู้ดูแลยืนยันว่า GitHub Pages เปิดใช้งานได้จาก `main`
 - [ ] หลัง Merge PR PWA ตรวจ Actions/Deployment ว่า Commit ล่าสุดเผยแพร่จริง
 - [ ] Acceptance บน Safari iPhone, Chrome Android และคอมพิวเตอร์ รวมถึง Offline/Updates
+
+## D3D-R19B — Hotfix รถค้างจุดรับส่ง (รอตรวจรับ)
+
+แยกแนวรถออกจากที่จอดกับแนวรถตู้ และใช้การจองสิทธิ์ผ่านจุดตัดทีละคันพร้อมเส้นหยุดก่อนเข้า ปรับ PWA เป็น v28; ดู [รายละเอียดและรายการตรวจรับ](docs/D3D_R19B_DROPOFF_DEADLOCK_ACCEPTANCE.md) ต้องตรวจบน Chrome/iPhone/iPad WebGL จริงก่อนถือว่าแก้ได้สมบูรณ์.

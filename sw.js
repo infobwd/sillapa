@@ -1,8 +1,8 @@
 /* Sillapa standalone public dashboard cache (no private API, names, or school plans separately stored). */
-const CACHE_NAME = 'sillapa-public-v27-3d-r19-20261017';
+const CACHE_NAME = 'sillapa-public-v28-3d-r19b-20261017';
 const CACHE_PREFIX = 'sillapa-public-';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './pwa.css', './pwa.js', './ia1.css', './ia2.css', './ia2-registry.js', './ia3.css', './ia3-readiness.js', './ia4.css', './ia4-workspace.js', './ia5.css', './desktop-shell.css', './ia5-judge-venue.js', './ia6.css', './ia6-executive.js',
-  './round70-catalog.js', './pull-refresh.js', './venues/traffic-r16.mjs', './venues/vehicle-models-r16b.mjs', './venues/dropoff-r17.mjs', './venues/wayfinding-r18.mjs', './venues/performance-r19.mjs', './venues/schematic-3d.html', './venues/venue-shell.css', './venues/history73.json',
+  './round70-catalog.js', './pull-refresh.js', './venues/traffic-r16.mjs', './venues/vehicle-models-r16b.mjs', './venues/dropoff-r17.mjs', './venues/junction-r19b.mjs', './venues/wayfinding-r18.mjs', './venues/performance-r19.mjs', './venues/schematic-3d.html', './venues/venue-shell.css', './venues/history73.json',
   './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 const INDEX = new URL('./index.html', self.registration.scope).href;
 const SCOPE = new URL(self.registration.scope);
