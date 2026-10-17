@@ -376,7 +376,14 @@ function decorateDistrict(){
  slab(7.2,2.55,6.65,18.55,'#bdc2bf',.215);
  for(const x of [3.12,10.18])slab(.09,2.25,x,18.55,'#f5f1e8',.28);
  slab(7,.12,6.65,19.87,'#f5eee1',.285);
- slab(7.4,.72,6.7,16.88,'#ded8c9',.23); // pedestrian step-off
+ slab(7.4,.72,6.7,16.88,'#ded8c9',.23); // protected student walk
+ // R17B: visual curb/bollards separate the passenger strip from moving cars.
+ // No post or greenery inside the rectangular van stop or pupils' walking path.
+ slab(7.3,.16,6.7,17.30,'#f4d885',.315);
+ for(const bx of [3.12,10.18]){
+  const post=new THREE.Mesh(new THREE.CylinderGeometry(.11,.13,.68,9),mat('#e6b54b'));
+  post.position.set(bx,.52,16.92);g.add(post);
+ }
  const dropoffMark=makeBuildingLabel('จุดรับ–ส่ง (จำลอง)',1.95);
  dropoffMark.position.set(9.6,1.95,16.9);
  dropoffMark.scale.set(4.8,1.04,1);g.add(dropoffMark);
