@@ -27,6 +27,8 @@
 
 - **D3D-R18A (Hotfix หลัง R18 · รอตรวจภาพจริง):** [จุดตัดรถรับ–ส่งและ UX มือถือ](docs/D3D_R18A_DROPOFF_MOBILE_ACCEPTANCE.md) — รถตู้รอรถที่เข้าจุดตัดไปแล้วก่อนออกจาก bay, รถจากลานจอดหน้าอาคารรอที่ X=-5.6 และรถด้านหลังรอที่ Z=8.5 เมื่อรถตู้กำลังออก; แก้แถบนำทางมือถือให้ย่อเครื่องมือขั้นสูงและปุ่มฉาก 3D แบบ 4×2 ช่อง (ปุ่มสัมผัส ≥44px) พร้อม safe-area และมุมกล้องมือถือที่ใกล้ขึ้น; PWA `sillapa-public-v26-3d-r18a-20261017`; Local-First tests R16–R18A **65/65 PASS ในแชท** (ยังรอ Node CLI/ตรวจ WebGL บนอุปกรณ์จริง, ไม่ใช้ GitHub Actions)
 
+- **D3D-R19 (Mobile, Performance & PWA · รอตรวจรับ WebGL จริง):** [Design / Tests / Acceptance](docs/D3D_R19_MOBILE_PERFORMANCE_PWA_ACCEPTANCE.md) — เพิ่มการเลือกระดับคุณภาพ 3D อัตโนมัติ/ประหยัด/สมดุล/คมชัด (จำกัด DPR/FPS และจำนวนคนประกอบฉาก), พักเรนเดอร์เมื่ออยู่นอกหน้าจอหรือเปิดแท็บอื่น, ตัวเลือก `prefers-reduced-motion`, สัมผัสหมุน/ซูมบนมือถือ, bottom sheet, แจ้ง WebGL/Three.js/CDN/ข้อมูลสนามโหลดไม่สำเร็จ, แก้ offline PWA ไม่ให้เปิดผิดหน้าและแจ้งอัปเดต SW ที่รออยู่; PWA `sillapa-public-v27-3d-r19-20261017` และ `&v=r19` ทั้ง 2 สนาม; **V8 77/77 PASS ในแชท** (รอ Node CLI/Chrome/iPhone/iPad WebGL ตรวจจริง), Local-First **ไม่ใช้ GitHub Actions**; ไฟล์ตรรกะ `venues/performance-r19.mjs` และทดสอบ `tests/d3d-r19-mobile-performance-pwa.test.mjs` · ฉากออฟไลน์ยังไม่รับประกัน Three.js CDN ครั้งแรก
+
 ## ทดลอง Three.js — แผนผังสนาม 3D (ต้นแบบ)
 
 [เปิดต้นแบบ 3D](threejs-demo/index.html) · เมื่อ Merge และ GitHub Pages เผยแพร่แล้ว: https://infobwd.github.io/sillapa/threejs-demo/
