@@ -34,7 +34,7 @@ Automatic initial profile uses **viewport width, exposed hardwareConcurrency, de
 
 ### C. Mobile detail sheet and controls
 
-- Compact two-column performance settings on narrow viewports with `min-height:44px` controls.
+- The **⚡ คุณภาพและการเคลื่อนไหว 3D** settings are **collapsed by default on narrow viewports** (≤680px) to avoid pushing the Three.js scene off-screen; tapping the semantic disclosure opens compact two-column settings with `min-height:44px` controls. Desktop keeps the section expanded.
 - Building-detail sheet uses a bounded, scrollable **bottom sheet** with a sticky 44px close button, safe-area-aware bottom inset, and stacking order that suppresses the scene toolbar while the sheet is open.
 - Existing R18A fixed 4×2 scene toolbar and R18 route accordion remain intact. Optional quality changes do not alter competition/score data or route eligibility.
 
