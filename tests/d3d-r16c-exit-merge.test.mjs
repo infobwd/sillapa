@@ -63,7 +63,7 @@ test('following highway vehicle reserves whole turn, not just merging center',()
  const justCommitted={x:13,z:43.8,exitMerge:true};
  assert.equal(computeHighwayProgress([behind,farAhead],[justCommitted],1).get(behind),behind.highwayProgress);
  assert.ok(computeHighwayProgress([behind,farAhead],[],1).get(behind)>behind.highwayProgress);
- assert.match(scene,/exitMerge:true/);
+ assert.match(scene,/exitMerge:!!p.onHighway/);
  assert.match(scene,/sameExit=wanted\.point\.x>10/);
  assert.match(scene,/gap<gapLimit/);
 });
