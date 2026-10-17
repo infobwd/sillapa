@@ -60,6 +60,8 @@ New R17A tests check:
 
 **In-chat JavaScript/V8 check:** the six checked-in test files were re-executed against the GitHub branch content on 17 October 2026: **37 passed, 0 failed**. Scene script syntax smoke test **PASS**. This is **not** a locally executed Node CLI command or live WebGL playback; no GitHub Actions were used.
 
+**Additional traffic replay (approximation, not WebGL):** The live scene's `trafficPose` and `animateDistrictVehicles` functions were executed over **360 simulated seconds** with all four dynamic campus vehicles and ten highway cars, using a dependency-free piecewise-linear approximation of Three.js's Catmull-Rom curves. Each campus vehicle completed **3 full arrival/parking/departure cycles** (pickup A 3, car B 3, white van 3, rear pickup 3). Maximum collision-induced hold durations in this replay were approximately **6.2 s, 13.3 s, 5.0 s (white van), and 19.8 s**, respectively. This is useful for detecting an obvious indefinite deadlock but **does not replace true Three.js spline/WebGL observation**.
+
 ## Real browser acceptance: NOT YET PASS
 
 - [ ] Chrome desktop WebGL, ≥5 minutes: observe the white van arrive, unload all four student figures, leave within about 10 seconds of becoming stationary (unless actual traffic blocks exit), travel east from the bay and north along the east-side road.
