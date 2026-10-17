@@ -161,6 +161,16 @@ test('standalone 3D page shows its own update banner; never reloads without clic
  assert.match(scene,/document\.querySelector\('#sceneUpdateReload'\)\.addEventListener\('click',\(\)=>location\.reload\(\)\)/);
 });
 
+test('scene runtime declarations remain executable, not hidden behind line comments',()=>{
+ const js=scene.split('<script type="module">')[1].split('</script>')[0];
+ const executable=js.split('\n').map(line=>line.split('//')[0]).join('\n');
+ for(const declaration of ['const buses=[]','const flagCloths=[]',
+  'const registrationStaff=[]','const buildingTargets=new Map()']){
+  assert.ok(executable.includes(declaration),declaration+' must be executable');
+ }
+ assert.match(scene,/renderer\.setAnimationLoop\(loop\)/);
+});
+
 test('graph, vehicle and historical 73 content stay separated from R19 optimization',()=>{
  assert.match(scene,/from '\.\/wayfinding-r18\.mjs'/);
  assert.match(scene,/from '\.\/traffic-r16\.mjs'/);
