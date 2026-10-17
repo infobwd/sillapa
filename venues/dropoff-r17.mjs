@@ -35,17 +35,53 @@ export function fromVanToRegistrationWaypoints(personIndex=0){
   [6.12,11.8],[6.12,8.0],[6.12,5.0],[6.12,-1.15],
   [5.18,-1.15],[5.18,destination[1]],destination];
 }
+// R18A: the link from the van bay crosses the east-west drop-off lane,
+// then shares the eastern northbound access road with the rear pickup.
+// Give cars already in the junction right-of-way; HOLD a van on the bay
+// until they clear. After the van has started moving, stop newcomers at
+// explicit approach lines instead of letting them get alongside the van.
+export const DROPOFF_LINK_LIMITS=Object.freeze({
+ frontStopX:-5.6,rearStopZ:8.5,clearZ:33,vanEntryZ:19
+});
+export function isVehicleInDropoffLink(route,pose){
+ if(!pose?.visible)return false;
+ const x=pose.point.x,z=pose.point.z;
+ if(route==='front-park')return x>DROPOFF_LINK_LIMITS.frontStopX
+  &&x<15.5&&z>=18.4&&z<=33;
+ if(route==='rear-parking')return x>=10.2&&x<=15.5
+  &&z>DROPOFF_LINK_LIMITS.rearStopZ&&z<=33;
+ return false;
+}
+export function shouldVanWaitForLink(vanCurrent,vanWanted,otherRoute,otherPose,
+ vanProgress,departStart){
+ if(!vanCurrent?.visible||!vanWanted?.visible)return false;
+ // This is a pre-commit check only. Once the van has safely entered the
+ // junction, approaching cars wait; the oriented-body check still runs.
+ if(vanProgress>departStart+0.00001)return false;
+ if(vanProgress<departStart-0.00001)return false;
+ return isVehicleInDropoffLink(otherRoute,otherPose);
+}
 export function shouldHoldFollowerAtDropoff(actorRoute,current,wanted,
  vanProgress,vanPose,vanDepartStart,vanDepartEnd){
- if(actorRoute!=='front-park'||!current?.visible||!wanted?.visible
-  ||!vanPose?.visible)return false;
- if(vanProgress<vanDepartStart||vanProgress>=vanDepartEnd)return false;
- // A front-lot car that has NOT entered the junction waits before X=-2.
- // A car already in the intersection has priority to CLEAR it; the van
- // still checks its full footprint before entering the same space.
- const approaching=current.point.x<=-2;
- return approaching&&wanted.point.x>-2
-  &&wanted.point.z>=19.4&&wanted.point.z<=24.6;
+ if(!current?.visible||!wanted?.visible||!vanPose?.visible)return false;
+ // At EXACT dwell end the van has not yet reserved anything; this
+ // lets a car already partway into the junction finish clearing it.
+ if(vanProgress<=vanDepartStart+0.00001||vanProgress>=vanDepartEnd)return false;
+ if(vanPose.point.x>=12&&vanPose.point.z>=DROPOFF_LINK_LIMITS.clearZ)
+  return false;
+ if(actorRoute==='front-park'){
+  // Hold in the straight approach west of the actual crossing; already
+  // committed vehicles still clear, never reverse or teleport.
+  return current.point.x<=DROPOFF_LINK_LIMITS.frontStopX
+   &&wanted.point.x>DROPOFF_LINK_LIMITS.frontStopX
+   &&wanted.point.z>=18.0&&wanted.point.z<=25.5;
+ }
+ if(actorRoute==='rear-parking'){
+  return current.point.z<=DROPOFF_LINK_LIMITS.rearStopZ
+   &&wanted.point.z>DROPOFF_LINK_LIMITS.rearStopZ
+   &&wanted.point.x>=10&&wanted.point.x<=15.5;
+ }
+ return false;
 }
 export function inDropoffZone(point){
  return !!point&&point.x>=-12&&point.x<=12&&point.z>=16&&point.z<=25.5;

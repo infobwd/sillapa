@@ -65,17 +65,17 @@ test('ALL four van passengers reach dome before Building 1 upstairs, clear of ve
   assert.equal(registrationPhase(q,.398).step,step);
 });
 
-test('following pickup waits before crossing while van departure is reserved',()=>{
+test('following pickup waits upstream while van holds the link reservation',()=>{
  const van=pose(9.1,18.55),depart=BUILDING_DROPOFF_TIMING;
  assert.equal(shouldHoldFollowerAtDropoff('front-park',
-  pose(-2.04,22),pose(-1.98,22),.50,van,depart.dwellEnd,depart.departEnd),true);
+  pose(-5.64,22),pose(-5.58,22),.50,van,depart.dwellEnd,depart.departEnd),true);
  assert.equal(shouldHoldFollowerAtDropoff('front-park',
-  pose(-2.04,22),pose(-1.98,22),.40,van,depart.dwellEnd,depart.departEnd),false);
+  pose(-5.64,22),pose(-5.58,22),.40,van,depart.dwellEnd,depart.departEnd),false);
  assert.equal(shouldHoldFollowerAtDropoff('front-park',
   pose(0,22),pose(.2,22),.50,van,depart.dwellEnd,depart.departEnd),false,
-  'cars already crossing must clear; the van itself yields in body checks');
+  'cars already crossing must clear; van waits before entry');
  assert.equal(shouldHoldFollowerAtDropoff('rear-parking',
-  pose(-2.04,22),pose(-1.98,22),.50,van,depart.dwellEnd,depart.departEnd),false);
+  pose(13,8.48,0),pose(13,8.52,0),.50,van,depart.dwellEnd,depart.departEnd),true);
  assert.match(scene,/shouldHoldFollowerAtDropoff\(b\.route,currentPose,wanted/);
 });
 
@@ -92,7 +92,7 @@ test('swept vehicle envelope prevents pickup from overtaking or hitting departin
 });
 
 test('45-second sequential rear-end avoidance keeps moving follower clear',()=>{
- let vanX=7.0,carX=-4.0,held=0,vanSteps=0;
+ let vanX=7.0,carX=-8.0,held=0,vanSteps=0;
  for(let frame=0;frame<45*60;frame++){
   const dt=1/60;
   const van=pose(vanX,18.55);
@@ -137,8 +137,8 @@ test('existing road/competition records remain out of R17B scope and PWA refresh
  assert.match(scene,/canEnterMainRoad\(currentPose,wanted,highway\)/);
  assert.match(scene,/canAdvanceInboundRoad\(currentPose,wanted,highway\)/);
  assert.match(scene,/registrationPhase\(q,start\)/);
- assert.match(sw,/sillapa-public-v25-3d-r18-20261017/);
+ assert.match(sw,/sillapa-public-v26-3d-r18a-20261017/);
  assert.match(sw,/venues\/dropoff-r17\.mjs/);
- assert.match(index,/venue=kanchanaburi-pesa4&v=r18/);
- assert.match(index,/venue=anuban-bophloi&v=r18/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r18a/);
+ assert.match(index,/venue=anuban-bophloi&v=r18a/);
 });

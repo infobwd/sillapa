@@ -25,6 +25,8 @@
 
 - **D3D-R18 (Interactive Wayfinding · รอตรวจรับ WebGL จริง):** [เส้นทางเดิน/คลิกจุดหมาย/ติดตามรถตู้และนักเรียน](docs/D3D_R18_INTERACTIVE_WAYFINDING_ACCEPTANCE.md) — เลือกต้นทาง–ปลายทาง 5 จุดในสนามสำนักงานเขต, แตะอาคาร/หมุด, เส้นทางสีเขียวฟ้าพร้อมลูกศร, ปุ่มภาพรวม/ติดตามเส้นทาง/ติดตามรถตู้/ซ่อนแสดงเส้น, คีย์บอร์ด Escape และ browser Back/Forward; เส้นทางเดินใช้พิกัดจำลองที่หลบเขตรถ ไม่ใช่ผังเดินจริง · PWA `sillapa-public-v25-3d-r18-20261017` · Local-First: `node --test tests/d3d-r18-wayfinding.test.mjs` (พร้อมรันชุด R16–R17B ทั้งหมด, **ไม่ใช้ GitHub Actions**) · JavaScript 58/58 ผ่านในแชท, รอตรวจ Node CLI และ Chrome/iPhone/iPad WebGL
 
+- **D3D-R18A (Hotfix หลัง R18 · รอตรวจภาพจริง):** [จุดตัดรถรับ–ส่งและ UX มือถือ](docs/D3D_R18A_DROPOFF_MOBILE_ACCEPTANCE.md) — รถตู้รอรถที่เข้าจุดตัดไปแล้วก่อนออกจาก bay, รถจากลานจอดหน้าอาคารรอที่ X=-5.6 และรถด้านหลังรอที่ Z=8.5 เมื่อรถตู้กำลังออก; แก้แถบนำทางมือถือให้ย่อเครื่องมือขั้นสูงและปุ่มฉาก 3D แบบ 4×2 ช่อง (ปุ่มสัมผัส ≥44px) พร้อม safe-area และมุมกล้องมือถือที่ใกล้ขึ้น; PWA `sillapa-public-v26-3d-r18a-20261017`; Local-First tests R16–R18A **65/65 PASS ในแชท** (ยังรอ Node CLI/ตรวจ WebGL บนอุปกรณ์จริง, ไม่ใช้ GitHub Actions)
+
 ## ทดลอง Three.js — แผนผังสนาม 3D (ต้นแบบ)
 
 [เปิดต้นแบบ 3D](threejs-demo/index.html) · เมื่อ Merge และ GitHub Pages เผยแพร่แล้ว: https://infobwd.github.io/sillapa/threejs-demo/
