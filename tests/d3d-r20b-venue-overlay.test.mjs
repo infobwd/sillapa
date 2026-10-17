@@ -61,10 +61,10 @@ test('no unverified 74 status is introduced; preserved R19B and student path',()
  assert.match(html,/function animateWayfindingFollow\(t\)/);
 });
 test('PWA v30 caches the helper and updates both venue URLs',()=>{
- assert.match(sw,/sillapa-public-v31-3d-r20b1-20261018/);
+ assert.match(sw,/sillapa-public-v32-3d-r20c-20261018/);
  assert.match(sw,/venues\/overlay-r20b\.mjs/);
- assert.match(index,/venue=kanchanaburi-pesa4&v=r20b1/);
- assert.match(index,/venue=anuban-bophloi&v=r20b1/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r20c/);
+ assert.match(index,/venue=anuban-bophloi&v=r20c/);
 });
 
 test('R20B1: disclosure startup has no TDZ and breakpoint listeners work',()=>{
