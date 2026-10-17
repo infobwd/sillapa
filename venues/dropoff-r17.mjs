@@ -2,8 +2,8 @@
 // Schematic coordinates only; neither an official traffic nor check-in plan.
 export const DROP_OFF_BAY=Object.freeze({x:7,z:18.55,vehicleLength:4.4,vehicleWidth:1.92});
 export const DOME_QUEUES=Object.freeze([
- Object.freeze({z:-5.75,deskX:-4.1}),
- Object.freeze({z:-2.25,deskX:-4.1})
+ Object.freeze({z:-5.75,deskX:3.21}),
+ Object.freeze({z:-2.25,deskX:3.21})
 ]);
 
 export function inDropoffZone(point){
@@ -37,21 +37,28 @@ export function mustYieldAtDropoff(wanted,other,aLength,bLength,aWidth=1.8,bWidt
 }
 export function registrationQueuePoint(queueIndex,personIndex){
  const queue=DOME_QUEUES[Math.abs(queueIndex)%DOME_QUEUES.length];
- return [-5.0-Math.max(0,Math.min(3,personIndex))*.65,queue.z];
+ // Dome group rotates +90° about Y with local Z scaled to .78. The
+ // queue marks at local Z=5.0,5.65,6.30 map to WORLD X=3.90,4.407,4.914.
+ return [3.90+Math.max(0,Math.min(3,personIndex))*.507,queue.z];
 }
 export function toRegistrationWaypoints(startX,queueIndex,personIndex){
  const queue=DOME_QUEUES[Math.abs(queueIndex)%DOME_QUEUES.length];
  const destination=registrationQueuePoint(queueIndex,personIndex);
  return [[startX,35.2],[startX,30],[startX,25],[startX,19],
   [-11.38,18],[-11.38,14.7],[-11.38,10.8],[-11.38,5],
-  [-11.38,-7.45],[-6.35,-7.45],[-6.35,queue.z],destination];
+  // Southern aisle at z=-7.5 stays outside the stage/chair footprint
+  // (southern-most content z≈-6.8), then turns to the EAST reception desks.
+  [-11.38,-7.45],[-6.35,-7.45],[-5.15,-7.50],
+  [4.95,-7.50],[5.18,-7.0],[5.18,queue.z],destination];
 }
 export function fromRegistrationToBuildingWaypoints(queueIndex,personIndex){
  const destination=registrationQueuePoint(queueIndex,personIndex);
  const lane=DOME_QUEUES[Math.abs(queueIndex)%DOME_QUEUES.length];
- return [destination,[-6.35,lane.z],[-6.35,-7.1],[-6.35,-7.45],
-  [-11.38,-7.45],[-11.38,10.8],[-11.38,15.5],
-  [-6.5,16.65],[6.12,16.65],[6.12,11.8],[5.15,10.8],
+ // After check-in, leave via the EAST opening and keep x=6.12
+ // between the host buildings and the right-side toilets. This avoids
+ // re-crossing the stage, chairs or the restroom on the western approach.
+ return [destination,[5.35,lane.z],[6.12,lane.z],
+  [6.12,-1.15],[6.12,5.0],[6.12,11.8],[5.15,10.8],
   [5.15,10.8,2.6],[3.60,10.8,2.6],[2.70,9.75,2.6]];
 }
 // q is the vehicle's normalized simulation progress. Every passenger
