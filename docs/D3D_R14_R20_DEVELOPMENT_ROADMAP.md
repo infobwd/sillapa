@@ -53,3 +53,7 @@ R14 stability/acceptance → R15 student journey → R16 traffic scenarios → R
 ## Non-goals
 - No historical results edits, student/teacher/judge record changes, scoring, application intake or official live traffic monitoring.
 - No claim that demonstration vehicle counts, routes or unapproved building details reflect real event operations.
+
+## R20A visual-only handoff (17 October 2026)
+
+Owner-requested 3D style refresh based on an illustrative external screenshot: palette, nameplates, informational legend and default responsive camera only. **This is not the original R20 approved-data integration gate.** R19B traffic, historical 73 records, source/PDPA controls, publication status and official 74 statistics remain untouched. Accept Local-First/browser checks on the exact PR SHA before merge.

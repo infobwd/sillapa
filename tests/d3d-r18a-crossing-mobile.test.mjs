@@ -92,16 +92,16 @@ test('every 3D scene action is reachable as a 44px touch target',()=>{
 });
 
 test('mobile 3D starts closer to the venue and reset chooses the same framing',()=>{
- assert.match(scene,/mount\.clientWidth<680\?\[43,58,76\]:\[59,78,90\]/);
+ assert.match(scene,/getSceneCameraPreset\(true,mount\.clientWidth<680\)/);
  assert.match(scene,/#scene\{height:clamp\(485px,70svh,760px\);min-height:485px\}/);
  assert.match(scene,/bottom:max\(8px,env\(safe-area-inset-bottom\)\)/);
  assert.match(scene,/min-height:44px;touch-action:manipulation/);
 });
 
 test('PWA invalidates R18 files and launches refreshed R18A venue links',()=>{
- assert.match(sw,/sillapa-public-v28-3d-r19b-20261017/);
+ assert.match(sw,/sillapa-public-v29-3d-r20a-20261017/);
  assert.match(sw,/venues\/dropoff-r17\.mjs/);
  assert.match(sw,/venues\/wayfinding-r18\.mjs/);
- assert.match(index,/venue=kanchanaburi-pesa4&v=r19b/);
- assert.match(index,/venue=anuban-bophloi&v=r19b/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r20a/);
+ assert.match(index,/venue=anuban-bophloi&v=r20a/);
 });
