@@ -56,7 +56,7 @@ test('five-minute repeated curbside pass avoids the parked van and close followe
 
 test('drop-off vehicle pulls off cross-road and uses a marked waiting bay',()=>{
  assert.match(scene,/const toBuilding=pointsToCurve\(\[[\s\S]*\[3\.1,19\.65\],\[5\.5,18\.55\],\[DROP_OFF_BAY\.x,DROP_OFF_BAY\.z\]/);
- assert.match(scene,/const fromBuilding=pointsToCurve\(\[[\s\S]*\[DROP_OFF_BAY\.x,DROP_OFF_BAY\.z\],\[9\.2,19\.15\]/);
+ assert.match(scene,/const fromBuilding=pointsToCurve\(\[[\s\S]*\[DROP_OFF_BAY\.x,DROP_OFF_BAY\.z\],\[9\.25,18\.55\]/);
  assert.match(scene,/slab\(7\.2,2\.55,6\.65,18\.55/);
  assert.match(scene,/slab\(7\.4,\.72,6\.7,16\.88/);
  assert.match(scene,/inBayZone&&bodyBlocked/);
@@ -133,10 +133,10 @@ test('dome contains two reception desks and two staff, clear of the original sta
 });
 
 test('R17 service worker and both venue URLs refresh with drop-off helper',()=>{
- assert.match(sw,/sillapa-public-v22-3d-r17-20261017/);
+ assert.match(sw,/sillapa-public-v23-3d-r17a-20261017/);
  assert.match(sw,/venues\/dropoff-r17\.mjs/);
  assert.match(sw,/venues\/traffic-r16\.mjs/);
  assert.match(sw,/venues\/vehicle-models-r16b\.mjs/);
- assert.match(index,/venue=kanchanaburi-pesa4&v=r17/);
- assert.match(index,/venue=anuban-bophloi&v=r17/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r17a/);
+ assert.match(index,/venue=anuban-bophloi&v=r17a/);
 });
