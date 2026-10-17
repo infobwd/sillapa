@@ -1155,7 +1155,7 @@ function trafficPose(b,q){
  }
  if(b.route==='building-dropoff'||b.route==='pickup-school'){
   const pickup=b.route==='pickup-school';
-  const arrivingEnd=pickup?.35:.38,waitingEnd=pickup?.56:.59;
+  const arrivingEnd=pickup ? .35 : .38,waitingEnd=pickup ? .56 : .59;
   if(q<arrivingEnd){
    const u=q/arrivingEnd,point=b.arrive.getPointAt(u),dir=b.arrive.getTangentAt(Math.min(.999,u));
    return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
@@ -1350,7 +1350,7 @@ function animateDistrictVehicles(t){
   accepted.set(b,pose);
   // Student journeys use their own continuous elapsed time after disembarking.
   if(b.destination&&b.studentStartAt===null){
-   const threshold=b.route==='pickup-school'?.355:.388;
+   const threshold=b.route==='pickup-school' ? .355 : .388;
    if(b.progress>=threshold)b.studentStartAt=roadSimTime;
   }
   animateDropoffPassengers(b,b.progress,roadSimTime);
