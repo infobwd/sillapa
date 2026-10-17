@@ -1414,6 +1414,250 @@ function animateStudentTour(t){
  const cameraGoal=new THREE.Vector3(target.x+14,target.y+17,target.z+16);
  controls.target.lerp(target,.065);camera.position.lerp(cameraGoal,.055);
 }
+// R18: visual-only route layer and accessible interactions. No claim
+// that these paths are surveyed, traffic-safe or wheelchair-accessible.
+for(const stop of WAYFINDING_STOPS){
+ for(const selectElement of [wayfindingFrom,wayfindingTo]){
+  const option=document.createElement('option');
+  option.value=stop.id;option.textContent=stop.label;selectElement.append(option);
+ }
+}
+wayfindingFrom.value='dropoff';wayfindingTo.value='registration';
+function stopWayfindingFollow(){
+ wayfindingFollowMode=null;wayfindingFollowVehicle=null;
+ if(wayfindingMarker)wayfindingMarker.visible=false;
+ wayfindingFollowButton.setAttribute('aria-pressed','false');
+ wayfindingFollowButton.textContent='▶ ติดตามเส้นทาง';
+ wayfindingVehicleButton.setAttribute('aria-pressed','false');
+ wayfindingVehicleButton.textContent='🚐 ติดตามรถตู้';
+ wayfindingTip.hidden=true;
+}
+function removeWayfindingGeometry(){
+ if(!wayfindingGroup)return;
+ scene.remove(wayfindingGroup);
+ for(const child of wayfindingGroup.children){
+  child.traverse(o=>{
+   if(o.geometry)o.geometry.dispose();
+   if(o.material){
+    const mats=Array.isArray(o.material)?o.material:[o.material];
+    for(const mat of mats){
+     if(mat.map&&mat.map.isCanvasTexture)mat.map.dispose();
+     mat.dispose();
+    }
+   }
+  });
+ }
+ const index=objects.indexOf(wayfindingGroup);
+ if(index>=0)objects.splice(index,1);
+ wayfindingGroup=null;wayfindingMarker=null;
+}
+function createWayfindingPins(){
+ if(wayfindingPins)return;
+ const group=new THREE.Group();group.userData.wayfindingPins=true;
+ for(const stop of WAYFINDING_STOPS){
+  const point=WAYFINDING_NODE_COORDINATES[stop.id];
+  const high=stop.id==='dropoff'?1.6:stop.id==='meeting2'?6.8:5.4;
+  const pin=new THREE.Mesh(new THREE.SphereGeometry(.43,12,8),
+   new THREE.MeshStandardMaterial({color:stop.id==='registration'?'#ffc267':'#31bb9b',
+    metalness:.12,emissive:'#09533c',emissiveIntensity:.3}));
+  pin.position.set(point[0],high,point[1]);
+  pin.userData.wayfindingStop=stop.id;pin.userData.wayfindingPin=true;
+  pin.scale.set(1,1.3,1);pin.renderOrder=9;
+  group.add(pin);meshes.push(pin);
+ }
+ scene.add(group);objects.push(group);wayfindingPins=group;
+}
+function renderWayfindingGeometry(route){
+ removeWayfindingGeometry();if(!route)return;
+ const group=new THREE.Group();group.userData.wayfindingRoute=true;
+ const vectors=route.points.map(p=>new THREE.Vector3(p[0],(p[2]||0)+.48,p[1]));
+ if(vectors.length>1){
+  const path=new THREE.Line(new THREE.BufferGeometry().setFromPoints(vectors),
+   new THREE.LineDashedMaterial({color:'#00e7c1',dashSize:.72,gapSize:.28,
+    linewidth:2,depthTest:false,transparent:true,opacity:1}));
+  path.computeLineDistances();path.renderOrder=9;group.add(path);
+  for(let i=1;i<vectors.length;i++){
+   const a=vectors[i-1],b=vectors[i],direction=b.clone().sub(a);
+   if(direction.length()<2.8)continue;
+   const arrow=new THREE.Mesh(new THREE.ConeGeometry(.31,.78,7),
+    new THREE.MeshBasicMaterial({color:'#fff1a2',depthTest:false}));
+   arrow.position.copy(a.clone().lerp(b,.62));
+   arrow.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),direction.normalize());
+   arrow.renderOrder=10;group.add(arrow);
+  }
+ }
+ for(const [index,p] of [[0,route.points[0]],[1,route.points.at(-1)]]){
+  const ring=new THREE.Mesh(new THREE.RingGeometry(.45,.67,24),
+   new THREE.MeshBasicMaterial({color:index===0?'#20d7a3':'#ffc966',
+    side:THREE.DoubleSide,depthTest:false}));
+  ring.rotation.x=-Math.PI/2;ring.position.set(p[0],(p[2]||0)+.43,p[1]);
+  ring.renderOrder=11;group.add(ring);
+ }
+ const finish=route.points.at(-1);
+ const endLabel=makeBuildingLabel('ปลายทาง · '+WAYFINDING_STOPS.find(s=>s.id===route.to).short,
+  (finish[2]||0)+3);
+ endLabel.position.set(finish[0],(finish[2]||0)+3,finish[1]);
+ endLabel.scale.set(5.0,1.15,1);group.add(endLabel);
+ const mover=new THREE.Mesh(new THREE.SphereGeometry(.38,12,8),
+  new THREE.MeshBasicMaterial({color:'#ffdc7b',depthTest:false}));
+ mover.visible=false;mover.renderOrder=12;group.add(mover);
+ wayfindingMarker=mover;
+ wayfindingGroup=group;
+ wayfindingGroup.visible=!wayfindingHidden;
+ scene.add(group);objects.push(group);
+}
+function flyToWayfindingOverview(){
+ if(!wayfindingRoute)return;
+ const points=wayfindingRoute.points;
+ const xs=points.map(p=>p[0]),zs=points.map(p=>p[1]);
+ const center=new THREE.Vector3(
+  (Math.min(...xs)+Math.max(...xs))/2,1.5,
+  (Math.min(...zs)+Math.max(...zs))/2);
+ const span=Math.max(16,Math.max(...xs)-Math.min(...xs),
+  Math.max(...zs)-Math.min(...zs));
+ const mobile=mount.clientWidth<680;
+ const offset=new THREE.Vector3(span*.9,mobile?span*1.6:span*1.2,span*1.15);
+ cameraFlight={fromCamera:camera.position.clone(),fromTarget:controls.target.clone(),
+  toTarget:center,toCamera:center.clone().add(offset),
+  start:clock.getElapsedTime(),duration:.55};
+}
+function setWayfindingControlsAvailability(district){
+ for(const element of [wayfindingFrom,wayfindingTo,wayfindingShowButton,
+  wayfindingVehicleButton])element.disabled=!district;
+ wayfindingOverviewButton.disabled=!district||!wayfindingRoute;
+ wayfindingFollowButton.disabled=!district||!wayfindingRoute||wayfindingHidden
+  ||wayfindingRoute.points.length<2;
+ wayfindingLayerButton.disabled=!district||!wayfindingRoute;
+ wayfindingClearButton.disabled=!district||!wayfindingRoute;
+}
+function applyWayfindingHash(){
+ stopWayfindingFollow();
+ const district=select.value==='kanchanaburi-pesa4';
+ const request=parseWayfindingHash(location.hash);
+ wayfindingRoute=null;removeWayfindingGeometry();
+ if(!district){
+  wayfindingStatus.textContent='สนามนี้ยังไม่มีผังเส้นทางเดินที่ตรวจสอบแล้ว';
+  setWayfindingControlsAvailability(false);return;
+ }
+ if(!request){
+  wayfindingStatus.textContent='เลือกต้นทางและจุดหมาย แล้วกดแสดงเส้นทาง (ไม่ใช่เส้นทางจริง)';
+  wayfindingHidden=false;setWayfindingControlsAvailability(true);return;
+ }
+ wayfindingFrom.value=request.from;wayfindingTo.value=request.to;
+ try{
+  wayfindingRoute=planWayfindingRoute(request.from,request.to);
+  wayfindingHidden=false;
+  renderWayfindingGeometry(wayfindingRoute);
+  wayfindingStatus.textContent='จาก '+wayfindingRoute.fromLabel+' → '
+   +wayfindingRoute.toLabel+' · เส้นทางจำลอง '+wayfindingRoute.nodeIds.length
+   +' จุด ไม่ใช่ระยะทางหรือเวลาเดินจริง';
+  wayfindingLayerButton.textContent='🙈 ซ่อนเส้น';
+  wayfindingLayerButton.setAttribute('aria-pressed','true');
+  setWayfindingControlsAvailability(true);
+  flyToWayfindingOverview();
+ }catch(err){
+  wayfindingStatus.textContent='ยังไม่พบเส้นทางจำลองที่เลือกได้';
+  setWayfindingControlsAvailability(true);
+ }
+}
+function setWayfindingSelection(from,to){
+ if(!isWayfindingStop(from)||!isWayfindingStop(to))return;
+ if(studentTourOn)stopStudentTour();
+ const hash=wayfindingHash(from,to);
+ if(location.hash===hash)applyWayfindingHash();
+ else location.hash=hash; // hashchange/back restores the previous route.
+}
+function startWayfindingFollow(mode){
+ if(studentTourOn)stopStudentTour();
+ stopWayfindingFollow();cameraFlight=null;
+ if(mode==='vehicle'){
+  if(select.value!=='kanchanaburi-pesa4'||!trafficEnabled){
+   wayfindingStatus.textContent='ต้องเปิดรถจำลองก่อน จึงติดตามรถตู้ได้';
+   return;
+  }
+  wayfindingFollowVehicle=buses.find(b=>b.route==='building-dropoff');
+  if(!wayfindingFollowVehicle)return;
+  wayfindingFollowMode='vehicle';
+  wayfindingVehicleButton.textContent='⏹ หยุดติดตามรถ';
+  wayfindingVehicleButton.setAttribute('aria-pressed','true');
+ }else{
+  if(!wayfindingRoute||wayfindingHidden||wayfindingRoute.points.length<2)return;
+  wayfindingFollowMode='route';wayfindingFollowStart=clock.getElapsedTime();
+  wayfindingFollowButton.textContent='⏹ หยุดติดตามเส้นทาง';
+  wayfindingFollowButton.setAttribute('aria-pressed','true');
+  if(wayfindingMarker)wayfindingMarker.visible=true;
+ }
+ wayfindingTip.hidden=false;
+ wayfindingTip.textContent='กำลังติดตามเส้นทางจำลอง · แตะ/ลากภาพเพื่อหยุด';
+}
+function animateWayfindingFollow(t){
+ if(!wayfindingFollowMode)return;
+ let point=null;
+ if(wayfindingFollowMode==='vehicle'){
+  const car=wayfindingFollowVehicle;
+  if(!trafficEnabled||!car||!car.model.visible){
+   stopWayfindingFollow();return;
+  }
+  point=car.model.position;
+  wayfindingTip.textContent='🚐 ติดตามรถตู้รับ–ส่ง (จำลอง) · ลากภาพเพื่อหยุด';
+ }else if(wayfindingRoute){
+  const duration=Math.max(12,Math.min(50,wayfindingRoute.sceneDistance/1.65));
+  const fraction=Math.min(1,(t-wayfindingFollowStart)/duration);
+  const pose=sampleWayfindingRoute(wayfindingRoute.points,fraction);
+  point=new THREE.Vector3(pose.x,pose.y,pose.z);
+  if(wayfindingMarker)
+   wayfindingMarker.position.set(pose.x,pose.y+.82,pose.z);
+  if(fraction>=1){
+   stopWayfindingFollow();
+   wayfindingStatus.textContent='ถึง '+wayfindingRoute.toLabel
+    +' (จุดหมายจำลอง) · เลือก ▶ ติดตามเส้นทาง เพื่อเล่นอีกครั้ง';
+   return;
+  }
+ }else{stopWayfindingFollow();return}
+ const target=new THREE.Vector3(point.x,point.y+1.1,point.z);
+ controls.target.lerp(target,.065);
+ camera.position.lerp(target.clone().add(new THREE.Vector3(12,16,15)),.055);
+}
+wayfindingShowButton.addEventListener('click',()=>setWayfindingSelection(
+ wayfindingFrom.value,wayfindingTo.value));
+wayfindingFrom.addEventListener('change',()=>{
+ if(wayfindingRoute)setWayfindingSelection(wayfindingFrom.value,wayfindingTo.value);
+});
+wayfindingTo.addEventListener('change',()=>{
+ if(wayfindingRoute)setWayfindingSelection(wayfindingFrom.value,wayfindingTo.value);
+});
+wayfindingOverviewButton.addEventListener('click',()=>{
+ stopWayfindingFollow();flyToWayfindingOverview();
+});
+wayfindingFollowButton.addEventListener('click',()=>{
+ if(wayfindingFollowMode==='route')stopWayfindingFollow();
+ else startWayfindingFollow('route');
+});
+wayfindingVehicleButton.addEventListener('click',()=>{
+ if(wayfindingFollowMode==='vehicle')stopWayfindingFollow();
+ else startWayfindingFollow('vehicle');
+});
+wayfindingLayerButton.addEventListener('click',()=>{
+ if(!wayfindingRoute)return;
+ wayfindingHidden=!wayfindingHidden;
+ if(wayfindingHidden)stopWayfindingFollow();
+ if(wayfindingGroup)wayfindingGroup.visible=!wayfindingHidden;
+ wayfindingLayerButton.textContent=wayfindingHidden?'👁 แสดงเส้น':'🙈 ซ่อนเส้น';
+ wayfindingLayerButton.setAttribute('aria-pressed',String(!wayfindingHidden));
+ setWayfindingControlsAvailability(true);
+});
+wayfindingClearButton.addEventListener('click',()=>{
+ stopWayfindingFollow();
+ if(location.hash)location.hash='';
+ else applyWayfindingHash();
+ wayfindingShowButton.focus();
+});
+window.addEventListener('hashchange',applyWayfindingHash);
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'&&wayfindingRoute){
+  e.preventDefault();wayfindingClearButton.click();
+ }
+});
 // Camera framing follows the selected building on either pointer/touch or list selection.
 function flyToBuilding(label){
  const key=label.normalize('NFKC').replace(/\s+/g,'').toLowerCase();
