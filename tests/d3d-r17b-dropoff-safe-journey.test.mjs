@@ -137,8 +137,8 @@ test('existing road/competition records remain out of R17B scope and PWA refresh
  assert.match(scene,/canEnterMainRoad\(currentPose,wanted,highway\)/);
  assert.match(scene,/canAdvanceInboundRoad\(currentPose,wanted,highway\)/);
  assert.match(scene,/registrationPhase\(q,start\)/);
- assert.match(sw,/sillapa-public-v24-3d-r17b-20261017/);
+ assert.match(sw,/sillapa-public-v25-3d-r18-20261017/);
  assert.match(sw,/venues\/dropoff-r17\.mjs/);
- assert.match(index,/venue=kanchanaburi-pesa4&v=r17b/);
- assert.match(index,/venue=anuban-bophloi&v=r17b/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r18/);
+ assert.match(index,/venue=anuban-bophloi&v=r18/);
 });
