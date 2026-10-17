@@ -18,7 +18,8 @@ export function computeHighwayProgress(vehicles, mergedOccupants, dt, safeHeadwa
       // Protect its full turning body from rear traffic, but never make
       // public traffic yield for a car that is still WAITING at the stop line.
       const inLane=Math.abs(occupant.z-car.lane)<=2.1;
-      const entering=occupant.exitMerge===true&&car.direction===1&&car.lane===49.25;
+      const entering=(occupant.exitMerge===true||occupant.inboundRoad===true)
+        &&car.direction===1&&car.lane===49.25;
       if (!inLane&&!entering) continue;
       const ahead=(occupant.x-x)*car.direction;
       if (ahead>=0&&ahead<car.travel/2) clearance=Math.min(clearance,ahead);
@@ -46,6 +47,26 @@ export function canEnterMainRoad(currentPose, wantedPose, highway, gateX=15.5, s
     const ahead=x-gateX;
     if ((behind>=0&&behind<rearClearance)
       ||(ahead>=0&&ahead<frontClearance))return false;
+  }
+  return true;
+}
+
+// R16D: inbound cars start OUTSIDE the highway scene and drive in from
+// its eastbound left approach. At spawn the full surrounding road gap must
+// be clear. After joining the visible lane, cars follow traffic ahead;
+// highway traffic behind treats the inbound car as an ahead occupant.
+// The test uses center positions and visual-only schematic headway.
+export function canAdvanceInboundRoad(currentPose,wantedPose,highway,safeGap=10) {
+  if (!wantedPose.visible||!wantedPose.inboundRoad) return true;
+  const firstJoin=!currentPose.visible||!currentPose.inboundRoad
+    ||currentPose.point.x<=-49;
+  const x=wantedPose.point.x;
+  for(const car of highway){
+    if(car.direction!==1||Math.abs(car.lane-49.25)>2)continue;
+    const roadX=-car.travel/2+car.highwayProgress;
+    const ahead=roadX-x;
+    if(ahead>=0&&ahead<safeGap)return false;
+    if(firstJoin&&ahead<0&&ahead>-safeGap)return false;
   }
   return true;
 }

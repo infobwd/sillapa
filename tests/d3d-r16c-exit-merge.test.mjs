@@ -63,7 +63,7 @@ test('following highway vehicle reserves whole turn, not just merging center',()
  const justCommitted={x:13,z:43.8,exitMerge:true};
  assert.equal(computeHighwayProgress([behind,farAhead],[justCommitted],1).get(behind),behind.highwayProgress);
  assert.ok(computeHighwayProgress([behind,farAhead],[],1).get(behind)>behind.highwayProgress);
- assert.match(scene,/exitMerge:true/);
+ assert.match(scene,/exitMerge:!!p.onHighway/);
  assert.match(scene,/sameExit=wanted\.point\.x>10/);
  assert.match(scene,/gap<gapLimit/);
 });
@@ -106,10 +106,10 @@ test('six-minute repeated entry scenario keeps road cars clear of committed exit
 });
 
 test('R16C PWA invalidation and versioned venue links',()=>{
- assert.match(sw,/sillapa-public-v20-3d-r16c-20261017/);
+ assert.match(sw,/sillapa-public-v21-3d-r16d-20261017/);
  assert.match(sw,/venues\/traffic-r16\.mjs/);
  assert.match(sw,/venues\/vehicle-models-r16b\.mjs/);
  const index=readFileSync(new URL('../index.html',import.meta.url),'utf8');
- assert.match(index,/venue=kanchanaburi-pesa4&v=r16c/);
- assert.match(index,/venue=anuban-bophloi&v=r16c/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r16d/);
+ assert.match(index,/venue=anuban-bophloi&v=r16d/);
 });
