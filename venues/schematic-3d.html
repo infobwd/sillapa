@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {computeHighwayProgress,canEnterMainRoad,canAdvanceInboundRoad} from './traffic-r16.mjs';
 import {makeModernSedan,makeModernVan,makeModernBlueBus,makeTenWheelFreightTruck} from './vehicle-models-r16b.mjs';
-import {DROP_OFF_BAY,inDropoffZone,mustYieldAtDropoff,registrationQueuePoint,toRegistrationWaypoints,fromRegistrationToBuildingWaypoints,registrationPhase} from './dropoff-r17.mjs';
+import {DROP_OFF_BAY,inDropoffZone,shouldHoldDropoffRelease,registrationQueuePoint,toRegistrationWaypoints,fromRegistrationToBuildingWaypoints,registrationPhase} from './dropoff-r17.mjs';
 const mount=document.querySelector('#scene'),select=document.querySelector('#venue'),list=document.querySelector('#list'),details=document.querySelector('#details'),heading=document.querySelector('#heading'),info=document.querySelector('#info'),panel=document.querySelector('#modelPanel'),tags=document.querySelector('#mapTags');
 const scene=new THREE.Scene();scene.background=new THREE.Color('#dceeff');const camera=new THREE.PerspectiveCamera(48,1,.1,320);camera.position.set(19,22,27);const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,2));mount.prepend(renderer.domElement);scene.add(new THREE.HemisphereLight(0xffffff,0x91a9a0,2));const sun=new THREE.DirectionalLight(0xffffff,2);sun.position.set(15,25,10);scene.add(sun);const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.maxPolarAngle=Math.PI/2.08;controls.minDistance=10;controls.maxDistance=210;const ground=new THREE.Mesh(new THREE.PlaneGeometry(180,180),new THREE.MeshStandardMaterial({color:'#b9d8af'}));ground.rotation.x=-Math.PI/2;scene.add(ground);const ray=new THREE.Raycaster(),pointer=new THREE.Vector2(),meshes=[],objects=[],walkers=[];let peopleVisible=true,roofVisible=true;const officeRoofs=[];const clock=new THREE.Clock();const buses=[];const flagCloths=[];const registrationStaff=[];const buildingTargets=new Map();let cameraFlight=null;let trafficEnabled=true;let active=null,venues=[];
 function dispose(){venueBadges.length=0;walkers.length=0;buses.length=0;flagCloths.length=0;registrationStaff.length=0;buildingTargets.clear();cameraFlight=null;lastVehicleUpdate=null;for(const o of objects){scene.remove(o);o.traverse(n=>{if(n.geometry)n.geometry.dispose();if(n.material){const mats=Array.isArray(n.material)?n.material:[n.material];for(const mat of mats){if(mat.map&&mat.map.isCanvasTexture)mat.map.dispose();mat.dispose()}}})}objects.length=0;meshes.length=0;officeRoofs.length=0}
@@ -987,9 +987,13 @@ function addDistrictVehicles(activityCount){
   [-13,45.8],[-13,34],[-13,24],[-9.7,22],[-3,22],
   [1.6,22],[3.1,19.65],[5.5,18.55],[DROP_OFF_BAY.x,DROP_OFF_BAY.z]
  ]);
+ // R17A: after unloading, clear the bay EAST along its own pull-out
+ // corridor to x=13 BEFORE turning north. The old shortcut through
+ // x≈10,z≈22 crossed the pickup/cedan through lane and could deadlock.
  const fromBuilding=pointsToCurve([
-  [DROP_OFF_BAY.x,DROP_OFF_BAY.z],[9.2,19.15],
-  [10,22],[13,26],[13,38],[13,43.8]
+  [DROP_OFF_BAY.x,DROP_OFF_BAY.z],[9.25,18.55],
+  [11.35,18.55],[13,19.0],[13,23.7],
+  [13,29],[13,38],[13,43.8]
  ]);
  const buildingPassengers=[];
  for(let i=0;i<4;i++){
@@ -1166,11 +1170,15 @@ function animateDistrictVehicles(t){
      // R17: check full oriented vehicle footprints in the front drop-off
      // zone rather than only the distance between model centers.
      const inBayZone=inDropoffZone(wanted.point)&&inDropoffZone(pose.point);
-     const bodyBlocked=inBayZone&&mustYieldAtDropoff(wanted,pose,
+     // If a van is already uncomfortably close, allow departure only
+     // when the proposed step increases BOTH its actual oriented-body
+     // clearance and distance. New incursions must continue to yield.
+     const releasing=b.route==='building-dropoff'&&b.progress>=.59&&b.progress<.76;
+     const bodyBlocked=inBayZone&&shouldHoldDropoffRelease(current,wanted,pose,
        b.model.userData.vehicleLength||3.8,
        other.model.userData.vehicleLength||3.8,
        b.model.userData.vehicleWidth||1.8,
-       other.model.userData.vehicleWidth||1.8);
+       other.model.userData.vehicleWidth||1.8,releasing);
      // The shared exit lane needs body-length headway, not merely a
      // center-to-center point distance for sedan versus long van.
      const sameExit=wanted.point.x>10&&pose.point.x>10
@@ -1184,8 +1192,13 @@ function animateDistrictVehicles(t){
      const crossing=current.visible&&otherCurrent.visible
        &&wanted.point.distanceTo(otherCurrent.point)<3.6
        &&pose.point.distanceTo(current.point)<3.6;
+     // The same one-way escape rule also applies when the van has just
+     // moved out of the bay zone and the legacy point-gap check takes over.
+     const releasingAway=releasing&&currentGap<gapLimit
+       &&gap>currentGap+0.00001;
+     const pointBlocked=gap<gapLimit&&!releasingAway;
      if((inBayZone&&bodyBlocked)
-       ||(!inBayZone&&(gap<gapLimit||crossing||(currentGap<gapLimit&&gap<currentGap)))){
+       ||(!inBayZone&&(pointBlocked||crossing))){
       blocked=true;break;
      }
     }
