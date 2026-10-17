@@ -91,8 +91,13 @@ test('six queue spots are distinct and route around both restroom blocks and sig
     assert.ok(distanceToRect(leg,[-10.5,-7,5.9,10.1])>.3,'Building 1 WC');
     assert.ok(distanceToRect(leg,[-10.5,-7,-6.1,-1.9])>.3,'dome WC');
    }
-   assert.ok(leave.some(p=>p[0]===6.12&&p[1]===16.65),'building sign bypass');
+   assert.ok(leave.some(p=>p[0]===6.12&&p[1]===11.8),'east-side Building 1 sign bypass');
+   assert.ok(q[0]>3.8&&q[0]<5.1,'queue on desk-facing EAST dome end');
+   assert.ok(q[0]-DOME_QUEUES[line].deskX>=.6,'queue spot in front of table');
+   assert.ok(distanceToRect(route,[-5.0,-3.2,-6.8,-1.2])>.3,'avoids west-end dome stage');
+   assert.ok(distanceToRect(route,[-1.1,2.0,-6.7,-1.3])>.3,'avoids red audience chairs');
    assert.deepEqual(leave.at(-1),[2.70,9.75,2.6]);
+   assert.ok(leave.some(p=>p[0]===6.12&&p[1]===-1.15),'exit via dome EAST opening');
   }
  }
  assert.equal(new Set(six).size,6);
