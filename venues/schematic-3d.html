@@ -1088,36 +1088,39 @@ function animateDistrictVehicles(t){
   accepted.set(b,pose);
   animateDropoffPassengers(b,b.progress);
  }
- // R13: advance highway traffic with lane headway, including vehicles that
- // have merged from the compound. Do not place two vehicle bodies in one lane.
- for(const b of buses){
-  if(b.route!=='main-road')continue;
-  const oldX=b.direction===1?-b.travel/2+b.highwayProgress:b.travel/2-b.highwayProgress;
-  const candidate=(b.highwayProgress+dt*b.speed)%b.travel;
-  const nextX=b.direction===1?-b.travel/2+candidate:b.travel/2-candidate;
-  let blocked=false;
-  for(const other of buses){
-   if(other===b)continue;
-   let ox,oz;
-   if(other.route==='main-road'){
-    if(other.lane!==b.lane)continue;
-    ox=other.model.position.x;oz=other.lane;
-   }else{
-    const pose=trafficPose(other,other.progress);
-    if(!pose.visible||pose.point.z<47.5)continue;
-    ox=pose.point.x;oz=pose.point.z;
-   }
-   // Only hold a vehicle behind traffic ahead, not a vehicle it has passed.
-   const ahead=(ox-oldX)*b.direction;
-   if(ahead>=0&&ahead<8.5&&Math.abs(oz-b.lane)<2.0){
-    blocked=true;break;
-   }
-   if(Math.abs(nextX-ox)<4.5&&Math.abs(oz-b.lane)<2.0){
-    blocked=true;break;
+ // R14: all lane positions come from the same simulation snapshot, never
+ // another car's not-yet-updated Three.js transform (which starts at x=0).
+ // A circular progress headway also protects the offscreen wrap-around seam.
+ const roadCars=buses.filter(b=>b.route==='main-road');
+ const snapshot=new Map(roadCars.map(b=>[b,b.highwayProgress]));
+ const roadX=(b,p)=>b.direction===1?-b.travel/2+p:b.travel/2-p;
+ const nextProgress=new Map();
+ for(const b of roadCars){
+  const current=snapshot.get(b);
+  const step=dt*b.speed;
+  let clearance=Infinity;
+  for(const other of roadCars){
+   if(other===b||other.lane!==b.lane||other.direction!==b.direction)continue;
+   const ahead=(snapshot.get(other)-current+b.travel)%b.travel;
+   clearance=Math.min(clearance,ahead);
+  }
+  // Maintain a conservative longitudinal gap for mixed-size low-poly traffic.
+  const allowed=Math.max(0,Math.min(step,clearance-10));
+  const candidate=(current+allowed)%b.travel;
+  const oldX=roadX(b,current),nextX=roadX(b,candidate);
+  let merging=false;
+  for(const other of internal){
+   const pose=trafficPose(other,other.progress);
+   if(!pose.visible||Math.abs(pose.point.z-b.lane)>=2.6)continue;
+   if(Math.abs(pose.point.x-oldX)<8||Math.abs(pose.point.x-nextX)<8){
+    merging=true;break;
    }
   }
-  if(!blocked)b.highwayProgress=candidate;
-  const x=b.direction===1?-b.travel/2+b.highwayProgress:b.travel/2-b.highwayProgress;
+  nextProgress.set(b,merging?current:candidate);
+ }
+ for(const b of roadCars){
+  b.highwayProgress=nextProgress.get(b);
+  const x=roadX(b,b.highwayProgress);
   b.model.position.set(x,.20,b.lane);
   b.model.rotation.y=-b.direction*Math.PI/2;
   b.model.visible=Math.abs(x)<49;
