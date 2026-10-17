@@ -1114,7 +1114,8 @@ function animateDropoffPassengers(b,q){
   if(building){
    const bypassX=6.09+j*.055;
    const route=[[7+offset,16.95],[bypassX,16.15],[bypassX,14.6],
-    [bypassX,11.0],[bypassX,9.8],[bypassX,9.1],[bypassX,9.1,2.6]];
+    [bypassX,11.8],[5.15,10.8],[5.15,10.8,2.6],
+    [3.60,10.8,2.6],[2.70,9.75,2.6]];
    pose=studentJourneyPoint(route,Math.min(1,Math.max(0,(q-start)/(.84-start))));
   }else{
    // R17: walk into the dome, visibly queue, then continue towards
