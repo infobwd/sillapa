@@ -1532,6 +1532,7 @@ function setWayfindingControlsAvailability(district){
  wayfindingClearButton.disabled=!district||!wayfindingRoute;
 }
 function applyWayfindingHash(){
+ if(studentTourOn)stopStudentTour();
  stopWayfindingFollow();
  const district=select.value==='kanchanaburi-pesa4';
  const request=parseWayfindingHash(location.hash);
@@ -1598,7 +1599,9 @@ function animateWayfindingFollow(t){
  if(wayfindingFollowMode==='vehicle'){
   const car=wayfindingFollowVehicle;
   if(!trafficEnabled||!car||!car.model.visible){
-   stopWayfindingFollow();return;
+   stopWayfindingFollow();
+   wayfindingStatus.textContent='รถตู้ผ่านพ้นพื้นที่แสดงผลแล้ว · กด 🚐 ติดตามรถตู้ เพื่อเริ่มใหม่';
+   return;
   }
   point=car.model.position;
   wayfindingTip.textContent='🚐 ติดตามรถตู้รับ–ส่ง (จำลอง) · ลากภาพเพื่อหยุด';
@@ -1655,6 +1658,8 @@ wayfindingClearButton.addEventListener('click',()=>{
  wayfindingShowButton.focus();
 });
 window.addEventListener('hashchange',applyWayfindingHash);
+// Do not expose actionable routing controls until a supported scene loads.
+setWayfindingControlsAvailability(false);
 document.addEventListener('keydown',e=>{
  if(e.key==='Escape'&&wayfindingRoute){
   e.preventDefault();wayfindingClearButton.click();
