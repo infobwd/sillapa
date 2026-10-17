@@ -19,6 +19,8 @@
 
 - **D3D-R17 (รอตรวจรับ WebGL จริง):** [Drop-off Spacing & Dome Registration Acceptance](docs/D3D_R17_DROPOFF_DOME_REGISTRATION_ACCEPTANCE.md) — รถตู้แวะช่องริมทางแยกจากรถวิ่งและคุมระยะจากรถกระบะ/รถเก๋งด้วยขนาดรถ, โดมมีโต๊ะลงทะเบียนจำลอง 2 โต๊ะ เจ้าหน้าที่ 2 คน จุดต่อคิว 2 แถว, นักเรียนเดินจากรถ → โดมลงทะเบียน → อาคาร 1 / ทางขึ้นห้องประชุมแบบจำลอง · PWA `sillapa-public-v22-3d-r17-20261017` · Local-First: `node --test tests/d3d-r16-traffic-parking.test.mjs tests/d3d-r16b-vehicles-parking-paths.test.mjs tests/d3d-r16c-exit-merge.test.mjs tests/d3d-r16d-inbound-flags-road-labels.test.mjs tests/d3d-r17-dropoff-registration.test.mjs` (ไม่ใช้ GitHub Actions)
 
+- **D3D-R17A (Hotfix รถไม่ออกจากจุดรับ–ส่ง · รอตรวจ WebGL จริง):** [เกณฑ์ตรวจรับและสาเหตุ](docs/D3D_R17A_DROPOFF_DEPARTURE_ACCEPTANCE.md) — ลดเวลาจอดส่งรถตู้จาก ~23 วินาทีเหลือ ~9.4 วินาที รถกระบะ/เก๋งจาก ~23 วินาทีเหลือ 10 วินาที, แยกทางออกของรถตู้ไปยังถนนด้านขวา, ปลดรถค้างได้เฉพาะเมื่อระยะห่างจากรถคันอื่นดีขึ้น · PWA `sillapa-public-v23-3d-r17a-20261017` · Local-First เพิ่ม `node --test tests/d3d-r17a-dropoff-departure.test.mjs` และต้องรันชุดเดิมร่วมด้วย (ไม่ใช้ GitHub Actions)
+
 ## ทดลอง Three.js — แผนผังสนาม 3D (ต้นแบบ)
 
 [เปิดต้นแบบ 3D](threejs-demo/index.html) · เมื่อ Merge และ GitHub Pages เผยแพร่แล้ว: https://infobwd.github.io/sillapa/threejs-demo/

@@ -1,6 +1,12 @@
 // D3D-R17 — small pure helpers for the illustrative drop-off and dome flow.
 // Schematic coordinates only; neither an official traffic nor check-in plan.
 export const DROP_OFF_BAY=Object.freeze({x:7,z:18.55,vehicleLength:4.4,vehicleWidth:1.92});
+export const BUILDING_DROPOFF_TIMING=Object.freeze({
+ arrivalEnd:.38,dwellEnd:.465,departEnd:.665
+});
+export const FRONT_PARK_TIMING=Object.freeze({
+ arrivalEnd:.29,reverseStart:.39,reverseEnd:.47,departEnd:.62
+});
 export const DOME_QUEUES=Object.freeze([
  Object.freeze({z:-5.75,deskX:3.21}),
  Object.freeze({z:-2.25,deskX:3.21})
@@ -35,6 +41,60 @@ export function mustYieldAtDropoff(wanted,other,aLength,bLength,aWidth=1.8,bWidt
  return !!(inDropoffZone(wanted?.point)&&inDropoffZone(other?.point)
   &&vehicleFootprintsConflict(wanted,other,aLength,bLength,aWidth,bWidth,.85));
 }
+
+// R17A: positive values indicate a separating axis has physical space.
+// If both positions still overlap, the candidate is allowed ONLY when
+// the departing vehicle increases BOTH center distance and body clearance.
+// This prevents an existing too-close pair from being permanently frozen,
+// without granting a free pass to drive deeper into another vehicle.
+export function vehicleFootprintMargin(a,b,aLength=3.7,bLength=3.7,
+ aWidth=1.8,bWidth=1.8,clearance=.85) {
+ if(!a?.visible||!b?.visible)return Infinity;
+ const ax=rectAxis(a.yaw),bx=rectAxis(b.yaw);
+ const dx=b.point.x-a.point.x,dz=b.point.z-a.point.z;
+ let best=-Infinity;
+ for(const axis of [...ax,...bx]){
+  const project=(u)=>Math.abs(u[0]*axis[0]+u[1]*axis[1]);
+  const rA=(aLength/2+clearance/2)*project(ax[0])
+    +(aWidth/2+clearance/2)*project(ax[1]);
+  const rB=(bLength/2+clearance/2)*project(bx[0])
+    +(bWidth/2+clearance/2)*project(bx[1]);
+  best=Math.max(best,Math.abs(dx*axis[0]+dz*axis[1])-rA-rB);
+ }
+ return best;
+}
+export function vehicleOverlapDepth(a,b,aLength=3.7,bLength=3.7,
+ aWidth=1.8,bWidth=1.8,clearance=.85) {
+ if(!a?.visible||!b?.visible)return 0;
+ const ax=rectAxis(a.yaw),bx=rectAxis(b.yaw);
+ const dx=b.point.x-a.point.x,dz=b.point.z-a.point.z;
+ let overlap=0;
+ for(const axis of [...ax,...bx]){
+  const dot=(u)=>Math.abs(u[0]*axis[0]+u[1]*axis[1]);
+  const ra=(aLength/2+clearance/2)*dot(ax[0])
+   +(aWidth/2+clearance/2)*dot(ax[1]);
+  const rb=(bLength/2+clearance/2)*dot(bx[0])
+   +(bWidth/2+clearance/2)*dot(bx[1]);
+  overlap+=Math.max(0,ra+rb-Math.abs(dx*axis[0]+dz*axis[1]));
+ }
+ return overlap;
+}
+export function shouldHoldDropoffRelease(current,wanted,other,
+ aLength,bLength,aWidth=1.8,bWidth=1.8,isDeparting=false) {
+ if(!mustYieldAtDropoff(wanted,other,aLength,bLength,aWidth,bWidth))return false;
+ if(!isDeparting||!current?.visible)return true;
+ const before=vehicleFootprintMargin(current,other,aLength,bLength,aWidth,bWidth);
+ if(before>=0)return true; // newly entering someone else's safety margin
+ // A lateral body overlap can remain constant while a departing
+ // vehicle moves longitudinally away. A maximum-SAT-axis comparison alone
+ // would still freeze it, so require decreasing TOTAL penetration instead.
+ const oldDepth=vehicleOverlapDepth(current,other,aLength,bLength,aWidth,bWidth);
+ const newDepth=vehicleOverlapDepth(wanted,other,aLength,bLength,aWidth,bWidth);
+ const oldDistance=Math.hypot(current.point.x-other.point.x,current.point.z-other.point.z);
+ const newDistance=Math.hypot(wanted.point.x-other.point.x,wanted.point.z-other.point.z);
+ return !(newDepth<oldDepth-0.00001&&newDistance>oldDistance+0.00001);
+}
+
 export function registrationQueuePoint(queueIndex,personIndex){
  const queue=DOME_QUEUES[Math.abs(queueIndex)%DOME_QUEUES.length];
  // Dome group rotates +90° about Y with local Z scaled to .78. The

@@ -18,8 +18,8 @@ test('all arriving vehicles use the same left-road approach before internal arri
  assert.match(scene,/car\.entryCurve=entryCurve/);
  assert.match(scene,/function inboundArrivalPose\(b,q,arrivalEnd\)/);
  assert.match(scene,/const entryEnd=\.15/);
- for(const end of ['.29','.38','.40'])
-  assert.ok(scene.includes('if(q<'+end+')return inboundArrivalPose(b,q,'+end+');'));
+ assert.match(scene,/if\(q<clock\.arrivalEnd\)return inboundArrivalPose\(b,q,clock\.arrivalEnd\)/);
+ assert.match(scene,/if\(q<\.40\)return inboundArrivalPose\(b,q,\.40\)/);
  assert.match(scene,/canAdvanceInboundRoad\(currentPose,wanted,highway\)/);
  assert.match(scene,/p\.inboundRoad&&p\.point\.z>=45\.5/);
  assert.match(scene,/inboundRoad:!!p\.inboundRoad/);
@@ -130,9 +130,9 @@ test('Road 3342 direction labels point right to U Thong and left to Bo Phloi',()
 });
 
 test('PWA cache and venue links refreshed for R16D',()=>{
- assert.match(sw,/sillapa-public-v22-3d-r17-20261017/);
+ assert.match(sw,/sillapa-public-v23-3d-r17a-20261017/);
  assert.match(sw,/venues\/traffic-r16\.mjs/);
  assert.match(sw,/venues\/vehicle-models-r16b\.mjs/);
- assert.match(index,/venue=kanchanaburi-pesa4&v=r17/);
- assert.match(index,/venue=anuban-bophloi&v=r17/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r17a/);
+ assert.match(index,/venue=anuban-bophloi&v=r17a/);
 });
