@@ -1033,7 +1033,7 @@ function addDistrictVehicles(activityCount){
   person.userData.schoolRoute=schoolPolyline(schoolJourney('dome',i));
   peopleRoot.add(person);buildingPassengers.push(person);
  }
- buses.push({model:buildingVehicle,route:'building-dropoff',progress:.73,
+ buses.push({model:buildingVehicle,route:'building-dropoff',progress:.31,
   speed:.009,arrive:toBuilding,depart:fromBuilding,passengers:buildingPassengers,
   destination:'dome',studentStartAt:null,length:3.8,exitStart:.76,exitMode:null});
  // The pickup delivers another group in front of Building 1, before the marked dome stop.
@@ -1050,7 +1050,7 @@ function addDistrictVehicles(activityCount){
   pupil.userData.schoolRoute=schoolPolyline(schoolJourney('meeting-room',i));
   peopleRoot.add(pupil);pickupChildren.push(pupil);
  }
- buses.push({model:blueSchoolPickup,route:'pickup-school',progress:.11,speed:.009,
+ buses.push({model:blueSchoolPickup,route:'pickup-school',progress:.22,speed:.009,
   arrive:pickupArrival,depart:pickupDeparture,passengers:pickupChildren,
   destination:'meeting-room',studentStartAt:null,length:3.7,exitStart:.76,exitMode:null});
  // The third rear-carport bay is dynamic, beyond Building 2's annex.
