@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {computeHighwayProgress,canEnterMainRoad,canAdvanceInboundRoad} from './traffic-r16.mjs';
 import {makeModernSedan,makeModernVan,makeModernBlueBus,makeTenWheelFreightTruck} from './vehicle-models-r16b.mjs';
-import {DROP_OFF_BAY,inDropoffZone,shouldHoldDropoffRelease,registrationQueuePoint,toRegistrationWaypoints,fromRegistrationToBuildingWaypoints,registrationPhase} from './dropoff-r17.mjs';
+import {DROP_OFF_BAY,BUILDING_DROPOFF_TIMING,FRONT_PARK_TIMING,inDropoffZone,shouldHoldDropoffRelease,registrationQueuePoint,toRegistrationWaypoints,fromRegistrationToBuildingWaypoints,registrationPhase} from './dropoff-r17.mjs';
 const mount=document.querySelector('#scene'),select=document.querySelector('#venue'),list=document.querySelector('#list'),details=document.querySelector('#details'),heading=document.querySelector('#heading'),info=document.querySelector('#info'),panel=document.querySelector('#modelPanel'),tags=document.querySelector('#mapTags');
 const scene=new THREE.Scene();scene.background=new THREE.Color('#dceeff');const camera=new THREE.PerspectiveCamera(48,1,.1,320);camera.position.set(19,22,27);const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,2));mount.prepend(renderer.domElement);scene.add(new THREE.HemisphereLight(0xffffff,0x91a9a0,2));const sun=new THREE.DirectionalLight(0xffffff,2);sun.position.set(15,25,10);scene.add(sun);const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.maxPolarAngle=Math.PI/2.08;controls.minDistance=10;controls.maxDistance=210;const ground=new THREE.Mesh(new THREE.PlaneGeometry(180,180),new THREE.MeshStandardMaterial({color:'#b9d8af'}));ground.rotation.x=-Math.PI/2;scene.add(ground);const ray=new THREE.Raycaster(),pointer=new THREE.Vector2(),meshes=[],objects=[],walkers=[];let peopleVisible=true,roofVisible=true;const officeRoofs=[];const clock=new THREE.Clock();const buses=[];const flagCloths=[];const registrationStaff=[];const buildingTargets=new Map();let cameraFlight=null;let trafficEnabled=true;let active=null,venues=[];
 function dispose(){venueBadges.length=0;walkers.length=0;buses.length=0;flagCloths.length=0;registrationStaff.length=0;buildingTargets.clear();cameraFlight=null;lastVehicleUpdate=null;for(const o of objects){scene.remove(o);o.traverse(n=>{if(n.geometry)n.geometry.dispose();if(n.material){const mats=Array.isArray(n.material)?n.material:[n.material];for(const mat of mats){if(mat.map&&mat.map.isCanvasTexture)mat.map.dispose();mat.dispose()}}})}objects.length=0;meshes.length=0;officeRoofs.length=0}
@@ -1062,28 +1062,34 @@ function trafficPose(b,q){
   return highwayExitPose(b,q,.78);
  }
  if(b.route==='front-park'){
-  if(q<.29)return inboundArrivalPose(b,q,.29);
-  if(q<.62){
-   const reverse=q<.52?0:(q-.52)/.10;
+  const clock=FRONT_PARK_TIMING;
+  if(q<clock.arrivalEnd)return inboundArrivalPose(b,q,clock.arrivalEnd);
+  // R17A: vehicle spends ~10 seconds unloading, then backs out instead
+  // of waiting motionless for over 20 seconds after its pupils have left.
+  if(q<clock.reverseEnd){
+   const reverse=q<clock.reverseStart?0:(q-clock.reverseStart)/(clock.reverseEnd-clock.reverseStart);
    return {visible:true,point:new THREE.Vector3(b.bay[0],0,b.bay[1]-reverse*5.3),yaw:Math.PI};
   }
-  if(q<.76){
-   const u=(q-.62)/.14,point=b.depart.getPointAt(u),dir=b.depart.getTangentAt(Math.min(.999,u));
+  if(q<clock.departEnd){
+   const u=(q-clock.reverseEnd)/(clock.departEnd-clock.reverseEnd);
+   const point=b.depart.getPointAt(u),dir=b.depart.getTangentAt(Math.min(.999,u));
    return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
   }
-  return highwayExitPose(b,q,.76);
+  return highwayExitPose(b,q,clock.departEnd);
  }
  if(b.route==='building-dropoff'){
-  if(q<.38)return inboundArrivalPose(b,q,.38);
-  if(q<.59){
+  const clock=BUILDING_DROPOFF_TIMING;
+  if(q<clock.arrivalEnd)return inboundArrivalPose(b,q,clock.arrivalEnd);
+  if(q<clock.dwellEnd){
    const point=b.arrive.getPointAt(1),dir=b.arrive.getTangentAt(.999);
    return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
   }
-  if(q<.76){
-   const u=(q-.59)/.17,point=b.depart.getPointAt(u),dir=b.depart.getTangentAt(Math.min(.999,u));
+  if(q<clock.departEnd){
+   const u=(q-clock.dwellEnd)/(clock.departEnd-clock.dwellEnd);
+   const point=b.depart.getPointAt(u),dir=b.depart.getTangentAt(Math.min(.999,u));
    return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
   }
-  return highwayExitPose(b,q,.76);
+  return highwayExitPose(b,q,clock.departEnd);
  }
  return hidden;
 }
@@ -1173,7 +1179,7 @@ function animateDistrictVehicles(t){
      // If a van is already uncomfortably close, allow departure only
      // when the proposed step increases BOTH its actual oriented-body
      // clearance and distance. New incursions must continue to yield.
-     const releasing=b.route==='building-dropoff'&&b.progress>=.59&&b.progress<.76;
+     const releasing=b.route==='building-dropoff'&&b.progress>=BUILDING_DROPOFF_TIMING.dwellEnd&&b.progress<BUILDING_DROPOFF_TIMING.departEnd;
      const bodyBlocked=inBayZone&&shouldHoldDropoffRelease(current,wanted,pose,
        b.model.userData.vehicleLength||3.8,
        other.model.userData.vehicleLength||3.8,
