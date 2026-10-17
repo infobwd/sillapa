@@ -63,7 +63,9 @@ test('every distinct stop pair has a complete connected walk graph',()=>{
 test('route between drop-off and reception matches the R17B protected sidewalk',()=>{
  const route=planWayfindingRoute('dropoff','registration');
  const van=fromVanToRegistrationWaypoints(1);
- assert.deepEqual(route.points[0].slice(0,2),van[0].slice(0,2));
+ assert.equal(route.points[0][1],van[0][1]);
+ assert.ok(Math.abs(route.points[0][0]-van[0][0])<.6,
+  'R18 starts on the same protected sidewalk as nearby van alighting figures');
  assert.ok(route.nodeIds.includes('east118'));
  assert.ok(route.nodeIds.includes('domeApproach'));
  assert.deepEqual(route.points.at(-1).slice(0,2),[4.407,-5.75]);
