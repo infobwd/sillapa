@@ -49,7 +49,7 @@ export function toRegistrationWaypoints(startX,queueIndex,personIndex){
 export function fromRegistrationToBuildingWaypoints(queueIndex,personIndex){
  const destination=registrationQueuePoint(queueIndex,personIndex);
  const lane=DOME_QUEUES[Math.abs(queueIndex)%DOME_QUEUES.length];
- return [destination,[-6.52,lane.z],[-6.52,-7.1],[-6.8,-7.45],
+ return [destination,[-6.35,lane.z],[-6.35,-7.1],[-6.35,-7.45],
   [-11.38,-7.45],[-11.38,10.8],[-11.38,15.5],
   [-6.5,16.65],[6.12,16.65],[6.12,11.8],[5.15,10.8],
   [5.15,10.8,2.6],[3.60,10.8,2.6],[2.70,9.75,2.6]];
