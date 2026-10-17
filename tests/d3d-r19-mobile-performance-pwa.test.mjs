@@ -177,7 +177,7 @@ test('module/CDN and WebGL failures remain actionable without falsely promising 
 });
 
 test('PWA v27 updates the proper 3D assets and surfaces queued SW updates',()=>{
- assert.match(sw,/sillapa-public-v29-3d-r20a-20261017/);
+ assert.match(sw,/sillapa-public-v30-3d-r20b-20261018/);
  for(const path of ['performance-r19.mjs','schematic-3d.html','venue-shell.css','history73.json']){
   assert.ok(sw.includes("'./venues/"+path+"'"),'offline shell includes '+path);
  }
@@ -187,6 +187,6 @@ test('PWA v27 updates the proper 3D assets and surfaces queued SW updates',()=>{
  assert.match(pwa,/reg\.addEventListener\('updatefound'/);
  assert.match(pwa,/installing\.state === 'installed' && navigator\.serviceWorker\.controller/);
  assert.match(pwa,/navigator\.serviceWorker\.addEventListener\('controllerchange'/);
- assert.match(index,/venue=kanchanaburi-pesa4&v=r20a/);
- assert.match(index,/venue=anuban-bophloi&v=r20a/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r20b/);
+ assert.match(index,/venue=anuban-bophloi&v=r20b/);
 });
