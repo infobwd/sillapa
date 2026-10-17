@@ -5,6 +5,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
+import {runInNewContext} from 'node:vm';
 import {LAYER_KEYS,LAYER_DEFAULTS,normalizeVenueLayers,withVenueLayer,
  historyOverlaySummary,schematicPointsForVenue} from '../venues/overlay-r20b.mjs';
 const html=readFileSync(new URL('../venues/schematic-3d.html',import.meta.url),'utf8');
@@ -60,8 +61,34 @@ test('no unverified 74 status is introduced; preserved R19B and student path',()
  assert.match(html,/function animateWayfindingFollow\(t\)/);
 });
 test('PWA v30 caches the helper and updates both venue URLs',()=>{
- assert.match(sw,/sillapa-public-v30-3d-r20b-20261018/);
+ assert.match(sw,/sillapa-public-v31-3d-r20b1-20261018/);
  assert.match(sw,/venues\/overlay-r20b\.mjs/);
- assert.match(index,/venue=kanchanaburi-pesa4&v=r20b/);
- assert.match(index,/venue=anuban-bophloi&v=r20b/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r20b1/);
+ assert.match(index,/venue=anuban-bophloi&v=r20b1/);
+});
+
+test('R20B1: disclosure startup has no TDZ and breakpoint listeners work',()=>{
+ const module=html.match(/<script type="module">([\s\S]*?)<\/script>/);
+ assert.ok(module,'scene ES module missing');
+ const code=module[1];
+ const start=code.indexOf('const wayfindingMore=');
+ const end=code.indexOf('const venueLayersStatus=',start);
+ assert.ok(start>=0&&end>start,'initialization excerpt was not found');
+ const handlers=[];
+ const nodes=new Map();
+ const document={querySelector(selector){
+  if(!nodes.has(selector))nodes.set(selector,{open:undefined});
+  return nodes.get(selector);
+ }};
+ const mq={matches:true,addEventListener(type,callback){
+  if(type==='change')handlers.push(callback);
+ }};
+ const window={matchMedia(){return mq;}};
+ assert.doesNotThrow(()=>runInNewContext(code.slice(start,end),{document,window}));
+ assert.equal(nodes.get('#venueLayers').open,false,'mobile overlay initially collapsed');
+ assert.equal(handlers.length,3,'R18, R19 and R20B listeners all registered');
+ handlers[2]({matches:false});
+ assert.equal(nodes.get('#venueLayers').open,true,'desktop overlay expanded');
+ handlers[2]({matches:true});
+ assert.equal(nodes.get('#venueLayers').open,false,'mobile overlay collapsed again');
 });

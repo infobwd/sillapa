@@ -187,11 +187,11 @@ test('layers and camera modes do not compete with R17B student tour or vehicle m
 });
 
 test('the R18 release updates public PWA without touching score or registration',()=>{
- assert.match(sw,/sillapa-public-v30-3d-r20b-20261018/);
+ assert.match(sw,/sillapa-public-v31-3d-r20b1-20261018/);
  assert.match(sw,/venues\/wayfinding-r18\.mjs/);
  assert.match(sw,/venues\/dropoff-r17\.mjs/);
- assert.match(index,/venue=kanchanaburi-pesa4&v=r20b/);
- assert.match(index,/venue=anuban-bophloi&v=r20b/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r20b1/);
+ assert.match(index,/venue=anuban-bophloi&v=r20b1/);
  assert.match(scene,/ไม่ใช่เส้นทางจริง/);
  assert.match(scene,/ผังอาคารจริงหรือแผนที่นำทาง/);
 });

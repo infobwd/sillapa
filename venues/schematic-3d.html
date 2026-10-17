@@ -189,6 +189,8 @@ if('serviceWorker' in navigator&&window.isSecureContext){
 }
 const studentTourButton=document.querySelector('#studentTour'),studentTourStatus=document.querySelector('#studentTourStatus');
 const wayfindingMore=document.querySelector('#routeMore');
+// R20B1: initialize before syncVenueLayerDisclosure() reads the binding.
+const venueLayerDisclosure=document.querySelector('#venueLayers');
 const mobileWayfindingQuery=window.matchMedia('(max-width:680px)');
 function syncWayfindingDisclosure(event){
  // Expanded on desktop, initially collapsed on a small screen.
@@ -212,7 +214,6 @@ mobileWayfindingQuery.addEventListener('change',syncVenueLayerDisclosure);
 const qualitySelector=document.querySelector('#qualityMode');
 const motionModeButton=document.querySelector('#motionMode');
 const performanceStatus=document.querySelector('#performanceStatus');
-const venueLayerDisclosure=document.querySelector('#venueLayers');
 const venueLayersStatus=document.querySelector('#venueLayersStatus');
 const venuePoiNames=document.querySelector('#venuePoiNames');
 const venueLayerInputs={labels:document.querySelector('#layerLabels'),historical:document.querySelector('#layerHistorical'),points:document.querySelector('#layerPoints')};

@@ -99,9 +99,9 @@ test('mobile 3D starts closer to the venue and reset chooses the same framing',(
 });
 
 test('PWA invalidates R18 files and launches refreshed R18A venue links',()=>{
- assert.match(sw,/sillapa-public-v30-3d-r20b-20261018/);
+ assert.match(sw,/sillapa-public-v31-3d-r20b1-20261018/);
  assert.match(sw,/venues\/dropoff-r17\.mjs/);
  assert.match(sw,/venues\/wayfinding-r18\.mjs/);
- assert.match(index,/venue=kanchanaburi-pesa4&v=r20b/);
- assert.match(index,/venue=anuban-bophloi&v=r20b/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r20b1/);
+ assert.match(index,/venue=anuban-bophloi&v=r20b1/);
 });
