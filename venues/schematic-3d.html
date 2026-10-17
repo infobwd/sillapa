@@ -7,7 +7,7 @@ import {DROP_OFF_BAY,BUILDING_DROPOFF_TIMING,FRONT_PARK_TIMING,SAFE_ALIGHT_Z,fro
 const studentTourButton=document.querySelector('#studentTour'),studentTourStatus=document.querySelector('#studentTourStatus');
 const mount=document.querySelector('#scene'),select=document.querySelector('#venue'),list=document.querySelector('#list'),details=document.querySelector('#details'),heading=document.querySelector('#heading'),info=document.querySelector('#info'),panel=document.querySelector('#modelPanel'),tags=document.querySelector('#mapTags');
 const scene=new THREE.Scene();scene.background=new THREE.Color('#dceeff');const camera=new THREE.PerspectiveCamera(48,1,.1,320);camera.position.set(19,22,27);const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,2));mount.prepend(renderer.domElement);scene.add(new THREE.HemisphereLight(0xffffff,0x91a9a0,2));const sun=new THREE.DirectionalLight(0xffffff,2);sun.position.set(15,25,10);scene.add(sun);const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.maxPolarAngle=Math.PI/2.08;controls.minDistance=10;controls.maxDistance=210;const ground=new THREE.Mesh(new THREE.PlaneGeometry(180,180),new THREE.MeshStandardMaterial({color:'#b9d8af'}));ground.rotation.x=-Math.PI/2;scene.add(ground);const ray=new THREE.Raycaster(),pointer=new THREE.Vector2(),meshes=[],objects=[],walkers=[];let peopleVisible=true,roofVisible=true;const officeRoofs=[];const clock=new THREE.Clock();const buses=[];const flagCloths=[];const registrationStaff=[];const buildingTargets=new Map();let cameraFlight=null;let studentTourGroup=null,studentTourFigures=[],studentTourOn=false,studentTourStart=0,studentTourRoofWasVisible=true,studentTourStage='';let trafficEnabled=true;let active=null,venues=[];
-function dispose(){venueBadges.length=0;walkers.length=0;buses.length=0;flagCloths.length=0;registrationStaff.length=0;buildingTargets.clear();cameraFlight=null;lastVehicleUpdate=null;for(const o of objects){scene.remove(o);o.traverse(n=>{if(n.geometry)n.geometry.dispose();if(n.material){const mats=Array.isArray(n.material)?n.material:[n.material];for(const mat of mats){if(mat.map&&mat.map.isCanvasTexture)mat.map.dispose();mat.dispose()}}})}objects.length=0;meshes.length=0;officeRoofs.length=0}
+function dispose(){if(studentTourOn)stopStudentTour();studentTourGroup=null;studentTourFigures=[];venueBadges.length=0;walkers.length=0;buses.length=0;flagCloths.length=0;registrationStaff.length=0;buildingTargets.clear();cameraFlight=null;lastVehicleUpdate=null;for(const o of objects){scene.remove(o);o.traverse(n=>{if(n.geometry)n.geometry.dispose();if(n.material){const mats=Array.isArray(n.material)?n.material:[n.material];for(const mat of mats){if(mat.map&&mat.map.isCanvasTexture)mat.map.dispose();mat.dispose()}}})}objects.length=0;meshes.length=0;officeRoofs.length=0}
 function makeBuildingLabel(name,y){const canvas=document.createElement('canvas');canvas.width=512;canvas.height=128;const ctx=canvas.getContext('2d');ctx.fillStyle='rgba(22,44,68,.92)';ctx.beginPath();ctx.roundRect(4,5,504,114,22);ctx.fill();ctx.strokeStyle='#ffffff';ctx.lineWidth=4;ctx.stroke();ctx.font='700 45px Kanit, sans-serif';ctx.fillStyle='white';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(name,256,64,460);const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,transparent:true,depthTest:false}));sprite.scale.set(6.6,1.65,1);sprite.position.set(0,y,0);sprite.renderOrder=5;return sprite}
 // Historic competition indicator: only derived from rows present in history73.json.
 // D3D-R4: keep venue indicators readable without covering buildings on narrow screens.
@@ -1321,6 +1321,83 @@ function animateWalkers(t){
   w.limbs[0].rotation.x=stride;w.limbs[1].rotation.x=-stride;
   w.limbs[2].rotation.x=-stride*.65;w.limbs[3].rotation.x=stride*.65;
  }
+}
+// R17B: user-triggered short camera-followed student demonstration,
+// independent of the 90-second traffic cycle so the whole path is visible.
+function stopStudentTour(){
+ if(!studentTourOn)return;
+ studentTourOn=false;studentTourStage='';
+ if(studentTourGroup)studentTourGroup.visible=false;
+ roofVisible=studentTourRoofWasVisible;
+ for(const roof of officeRoofs)roof.visible=roofVisible;
+ const roofButton=document.querySelector('#toggleRoofs');
+ roofButton.textContent=roofVisible?'🏠 หลังคา':'🏠 ดูภายใน';
+ roofButton.setAttribute('aria-pressed',String(roofVisible));
+ studentTourButton.textContent='👣 ดูนักเรียน';
+ studentTourButton.setAttribute('aria-pressed','false');
+ studentTourStatus.hidden=true;
+}
+function buildStudentTour(){
+ const root=new THREE.Group();root.visible=false;root.userData.people=true;
+ const arrival=fromVanToRegistrationWaypoints(0);
+ const onward=fromRegistrationToBuildingWaypoints(0,0);
+ const route=[...arrival,...onward.slice(1)];
+ const geo=new THREE.BufferGeometry().setFromPoints(route.map(p=>
+  new THREE.Vector3(p[0],(p[2]||0)+.34,p[1])));
+ const line=new THREE.Line(geo,new THREE.LineDashedMaterial({
+  color:'#fff2a8',dashSize:.55,gapSize:.35,transparent:true,opacity:.95,depthTest:false
+ }));
+ line.computeLineDistances();line.renderOrder=7;root.add(line);
+ for(const [name,x,z,y] of [
+  ['① ลงรถบนทางเท้า',7,16.52,2.4],
+  ['② ลงทะเบียนโดม',4.3,-5.75,2.5],
+  ['③ ห้องประชุม ชั้น 2',2.7,9.75,4.4]
+ ]){
+  const label=makeBuildingLabel(name,y);label.position.set(x,y,z);
+  label.scale.set(4.6,1.12,1);root.add(label);
+ }
+ studentTourFigures=[];
+ for(let i=0;i<3;i++){
+  const figure=makeDropoffPerson(false,i);
+  figure.scale.setScalar(1.45);
+  const ring=new THREE.Mesh(new THREE.RingGeometry(.26,.38,16),
+   new THREE.MeshBasicMaterial({color:'#f7d66c',side:THREE.DoubleSide,depthTest:false}));
+  ring.rotation.x=-Math.PI/2;ring.position.y=.075;figure.add(ring);
+  root.add(figure);studentTourFigures.push(figure);
+ }
+ studentTourGroup=root;scene.add(root);objects.push(root);
+}
+function animateStudentTour(t){
+ if(!studentTourOn||!studentTourGroup||!peopleVisible)return;
+ const duration=46,elapsed=(t-studentTourStart)%duration;
+ const arrival=fromVanToRegistrationWaypoints(0);
+ const onward=fromRegistrationToBuildingWaypoints(0,0);
+ for(let i=0;i<studentTourFigures.length;i++){
+  const local=Math.max(0,elapsed-i*.65);
+  let pose;
+  if(local<16)pose=studentJourneyPoint(arrival,local/16);
+  else if(local<22)pose=studentJourneyPoint(arrival,1);
+  else if(local<39)pose=studentJourneyPoint(onward,(local-22)/17);
+  else pose=studentJourneyPoint(onward,1);
+  const person=studentTourFigures[i];
+  person.position.set(pose.x,pose.y,pose.z);
+  person.rotation.y=pose.heading;
+  if(local<16||(local>=22&&local<39))
+   person.position.y+=.035*Math.abs(Math.sin(t*10+i));
+ }
+ const stage=elapsed<3?'① ลงรถบนทางเท้าปลอดภัย'
+  :elapsed<16?'② เดินไปโดมลงทะเบียน'
+  :elapsed<22?'③ ต่อคิวลงทะเบียน'
+  :elapsed<39?'④ เดินเข้าอาคาร 1 และขึ้นชั้น 2'
+  :'⑤ ถึงห้องประชุมชั้น 2';
+ if(stage!==studentTourStage){
+  studentTourStage=stage;
+  studentTourStatus.textContent=stage+' · เส้นทางสาธิต ไม่ใช่เส้นทางที่ได้รับอนุมัติ';
+ }
+ const lead=studentTourFigures[0].position;
+ const target=new THREE.Vector3(lead.x,lead.y+1,lead.z);
+ const cameraGoal=new THREE.Vector3(target.x+14,target.y+17,target.z+16);
+ controls.target.lerp(target,.065);camera.position.lerp(cameraGoal,.055);
 }
 // Camera framing follows the selected building on either pointer/touch or list selection.
 function flyToBuilding(label){
