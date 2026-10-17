@@ -86,7 +86,7 @@ test('R20B1: disclosure startup has no TDZ and breakpoint listeners work',()=>{
  const window={matchMedia(){return mq;}};
  assert.doesNotThrow(()=>runInNewContext(code.slice(start,end),{document,window}));
  assert.equal(nodes.get('#venueLayers').open,false,'mobile overlay initially collapsed');
- assert.equal(handlers.length,3,'R18, R19 and R20B listeners all registered');
+ assert.equal(handlers.length,4,'R18, R19, R20B and R20C listeners all registered');
  handlers[2]({matches:false});
  assert.equal(nodes.get('#venueLayers').open,true,'desktop overlay expanded');
  handlers[2]({matches:true});
