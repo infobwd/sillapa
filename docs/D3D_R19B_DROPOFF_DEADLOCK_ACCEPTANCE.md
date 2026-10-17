@@ -19,7 +19,7 @@ In-chat V8 simulation using the source scene's extracted movement functions (not
 On a local checkout of the PR branch with Node 22+, run:
 
 ```powershell
-node --test tests/d3d-r16*.test.mjs tests/d3d-r17*.test.mjs tests/d3d-r18*.test.mjs tests/d3d-r19*.test.mjs
+node --test
 ```
 
 ## Acceptance gate — not yet verified
