@@ -279,6 +279,42 @@ function building(label,i,total,isDistrict,competitionCount=0){const key=label.n
    leg.position.set(xx+dx,.36,zz);group.add(leg);
   }
  }
+ // D3D-R12: reception desks and staff near the entrance end of the dome.
+ // Desks occupy local z>3.9, beyond the audience chairs (last row z=2.2).
+ const reception=new THREE.Group();group.add(reception);
+ const deskWood=new THREE.MeshStandardMaterial({color:'#ad8052',roughness:.86});
+ const deskLight=new THREE.MeshStandardMaterial({color:'#eee0c0',roughness:.9});
+ const uniform=new THREE.MeshStandardMaterial({color:'#c19d72',roughness:.9});
+ const staffSkin=new THREE.MeshStandardMaterial({color:'#d9aa88'});
+ const darkHair=new THREE.MeshStandardMaterial({color:'#28313c'});
+ function receptionBox(w,h,d,x,y,z,material){
+  const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
+  m.position.set(x,y,z);reception.add(m);return m;
+ }
+ for(const x of [-2.25,0,2.25]){
+  receptionBox(1.65,.13,.72,x,.88,4.55,deskLight);
+  receptionBox(1.5,.68,.10,x,.49,4.88,deskWood);
+  for(const dx of [-.71,.71])receptionBox(.09,.76,.09,x+dx,.46,4.44,deskWood);
+  // Attendance sheet and a small colored "check-in" marker.
+  receptionBox(.69,.018,.36,x-.23,.955,4.56,deskLight);
+  const computer=receptionBox(.56,.34,.065,x+.42,1.16,4.45,darkHair);
+  computer.rotation.x=.20;
+  const staff=new THREE.Group();
+  const torso=new THREE.Mesh(new THREE.BoxGeometry(.34,.53,.25),uniform);
+  torso.position.y=.80;staff.add(torso);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(.16,9,7),staffSkin);
+  head.position.y=1.20;staff.add(head);
+  const cap=new THREE.Mesh(new THREE.SphereGeometry(.165,9,7),darkHair);
+  cap.scale.y=.41;cap.position.y=1.33;staff.add(cap);
+  for(const dx of [-.115,.115]){
+   const leg=new THREE.Mesh(new THREE.BoxGeometry(.12,.34,.13),darkHair);
+   leg.position.set(dx,.32,0);staff.add(leg);
+  }
+  staff.position.set(x,0,5.57);reception.add(staff);
+  // Waiting-place marker on the accessible side of each desk.
+  receptionBox(.58,.015,.18,x,.30,3.65,
+   new THREE.MeshStandardMaterial({color:'#e4b448',roughness:.9}));
+ }
  for(const side of [-1,1])for(const zz of [-6,-3,0,3,6])add(new THREE.BoxGeometry(.18,3.25,.18),'#637d88',side*4.15,1.65,zz)}else{add(new THREE.BoxGeometry(4,2.3,3.6),color,0,1.15,0);const roof=add(new THREE.ConeGeometry(3.5,1.1,4),'#8b6965',0,2.8,0);roof.rotation.y=Math.PI/4}if(isDistrict&&[ 'อาคาร1','อาคาร2','อาคารโดม'].includes(key))group.add(makeBuildingLabel(key==='อาคารโดม'?'อาคารโดม':key==='อาคาร1'?'อาคาร 1':'อาคาร 2',office?7.5:8));if(competitionCount>0)group.add(makeCompetitionBadge(competitionCount,isDistrict?(office?9.45:9.95):5.7));buildingTargets.set(key,{center:group.position.clone(),office,dome});scene.add(group);objects.push(group)}
 // D3D-1: provisional scene coordinates only; +Z = frontage, -Z = rear.
 const DISTRICT_LAYOUT=Object.freeze({verified:false,parcel:{width:42,length:116},rearPond:{x:0,z:-46,rx:9,rz:6},buildingCenters:{'อาคาร1':[0,8],'อาคารโดม':[0,-4],'อาคาร2':[0,-16]},rearCarport:{x:0,z:-35,width:12,length:7},sideRoadsX:[-13,13],frontRoadsZ:[22],gate:{entryX:-13,exitX:13,z:43},road3342:{z:52,width:9}});
@@ -760,53 +796,138 @@ function makeBlueLowPolyPickup(){
  }
  return truck;
 }
-// D3D-R9: stylized municipal bus on main road (visual simulation, not live transport).
-function makeRoadBus(color){
- const vehicle=new THREE.Group();
- const bodyMat=new THREE.MeshStandardMaterial({color,roughness:.64});
- const glazing=new THREE.MeshStandardMaterial({color:'#4d7689',roughness:.38,metalness:.12});
- const bumperMat=new THREE.MeshStandardMaterial({color:'#dde2e3',roughness:.8});
- const body=new THREE.Mesh(new THREE.BoxGeometry(2.05,1.78,5.7),bodyMat);
- body.position.y=1.33;vehicle.add(body);
- const top=new THREE.Mesh(new THREE.BoxGeometry(1.98,.22,5.4),bumperMat);
- top.position.y=2.33;vehicle.add(top);
- for(const side of [-1,1]){
-  for(let j=0;j<5;j++){
-   const window=new THREE.Mesh(new THREE.BoxGeometry(.045,.67,.75),glazing);
-   window.position.set(side*1.035,1.65,-1.88+j*.91);vehicle.add(window);
-  }
-  for(const z of [-1.85,1.84]){
-   const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.40,.40,.14,12),
-    new THREE.MeshStandardMaterial({color:'#283037',roughness:.93}));
-   wheel.rotation.z=Math.PI/2;
-   wheel.position.set(side*1.06,.50,z);vehicle.add(wheel);
-  }
- }
- for(const z of [-2.88,2.88]){
-  const windshield=new THREE.Mesh(new THREE.BoxGeometry(1.72,.70,.05),glazing);
-  windshield.position.set(0,1.67,z);vehicle.add(windshield);
- }
- const band=new THREE.Mesh(new THREE.BoxGeometry(2.08,.22,5.75),
-  new THREE.MeshStandardMaterial({color:'#f0e6ba',roughness:.85}));
- band.position.y=1.06;vehicle.add(band);
- return vehicle;
+// D3D-R12: lightweight procedural vehicle library, inspired by the owner's low-poly references.
+// Local -Z is the front of each vehicle. All meshes are created per scene and disposed on show().
+function roadPaint(color){return new THREE.MeshStandardMaterial({color,roughness:.67,metalness:.08,flatShading:true})}
+function vehicleBox(group,w,h,l,x,y,z,mat){
+ const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,l),mat);
+ m.position.set(x,y,z);group.add(m);return m;
 }
-function makeRoadVan(color){
- const van=makeDistrictCar(color,false);
- const top=new THREE.Mesh(new THREE.BoxGeometry(1.15,.62,1.75),
-  new THREE.MeshStandardMaterial({color:'#a9bdc4',roughness:.55}));
- top.position.set(0,1.26,0);van.add(top);
+function vehicleWheels(group,{halfWidth=.80,zs=[-1,1],radius=.36,dualRear=false}={}){
+ const rubber=roadPaint('#25292f'),hub=roadPaint('#9ba5ae');
+ for(let axle=0;axle<zs.length;axle++){
+  for(const side of [-1,1]){
+   const dual=dualRear&&axle>0;
+   for(const inset of dual?[0,.23]:[0]){
+    const offset=side*(halfWidth+inset);
+    const wheel=new THREE.Mesh(new THREE.CylinderGeometry(radius,radius,.15,10),rubber);
+    wheel.rotation.z=Math.PI/2;wheel.position.set(offset,radius+.16,zs[axle]);group.add(wheel);
+    const cap=new THREE.Mesh(new THREE.CylinderGeometry(radius*.55,radius*.55,.17,10),hub);
+    cap.rotation.z=Math.PI/2;cap.position.set(offset+side*.01,radius+.16,zs[axle]);group.add(cap);
+   }
+  }
+ }
+}
+function makeBlueLowPolySedan(){
+ const car=new THREE.Group(),blue=roadPaint('#326ea7'),darkBlue=roadPaint('#234e78');
+ const glass=roadPaint('#293b49'),black=roadPaint('#25282e'),silver=roadPaint('#c8d0d4');
+ vehicleBox(car,1.62,.53,3.14,0,.80,0,blue);
+ vehicleBox(car,1.55,.38,1.53,0,1.22,.04,blue);
+ vehicleBox(car,1.49,.20,1.30,0,1.54,.04,darkBlue);
+ const front=vehicleBox(car,1.41,.49,.06,0,1.22,-.77,glass);front.rotation.x=-.21;
+ vehicleBox(car,1.42,.34,.04,0,1.26,.86,glass);
+ for(const side of [-1,1]){
+  vehicleBox(car,.04,.34,1.19,side*.79,1.28,.04,glass);
+  vehicleBox(car,.15,.14,.16,side*.92,1.22,-.61,darkBlue);
+  vehicleBox(car,.08,.10,1.63,side*.81,.81,0,darkBlue);
+ }
+ vehicleBox(car,1.42,.20,.06,0,.72,-1.61,black);
+ vehicleBox(car,1.10,.16,.065,0,.88,-1.64,black);
+ for(const x of [-.61,.61]){
+  vehicleBox(car,.24,.12,.045,x,.97,-1.64,silver);
+  vehicleBox(car,.22,.10,.04,x,.91,1.61,roadPaint('#c44e4f'));
+ }
+ vehicleWheels(car,{halfWidth:.83,zs:[-1.01,1.03],radius:.34});
+ return car;
+}
+function makeBlueCityBus(){
+ const bus=new THREE.Group(),blue=roadPaint('#2870aa'),black=roadPaint('#252a30');
+ const glass=roadPaint('#263a4a'),trim=roadPaint('#adb8c2');
+ vehicleBox(bus,2.12,1.75,5.9,0,1.40,0,blue);
+ vehicleBox(bus,2.08,.18,5.72,0,2.38,0,blue);
+ const nose=vehicleBox(bus,1.90,1.42,.07,0,1.83,-3.0,glass);nose.rotation.x=-.02;
+ vehicleBox(bus,1.77,.36,.07,0,.80,-3.03,black);
+ for(const side of [-1,1]){
+  // Continuous dark upper glazing with visible vertical pillar separators.
+  vehicleBox(bus,.055,.89,5.3,side*1.07,1.79,.05,glass);
+  for(let n=0;n<6;n++){
+   const zz=-2.42+n*.91;
+   vehicleBox(bus,.065,.91,.068,side*1.10,1.77,zz,blue);
+  }
+  for(const zz of [-1.2,2.05]){
+   const panel=vehicleBox(bus,.08,1.42,.74,side*1.085,1.26,zz,glass);
+   if(side===1){
+    vehicleBox(bus,.09,.06,.75,side*1.13,1.32,zz,trim);
+    vehicleBox(bus,.10,1.42,.06,side*1.13,1.26,zz,black);
+   }
+  }
+ }
+ vehicleBox(bus,1.85,.10,.05,0,.90,-3.08,trim);
+ for(const x of [-.82,.82]){
+  vehicleBox(bus,.25,.12,.045,x,.99,-3.07,roadPaint('#f6eee0'));
+  vehicleBox(bus,.16,.12,.04,x,.89,3.03,roadPaint('#bb4846'));
+ }
+ vehicleWheels(bus,{halfWidth:1.08,zs:[-1.92,2.0],radius:.43,dualRear:true});
+ return bus;
+}
+function makeWhiteTenWheelTruck(){
+ const truck=new THREE.Group(),white=roadPaint('#e3e8e9'),black=roadPaint('#2c3136');
+ const silver=roadPaint('#a8b0b6'),glass=roadPaint('#293946');
+ vehicleBox(truck,2.18,1.73,2.20,0,1.39,-2.53,white);
+ vehicleBox(truck,2.13,.20,2.08,0,2.35,-2.53,white);
+ vehicleBox(truck,1.89,.92,.055,0,1.78,-3.67,glass);
+ for(const side of [-1,1]){
+  vehicleBox(truck,.045,.76,.90,side*1.10,1.82,-2.40,glass);
+  vehicleBox(truck,.21,.21,.18,side*1.28,1.72,-3.20,black);
+ }
+ vehicleBox(truck,2.2,.57,.12,0,.80,-3.69,black);
+ vehicleBox(truck,1.86,.14,.07,0,.95,-3.76,silver);
+ const load=roadPaint('#bfc6c9'),edge=roadPaint('#929ca2');
+ vehicleBox(truck,2.13,1.38,4.90,0,1.45,1.09,load);
+ for(const side of [-1,1]){
+  for(let n=0;n<4;n++)vehicleBox(truck,.07,1.33,.095,side*1.09,1.46,-.8+n*1.23,edge);
+  for(let y=.98;y<=1.94;y+=.30)vehicleBox(truck,.075,.045,4.78,side*1.105,y,1.10,edge);
+ }
+ for(const x of [-.91,.91])vehicleBox(truck,.16,.12,.04,x,1.13,3.6,roadPaint('#b24f4f'));
+ // Ten tyres: front axle single wheels (2), two rear axles dual on both sides (8).
+ vehicleWheels(truck,{halfWidth:1.06,zs:[-2.95,.95,2.8],radius:.49,dualRear:true});
+ return truck;
+}
+function makeWhitePassengerVan(){
+ const van=new THREE.Group(),white=roadPaint('#e3e7ea'),glass=roadPaint('#263b4a');
+ const black=roadPaint('#252b31'),trim=roadPaint('#9ba6af');
+ vehicleBox(van,1.78,1.24,3.38,0,1.23,0,white);
+ vehicleBox(van,1.67,.28,3.08,0,1.97,.12,white);
+ const wind=vehicleBox(van,1.53,.78,.05,0,1.61,-1.72,glass);wind.rotation.x=-.13;
+ for(const side of [-1,1]){
+  vehicleBox(van,.055,.61,2.35,side*.90,1.67,.29,glass);
+  for(const z of [-.60,.68])vehicleBox(van,.06,.66,.08,side*.93,1.65,z,white);
+  vehicleBox(van,.21,.16,.17,side*1.03,1.38,-1.43,black);
+  vehicleBox(van,.06,.11,3.2,side*.88,.74,0,trim);
+ }
+ vehicleBox(van,1.68,.38,.07,0,.80,-1.77,black);
+ for(const x of [-.70,.70]){
+  vehicleBox(van,.23,.13,.055,x,1.10,-1.80,roadPaint('#f3f3eb'));
+  vehicleBox(van,.18,.14,.045,x,1.15,1.72,roadPaint('#c65052'));
+ }
+ vehicleWheels(van,{halfWidth:.91,zs:[-1.15,1.16],radius:.36});
  return van;
 }
+// Aliases preserve existing semantic call sites (cars, buses, vans).
+function makeRoadBus(color='#2870aa'){return makeBlueCityBus()}
+function makeRoadVan(color='#e3e7ea'){return makeWhitePassengerVan()}
 function addMainRoadTraffic(root){
- // Road 3342 runs east-west at z=52. Use fixed spacing and equal speed per lane.
+ // Fixed phase spacing with equal-speed cruise in each direction;
+ // reservations at merge prevent campus cars entering occupied road gaps.
  const fleet=[
-  {model:makeRoadBus('#f0d49b'),lane:49.25,direction:1,phase:0},
-  {model:makeDistrictCar('#f3f4f3'),lane:49.25,direction:1,phase:1/3},
-  {model:makeBlueLowPolyPickup(),lane:49.25,direction:1,phase:2/3},
-  {model:makeRoadVan('#d5e3ea'),lane:54.75,direction:-1,phase:0},
-  {model:makeRoadBus('#e5a863'),lane:54.75,direction:-1,phase:1/3},
-  {model:makeDistrictCar('#b7d1b9'),lane:54.75,direction:-1,phase:2/3}
+  {model:makeBlueCityBus(),lane:49.25,direction:1,phase:0,length:6.0},
+  {model:makeBlueLowPolySedan(),lane:49.25,direction:1,phase:.25,length:3.4},
+  {model:makeWhiteTenWheelTruck(),lane:49.25,direction:1,phase:.5,length:8.1},
+  {model:makeBlueLowPolyPickup(),lane:49.25,direction:1,phase:.75,length:3.4},
+  {model:makeWhitePassengerVan(),lane:54.75,direction:-1,phase:0,length:3.7},
+  {model:makeWhiteTenWheelTruck(),lane:54.75,direction:-1,phase:.25,length:8.1},
+  {model:makeBlueCityBus(),lane:54.75,direction:-1,phase:.5,length:6.0},
+  {model:makeBlueLowPolySedan(),lane:54.75,direction:-1,phase:.75,length:3.4}
  ];
  for(const item of fleet){
   root.add(item.model);
@@ -895,7 +1016,7 @@ function addDistrictVehicles(activityCount){
    peopleRoot.add(person);passengers.push(person);
   }
   buses.push({model,route:'front-park',progress:i*.5,speed:.010,
-   arrive,depart,passengers,bay:bays[i]});
+   arrive,depart,passengers,bay:bays[i],length:3.2,exitStart:.76,exitMode:null});
  }
  // Drive to the cross-road in front of Building 1, stop in the signed drop-off bay
  // before the lawn, unload pupils onto the building-side curb, then leave eastwards.
@@ -909,10 +1030,29 @@ function addDistrictVehicles(activityCount){
  const buildingPassengers=[];
  for(let i=0;i<4;i++){
   const person=makeDropoffPerson(false,i);
+  person.userData.schoolRoute=schoolPolyline(schoolJourney('dome',i));
   peopleRoot.add(person);buildingPassengers.push(person);
  }
- buses.push({model:buildingVehicle,route:'building-dropoff',progress:.73,
-  speed:.009,arrive:toBuilding,depart:fromBuilding,passengers:buildingPassengers});
+ buses.push({model:buildingVehicle,route:'building-dropoff',progress:.31,
+  speed:.009,arrive:toBuilding,depart:fromBuilding,passengers:buildingPassengers,
+  destination:'dome',studentStartAt:null,length:3.8,exitStart:.76,exitMode:null});
+ // The pickup delivers another group in front of Building 1, before the marked dome stop.
+ const blueSchoolPickup=makeBlueLowPolyPickup();root.add(blueSchoolPickup);
+ const pickupArrival=pointsToCurve([
+  [-13,45.8],[-13,34],[-13,26],[-10,22],[-6,22],[-3,22]
+ ]);
+ const pickupDeparture=pointsToCurve([
+  [-3,22],[1,22],[9,22],[13,26],[13,38],[13,45.8]
+ ]);
+ const pickupChildren=[];
+ for(let i=0;i<3;i++){
+  const pupil=makeDropoffPerson(false,i+1);
+  pupil.userData.schoolRoute=schoolPolyline(schoolJourney('meeting-room',i));
+  peopleRoot.add(pupil);pickupChildren.push(pupil);
+ }
+ buses.push({model:blueSchoolPickup,route:'pickup-school',progress:.22,speed:.009,
+  arrive:pickupArrival,depart:pickupDeparture,passengers:pickupChildren,
+  destination:'meeting-room',studentStartAt:null,length:3.7,exitStart:.76,exitMode:null});
  // The third rear-carport bay is dynamic, beyond Building 2's annex.
  const rearApproach=pointsToCurve([
   [-13,45.8],[-13,18],[-13,-15],[-10,-27],[-4,-27],[1,-27],
@@ -923,25 +1063,65 @@ function addDistrictVehicles(activityCount){
  ]);
  const rearPickup=makeBlueLowPolyPickup();root.add(rearPickup);
  buses.push({model:rearPickup,route:'rear-parking',arrive:rearApproach,
-  depart:rearDeparture,bay:[3.4,-35],progress:.37,speed:.008});
+  depart:rearDeparture,bay:[3.4,-35],progress:.37,speed:.008,
+  length:3.8,exitStart:.78,exitMode:null});
  // Exiting vehicles connect to the eastbound highway lane after the right gate.
  const exitCurve=pointsToCurve([[13,45.8],[13,47.4],[15.5,49.25],[27,49.25],[49,49.25]]);
- for(const car of buses)if(car.route!=='main-road')car.exitCurve=exitCurve;
+ for(const car of buses)if(car.route!=='main-road'){
+  car.exitCurve=exitCurve;
+  car.turnCurve=pointsToCurve([[13,45.8],[13,47.0],[14.2,48.65],[15.5,49.25]]);
+ }
  // Independent highway traffic keeps its lanes and minimum longitudinal spacing.
  addMainRoadTraffic(root);
  root.visible=trafficEnabled;root.userData.vehicles=true;
  peopleRoot.visible=trafficEnabled&&peopleVisible;peopleRoot.userData.dropoffPeople=true;
  scene.add(root,peopleRoot);objects.push(root,peopleRoot);
- lastVehicleUpdate=null;
+ lastVehicleUpdate=null;roadSimTime=0;
 }
 let lastVehicleUpdate=null;
-function highwayExitPose(b,q,start){
- const u=Math.max(0,Math.min(.999,(q-start)/(.94-start)));
- const point=b.exitCurve.getPointAt(u),dir=b.exitCurve.getTangentAt(u);
- return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI,onHighway:true};
+// D3D-R12: departure uses a protected road-gap reservation, then cruises at
+// the *same physical speed* as main-road traffic to avoid a following vehicle catching it.
+const MAIN_ROAD_SPEED=2.9;
+const HIGHWAY_JOIN_X=15.5;
+let roadSimTime=0;
+function mainRoadX(b,time){
+ const travelled=(time*b.speed+b.phase*b.travel)%b.travel;
+ return b.direction===1?-b.travel/2+travelled:b.travel/2-travelled;
+}
+function visibleRoadCar(b,time){
+ const x=mainRoadX(b,time);
+ return {x,z:b.lane,length:b.length||3.6,visible:Math.abs(x)<49};
+}
+function highwayGapAvailable(b,time){
+ // Check the expected *future* join point, not just where traffic is now.
+ // Reserve room for the full length of a ten-wheel truck and the entering car.
+ const future=time+2.7;
+ for(const roadCar of buses){
+  if(roadCar.route!=='main-road'||roadCar.direction!==1)continue;
+  const x=mainRoadX(roadCar,future);
+  const gap=(roadCar.length+(b.length||3.5))/2+5.7;
+  if(Math.abs(x-HIGHWAY_JOIN_X)<gap)return false;
+ }
+ // Only one vehicle may use the turn-in at a time.
+ for(const other of buses){
+  if(other===b||other.route==='main-road')continue;
+  if(other.exitMode==='turn')return false;
+  if(other.exitMode==='cruise'&&Math.abs(other.exitX-HIGHWAY_JOIN_X)<(other.length||3.5)+9)return false;
+ }
+ return true;
 }
 function trafficPose(b,q){
  const hidden={visible:false,point:new THREE.Vector3(-100,0,-100),yaw:0};
+ if(b.exitMode==='done')return hidden;
+ if(b.exitMode==='turn'){
+  const u=Math.min(.999,b.turnProgress);
+  const point=b.turnCurve.getPointAt(u),dir=b.turnCurve.getTangentAt(u);
+  return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
+ }
+ if(b.exitMode==='cruise'){
+  return {visible:b.exitX<49,point:new THREE.Vector3(b.exitX,0,49.25),
+   yaw:-Math.PI/2,onHighway:true};
+ }
  if(q>=.94)return hidden;
  if(b.route==='rear-parking'){
   if(q<.40){
@@ -956,7 +1136,7 @@ function trafficPose(b,q){
    const u=(q-.64)/.14,point=b.depart.getPointAt(u),dir=b.depart.getTangentAt(Math.min(.999,u));
    return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
   }
-  return highwayExitPose(b,q,.78);
+  return {visible:true,point:new THREE.Vector3(13,0,45.8),yaw:Math.PI};
  }
  if(b.route==='front-park'){
   if(q<.29){
@@ -971,108 +1151,213 @@ function trafficPose(b,q){
    const u=(q-.62)/.14,point=b.depart.getPointAt(u),dir=b.depart.getTangentAt(Math.min(.999,u));
    return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
   }
-  return highwayExitPose(b,q,.76);
+  return {visible:true,point:new THREE.Vector3(13,0,45.8),yaw:Math.PI};
  }
- if(b.route==='building-dropoff'){
-  if(q<.38){
-   const u=q/.38,point=b.arrive.getPointAt(u),dir=b.arrive.getTangentAt(Math.min(.999,u));
+ if(b.route==='building-dropoff'||b.route==='pickup-school'){
+  const pickup=b.route==='pickup-school';
+  const arrivingEnd=pickup ? .35 : .38,waitingEnd=pickup ? .56 : .59;
+  if(q<arrivingEnd){
+   const u=q/arrivingEnd,point=b.arrive.getPointAt(u),dir=b.arrive.getTangentAt(Math.min(.999,u));
    return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
   }
-  if(q<.59){
+  if(q<waitingEnd){
    const point=b.arrive.getPointAt(1),dir=b.arrive.getTangentAt(.999);
    return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
   }
-  if(q<.76){
-   const u=(q-.59)/.17,point=b.depart.getPointAt(u),dir=b.depart.getTangentAt(Math.min(.999,u));
+  if(q<b.exitStart){
+   const u=(q-waitingEnd)/(b.exitStart-waitingEnd);
+   const point=b.depart.getPointAt(Math.min(.999,u));
+   const dir=b.depart.getTangentAt(Math.min(.999,u));
    return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
   }
-  return highwayExitPose(b,q,.76);
+  return {visible:true,point:new THREE.Vector3(13,0,45.8),yaw:Math.PI};
  }
  return hidden;
 }
-function animateDropoffPassengers(b,q){
+// D3D-R12: independent school journeys; children never vanish in the middle
+// of their walk merely because the vehicle drives away.
+function schoolJourney(destination,index){
+ const offset=(index-1.5)*.26;
+ if(destination==='dome'){
+  // Van -> protected curb -> east-side pedestrian corridor -> dome reception.
+  const endZ=-4+(index-1.5)*1.26;
+  return [
+   [6.2+offset,0,19.15],[8.9+offset,0,18.7],
+   [10.3+offset*.16,0,15.8],[10.3+offset*.16,0,10.2],
+   [10.3+offset*.16,0,3.0],[10.3+offset*.16,0,-3.8],
+   [7.3,0,-4.0],[4.2,0,endZ],[2.9,0,endZ]
+  ];
+ }
+ // Low-poly pickup -> Building 1 facade -> outer staircase -> second-floor meeting.
+ return [
+  [-3.9+offset,0,19.25],[-5.8+offset,0,17.6],
+  [-6.5+offset*.2,0,14.5],[-6.7+offset*.1,0,11.8],
+  [-6.65,0,10.9],[-6.5,.9,10.8],[-6.2,1.8,10.8],
+  [-5.9,2.57,10.6],[-5.1,2.57,9.9],
+  [-3.8+index*.43,2.57,9.2]
+ ];
+}
+function schoolPolyline(points){
+ const pts=points.map(([x,y,z])=>new THREE.Vector3(x,y,z));
+ const dists=[];let total=0;
+ for(let i=1;i<pts.length;i++){
+  const d=pts[i-1].distanceTo(pts[i]);dists.push(d);total+=d;
+ }
+ return {pts,dists,total};
+}
+function studentPoseAt(route,travelled){
+ let remaining=Math.min(route.total,Math.max(0,travelled));
+ for(let i=0;i<route.dists.length;i++){
+  const length=route.dists[i];
+  if(remaining<=length||i===route.dists.length-1){
+   const u=length>0?Math.min(1,remaining/length):1;
+   const from=route.pts[i],to=route.pts[i+1];
+   return {x:from.x+(to.x-from.x)*u,
+    y:from.y+(to.y-from.y)*u,z:from.z+(to.z-from.z)*u,
+    angle:Math.atan2(to.x-from.x,to.z-from.z),arrived:travelled>=route.total};
+  }
+  remaining-=length;
+ }
+ return {x:0,y:0,z:0,angle:0,arrived:true};
+}
+function setStudentOpacity(person,opacity){
+ person.traverse(node=>{
+  if(!node.isMesh)return;
+  node.material.transparent=opacity<1;
+  node.material.opacity=opacity;
+  node.material.depthWrite=opacity>=1;
+ });
+}
+function animateDropoffPassengers(b,q,now){
  if(!b.passengers)return;
+ if(b.destination){
+  for(let j=0;j<b.passengers.length;j++){
+   const person=b.passengers[j];
+   if(b.studentStartAt===null||!peopleVisible||!trafficEnabled){
+    person.visible=false;continue;
+   }
+   // Give students room to step off one at a time.
+   const elapsed=now-b.studentStartAt-j*.95;
+   if(elapsed<0){person.visible=false;continue;}
+   const route=person.userData.schoolRoute;
+   const pace=b.destination==='dome'?1.48:1.08;
+   const distance=elapsed*pace;
+   const pose=studentPoseAt(route,distance);
+   const settledFor=Math.max(0,elapsed-route.total/pace);
+   if(settledFor>=11){person.visible=false;continue;}
+   person.visible=true;
+   person.position.set(pose.x,pose.y+(pose.arrived?0:Math.abs(Math.sin(elapsed*8))*.035),pose.z);
+   person.rotation.y=pose.angle;
+   setStudentOpacity(person,settledFor>9.5?Math.max(0,1-(settledFor-9.5)/1.5):1);
+  }
+  return;
+ }
+ // Forecourt parking passengers use a local, short trip from their own bay.
  for(let j=0;j<b.passengers.length;j++){
-  const person=b.passengers[j];
-  const building=b.route==='building-dropoff';
-  const start=building ? .398+j*.012 : .316+j*.015;
-  const finish=building?.59:.52;
-  const active=peopleVisible&&trafficEnabled&&q>=start&&q<finish;
+  const person=b.passengers[j],start=.322+j*.012;
+  const active=peopleVisible&&trafficEnabled&&q>=start&&q<.52;
   person.visible=active;
   if(!active)continue;
-  const walking=Math.min(1,Math.max(0,(q-start)/.105));
-  const smooth=walking*walking*(3-2*walking);
-  if(building){
-   // Southern (building-facing) shoulder of transverse road: road z=20..24.
-   person.position.set(4.2+j*.72,0,19.0-smooth*2.05);
-   person.rotation.y=Math.PI;
-  }else{
-   const leftBay=b.bay[0]<-5,side=leftBay?-1:1;
-   person.position.set(b.bay[0]+side*(1.20+j*.27),0,
-     b.bay[1]+.6+smooth*1.55);
-   person.rotation.y=0;
-  }
-  person.position.y+=walking<1?Math.abs(Math.sin(q*155+j))*.045:0;
-  const fadeStart=finish-.025;
-  const opacity=q>fadeStart?Math.max(0,1-(q-fadeStart)/.025):1;
-  // Materials are unique to each person and only updated while visible.
-  person.traverse(node=>{
-   if(node.isMesh){
-    node.material.opacity=opacity;
-    node.material.transparent=opacity<1;
-    node.material.depthWrite=opacity>=1;
-   }
-  });
+  const stride=Math.min(1,Math.max(0,(q-start)/.105));
+  const smooth=stride*stride*(3-2*stride),side=b.bay[0]<-5?-1:1;
+  person.position.set(b.bay[0]+side*(1.20+j*.15),0,b.bay[1]+.6+smooth*1.55);
+  person.rotation.y=0;
+  setStudentOpacity(person,q>.495?Math.max(0,1-(q-.495)/.025):1);
  }
 }
+// Oriented rectangle overlap (2D separating-axis test). Side-by-side cars in
+// neighbouring parking bays are legal; crossed or nose-to-tail vehicles are not.
+function vehicleFootprintOverlap(a,pa,b,pb,withMargin=true){
+ if(!pa.visible||!pb.visible)return false;
+ const dx=pb.point.x-pa.point.x,dz=pb.point.z-pa.point.z;
+ const shape=(v,pose)=>{
+  const angle=pose.yaw;
+  return {
+   right:[Math.cos(angle),-Math.sin(angle)],
+   forward:[-Math.sin(angle),-Math.cos(angle)],
+   halfW:(v.width||1.72)/2+(withMargin?.13:0),
+   halfL:(v.length||3.5)/2+(withMargin?.35:0)
+  };
+ };
+ const A=shape(a,pa),B=shape(b,pb);
+ for(const axis of [A.right,A.forward,B.right,B.forward]){
+  const offset=Math.abs(dx*axis[0]+dz*axis[1]);
+  const ext=(rect)=>{
+   return rect.halfW*Math.abs(axis[0]*rect.right[0]+axis[1]*rect.right[1])+
+     rect.halfL*Math.abs(axis[0]*rect.forward[0]+axis[1]*rect.forward[1]);
+  };
+  if(offset>ext(A)+ext(B))return false;
+ }
+ return true;
+}
 function animateDistrictVehicles(t){
- const dt=Math.min(.06,Math.max(0,lastVehicleUpdate===null?1/60:t-lastVehicleUpdate));
+ const dt=Math.min(.05,Math.max(0,lastVehicleUpdate===null?1/60:t-lastVehicleUpdate));
  lastVehicleUpdate=t;
+ roadSimTime+=dt;
  const internal=buses.filter(b=>b.route!=='main-road');
- // Keep highway cars in their own lane; a departing car yields before joining it.
- const highway=buses.filter(b=>b.route==='main-road').map(b=>{
-  const traveled=(t*b.speed+b.phase*b.travel)%b.travel;
-  const x=b.direction===1?-b.travel/2+traveled:b.travel/2-traveled;
-  return {x,z:b.lane,visible:Math.abs(x)<49};
- });
- // Compute prospective poses before committing. Cars share a simple visual safe-gap rule,
- // so vehicles queue rather than occupying the same space at road junctions.
  const accepted=new Map();
  for(const b of internal){
-  const next=(b.progress+dt*b.speed)%1;
-  const wanted=trafficPose(b,next);
-  let blocked=false;
-  if(wanted.visible){
-   for(const other of internal){
-    if(other===b)continue;
-    const pose=accepted.get(other)||trafficPose(other,other.progress);
-    if(pose.visible&&wanted.point.distanceTo(pose.point)<3.25){
-     blocked=true;break;
+  // Process protected turns and highway cruising before attempting another internal step.
+  if(b.exitMode==='turn'){
+   b.turnProgress=Math.min(1,b.turnProgress+dt/2.7);
+   if(b.turnProgress>=1){
+    b.exitMode='cruise';b.exitX=HIGHWAY_JOIN_X;
+   }
+  }else if(b.exitMode==='cruise'){
+   b.exitX+=MAIN_ROAD_SPEED*dt;
+   if(b.exitX>=49){
+    b.exitMode='done';b.progress=.949;
+   }
+  }else if(b.exitMode==='done'){
+   // Invisible dwell before returning to the left entrance for another cycle.
+   b.progress+=dt*b.speed;
+   if(b.progress>=1){
+    b.progress=0;b.exitMode=null;
+    b.studentStartAt=null;
+   }
+  }else{
+   const next=Math.min(b.exitStart,b.progress+dt*b.speed);
+   const wanted=trafficPose(b,next);
+   let blocked=false;
+   if(wanted.visible){
+    for(const other of internal){
+     if(other===b)continue;
+     const pose=accepted.get(other)||trafficPose(other,other.progress);
+     if(vehicleFootprintOverlap(b,wanted,other,pose)){
+      // Never deadlock a lead vehicle because a following car encroaches on
+      // its turning envelope. Let it move AWAY; brake the car closing the gap.
+      const current=trafficPose(b,b.progress);
+      const oldGap=current.point.distanceTo(pose.point);
+      const nextGap=wanted.point.distanceTo(pose.point);
+      // Escape a conservative safety buffer only while diverging;
+      // never permit actual body footprints to intersect.
+      if(nextGap<oldGap+0.002||
+         vehicleFootprintOverlap(b,wanted,other,pose,false)){blocked=true;break;}
+     }
     }
    }
-  }
-  if(wanted.visible&&wanted.point.z>46.4&&wanted.point.z<50.6){
-   // The entering vehicle waits when an eastbound road user is too close to merge.
-   for(const car of highway){
-    if(car.visible&&Math.hypot(wanted.point.x-car.x,wanted.point.z-car.z)<7.0){
-     blocked=true;break;
-    }
+   if(!blocked)b.progress=next;
+   if(b.progress>=b.exitStart-1e-6&&!blocked&&highwayGapAvailable(b,roadSimTime)){
+    b.exitMode='turn';b.turnProgress=0;
    }
   }
-  if(!blocked)b.progress=next;
-  const pose=blocked?trafficPose(b,b.progress):wanted;
+  const pose=trafficPose(b,b.progress);
   b.model.visible=pose.visible;
   if(pose.visible){
    b.model.position.set(pose.point.x,.24,pose.point.z);
    b.model.rotation.y=pose.yaw;
   }
   accepted.set(b,pose);
-  animateDropoffPassengers(b,b.progress);
+  // Student journeys use their own continuous elapsed time after disembarking.
+  if(b.destination&&b.studentStartAt===null){
+   const threshold=b.route==='pickup-school' ? .355 : .388;
+   if(b.progress>=threshold)b.studentStartAt=roadSimTime;
+  }
+  animateDropoffPassengers(b,b.progress,roadSimTime);
  }
  for(const b of buses){
   if(b.route!=='main-road')continue;
-  const travelled=(t*b.speed+b.phase*b.travel)%b.travel;
-  const x=b.direction===1?-b.travel/2+travelled:b.travel/2-travelled;
+  const x=mainRoadX(b,roadSimTime);
   b.model.position.set(x,.20,b.lane);
   b.model.rotation.y=-b.direction*Math.PI/2;
   b.model.visible=Math.abs(x)<49;
