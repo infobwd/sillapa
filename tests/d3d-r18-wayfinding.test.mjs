@@ -149,7 +149,8 @@ test('accessible selector/buttons, active route control and disabled second venu
  assert.match(scene,/wayfindingFrom\.value='dropoff'/);
  assert.match(scene,/wayfindingTo\.value='registration'/);
  assert.match(scene,/setWayfindingControlsAvailability\(false\)/);
- assert.match(scene,/if\(district\)createWayfindingPins\(\);applyWayfindingHash\(\)/);
+ assert.match(scene,/if\(district\)\{buildVenuePoiOverlay\(v\.id\);createWayfindingPins\(\)\}/);
+ assert.match(scene,/applyVenueLayers\(\);applyWayfindingHash\(\)/);
  assert.match(scene,/setWayfindingControlsAvailability\(false\);\s*document\.addEventListener\('keydown'/);
  assert.match(scene,/function setWayfindingSelection\(from,to\)/);
  assert.match(scene,/const routeStop=buildingWayfindingStop\(g\.label\)/);
