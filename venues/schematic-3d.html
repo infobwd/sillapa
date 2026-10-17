@@ -298,8 +298,10 @@ function decorateDistrict(){
  slab(18,.09,0,39,'#f4efe0',.256);
  // External road is a distinct continuous surface: inner edge at z=47.5.
  // Gate stubs end at that edge, never overlap road 3342 or cover its lanes.
- slab(94,d.road3342.width,0,d.road3342.z,'#515962',.16);
- for(let x=-43;x<=43;x+=8)slab(3,.14,x,d.road3342.z,'#f0d982',.25);
+ // R16D: extend real asphalt under cars entering from the left edge;
+ // the road also continues beyond where its cyclic traffic becomes invisible.
+ slab(140,d.road3342.width,0,d.road3342.z,'#515962',.16);
+ for(let x=-66;x<=66;x+=8)slab(3,.14,x,d.road3342.z,'#f0d982',.25);
  // R16D: road-surface labels follow the visual lane directions, not a live map.
  // +X (right side of the illustration) points to U Thong; -X to Bo Phloi.
  // Canvas textures stay level with the asphalt and never obstruct traffic.
@@ -815,8 +817,8 @@ function makeBlueLowPolyPickup(){
 function makeRoadBus(color='#2873b9'){return makeModernBlueBus(color)}
 function makeRoadVan(color='#edf1f0'){return makeModernVan(color)}
 function addMainRoadTraffic(root){
- // Ten illustrative road users: five in each direction, 22.8-unit initial
- // separation on the 114-unit wrap, with the R16 10-unit headway preserved.
+ // Ten illustrative road users: five in each direction, spaced on a
+ // longer offscreen 154-unit wrap so they never teleport within the road.
  const fleet=[
   {model:makeRoadBus('#2974b9'),lane:49.25,direction:1,phase:0},
   {model:makeModernSedan('#3d82c7'),lane:49.25,direction:1,phase:.2},
@@ -831,7 +833,7 @@ function addMainRoadTraffic(root){
  ];
  for(const item of fleet){
   root.add(item.model);
-  buses.push({...item,route:'main-road',speed:2.9,travel:114,highwayProgress:item.phase*114});
+  buses.push({...item,route:'main-road',speed:2.9,travel:154,highwayProgress:item.phase*154});
  }
 }
 // D3D-R7: front open forecourt is a parking and drop-off zone, not grass.
@@ -905,7 +907,7 @@ function addDistrictVehicles(activityCount){
  // turn at the western entry gate, then follow the existing parking routes.
  // Match the highway's eastbound lane at Z=49.25 until the gate turn.
  const entryCurve=pointsToCurve([
-  [-62,49.25],[-52,49.25],[-36,49.25],[-24,49.25],
+  [-65,49.25],[-52,49.25],[-36,49.25],[-24,49.25],
   [-17,49.25],[-13,46.2],[-13,45.8]
  ]);
  const arrivals=[
@@ -1166,7 +1168,7 @@ function animateDistrictVehicles(t){
   const x=b.direction===1?-b.travel/2+b.highwayProgress:b.travel/2-b.highwayProgress;
   b.model.position.set(x,.20,b.lane);
   b.model.rotation.y=-b.direction*Math.PI/2;
-  b.model.visible=Math.abs(x)<49;
+  b.model.visible=Math.abs(x)<68;
  }
 }
 function animateBuses(t){if(trafficEnabled)animateDistrictVehicles(t)}
