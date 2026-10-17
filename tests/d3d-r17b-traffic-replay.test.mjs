@@ -52,7 +52,7 @@ function replay(seconds=360){
    arrive:curve([[-13,45.8],[-13,33],[-10,29.7],[-5.4,30],[-3.5,31],[-3.5,33.4],[-3.5,36]]),
    depart:curve([[-3.5,30.7],[-5.8,29.3],[-9.2,25],[-10,22],[0,22],[10,22],[13,26],[13,40],[13,43.8]]),
    model:model(3.5,1.67)},
-  {route:'building-dropoff',progress:.31,speed:.009,
+  {route:'building-dropoff',progress:.73,speed:.009,
    arrive:curve([[-13,45.8],[-13,34],[-13,24],[-9.7,22],[-3,22],
      [1.6,22],[3.1,19.65],[5.5,18.55],[DROP_OFF_BAY.x,DROP_OFF_BAY.z]]),
    depart:curve([[DROP_OFF_BAY.x,DROP_OFF_BAY.z],[9.25,18.55],
