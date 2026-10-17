@@ -1074,7 +1074,7 @@ function addDistrictVehicles(activityCount){
  root.visible=trafficEnabled;root.userData.vehicles=true;
  peopleRoot.visible=trafficEnabled&&peopleVisible;peopleRoot.userData.dropoffPeople=true;
  scene.add(root,peopleRoot);objects.push(root,peopleRoot);
- lastVehicleUpdate=null;
+ lastVehicleUpdate=null;roadSimTime=0;
 }
 let lastVehicleUpdate=null;
 // D3D-R12: departure uses a protected road-gap reservation, then cruises at
@@ -1208,53 +1208,67 @@ function animateDropoffPassengers(b,q){
  }
 }
 function animateDistrictVehicles(t){
- const dt=Math.min(.06,Math.max(0,lastVehicleUpdate===null?1/60:t-lastVehicleUpdate));
+ const dt=Math.min(.05,Math.max(0,lastVehicleUpdate===null?1/60:t-lastVehicleUpdate));
  lastVehicleUpdate=t;
+ roadSimTime+=dt;
  const internal=buses.filter(b=>b.route!=='main-road');
- // Keep highway cars in their own lane; a departing car yields before joining it.
- const highway=buses.filter(b=>b.route==='main-road').map(b=>{
-  const traveled=(t*b.speed+b.phase*b.travel)%b.travel;
-  const x=b.direction===1?-b.travel/2+traveled:b.travel/2-traveled;
-  return {x,z:b.lane,visible:Math.abs(x)<49};
- });
- // Compute prospective poses before committing. Cars share a simple visual safe-gap rule,
- // so vehicles queue rather than occupying the same space at road junctions.
  const accepted=new Map();
  for(const b of internal){
-  const next=(b.progress+dt*b.speed)%1;
-  const wanted=trafficPose(b,next);
-  let blocked=false;
-  if(wanted.visible){
-   for(const other of internal){
-    if(other===b)continue;
-    const pose=accepted.get(other)||trafficPose(other,other.progress);
-    if(pose.visible&&wanted.point.distanceTo(pose.point)<3.25){
-     blocked=true;break;
+  // Process protected turns and highway cruising before attempting another internal step.
+  if(b.exitMode==='turn'){
+   b.turnProgress=Math.min(1,b.turnProgress+dt/2.7);
+   if(b.turnProgress>=1){
+    b.exitMode='cruise';b.exitX=HIGHWAY_JOIN_X;
+   }
+  }else if(b.exitMode==='cruise'){
+   b.exitX+=MAIN_ROAD_SPEED*dt;
+   if(b.exitX>=49){
+    b.exitMode='done';b.progress=.949;
+   }
+  }else if(b.exitMode==='done'){
+   // Invisible dwell before returning to the left entrance for another cycle.
+   b.progress+=dt*b.speed;
+   if(b.progress>=1){
+    b.progress=0;b.exitMode=null;
+    b.studentStartAt=null;
+   }
+  }else{
+   const next=Math.min(b.exitStart,b.progress+dt*b.speed);
+   const wanted=trafficPose(b,next);
+   let blocked=false;
+   if(wanted.visible){
+    for(const other of internal){
+     if(other===b)continue;
+     const pose=accepted.get(other)||trafficPose(other,other.progress);
+     // Include half-lengths so a longer pickup cannot clip a stopped car.
+     const minimum=(b.length||3.5)/2+(other.length||3.5)/2+1;
+     if(pose.visible&&wanted.point.distanceTo(pose.point)<minimum){
+      blocked=true;break;
+     }
     }
    }
-  }
-  if(wanted.visible&&wanted.point.z>46.4&&wanted.point.z<50.6){
-   // The entering vehicle waits when an eastbound road user is too close to merge.
-   for(const car of highway){
-    if(car.visible&&Math.hypot(wanted.point.x-car.x,wanted.point.z-car.z)<7.0){
-     blocked=true;break;
-    }
+   if(!blocked)b.progress=next;
+   if(b.progress>=b.exitStart-1e-6&&!blocked&&highwayGapAvailable(b,roadSimTime)){
+    b.exitMode='turn';b.turnProgress=0;
    }
   }
-  if(!blocked)b.progress=next;
-  const pose=blocked?trafficPose(b,b.progress):wanted;
+  const pose=trafficPose(b,b.progress);
   b.model.visible=pose.visible;
   if(pose.visible){
    b.model.position.set(pose.point.x,.24,pose.point.z);
    b.model.rotation.y=pose.yaw;
   }
   accepted.set(b,pose);
-  animateDropoffPassengers(b,b.progress);
+  // Student journeys use their own continuous elapsed time after disembarking.
+  if(b.destination&&b.studentStartAt===null){
+   const threshold=b.route==='pickup-school'?.355:.388;
+   if(b.progress>=threshold)b.studentStartAt=roadSimTime;
+  }
+  animateDropoffPassengers(b,b.progress,roadSimTime);
  }
  for(const b of buses){
   if(b.route!=='main-road')continue;
-  const travelled=(t*b.speed+b.phase*b.travel)%b.travel;
-  const x=b.direction===1?-b.travel/2+travelled:b.travel/2-travelled;
+  const x=mainRoadX(b,roadSimTime);
   b.model.position.set(x,.20,b.lane);
   b.model.rotation.y=-b.direction*Math.PI/2;
   b.model.visible=Math.abs(x)<49;
