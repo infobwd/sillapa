@@ -57,6 +57,12 @@ test('low detail reduces ambient population but retains illustrative vehicle/pup
  assert.equal(visibleBadgeLimit(getQualityProfile('low'),false),0);
  assert.ok(visibleBadgeLimit(getQualityProfile('high'),true)>=5);
  assert.match(scene,/const totalPeople=limitAmbientCount\(activityCount,isDistrict,qualityProfile\)/);
+ assert.match(scene,/function refreshAmbientWalkerVisibility\(\)/);
+ assert.match(scene,/walkers\[i\]\.person\.visible=i<maxVisible/);
+ assert.match(scene,/lastRenderedMs=null;performanceWindowStart=null;performanceSamples=0;\s*refreshAmbientWalkerVisibility\(\)/);
+ assert.match(scene,/addWalkers\(district,activityCount\);refreshAmbientWalkerVisibility\(\);animateWalkers\(simulationTime\)/);
+ assert.match(scene,/if\(!w\.person\.visible\|\|w\.length<=0\)continue/);
+ assert.match(scene,/renderer\.setPixelRatio\(qualityProfile\.pixelRatio\);\s*paintPerformanceStatus\(\);\s*refreshAmbientWalkerVisibility\(\)/);
  assert.match(scene,/camDistance<=qualityProfile\.detailDistance/);
  assert.match(scene,/addDistrictVehicles\(activityCount\);buildStudentTour\(\)/);
  assert.match(scene,/fromVanToRegistrationWaypoints\(j\)/);
