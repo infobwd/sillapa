@@ -1267,7 +1267,7 @@ function animateDropoffPassengers(b,q,now){
 }
 // Oriented rectangle overlap (2D separating-axis test). Side-by-side cars in
 // neighbouring parking bays are legal; crossed or nose-to-tail vehicles are not.
-function vehicleFootprintOverlap(a,pa,b,pb){
+function vehicleFootprintOverlap(a,pa,b,pb,withMargin=true){
  if(!pa.visible||!pb.visible)return false;
  const dx=pb.point.x-pa.point.x,dz=pb.point.z-pa.point.z;
  const shape=(v,pose)=>{
@@ -1275,8 +1275,8 @@ function vehicleFootprintOverlap(a,pa,b,pb){
   return {
    right:[Math.cos(angle),-Math.sin(angle)],
    forward:[-Math.sin(angle),-Math.cos(angle)],
-   halfW:(v.width||1.72)/2+.13,
-   halfL:(v.length||3.5)/2+.35
+   halfW:(v.width||1.72)/2+(withMargin?.13:0),
+   halfL:(v.length||3.5)/2+(withMargin?.35:0)
   };
  };
  const A=shape(a,pa),B=shape(b,pb);
@@ -1329,7 +1329,10 @@ function animateDistrictVehicles(t){
       const current=trafficPose(b,b.progress);
       const oldGap=current.point.distanceTo(pose.point);
       const nextGap=wanted.point.distanceTo(pose.point);
-      if(nextGap<oldGap+0.002){blocked=true;break;}
+      // Escape a conservative safety buffer only while diverging;
+      // never permit actual body footprints to intersect.
+      if(nextGap<oldGap+0.002||
+         vehicleFootprintOverlap(b,wanted,other,pose,false)){blocked=true;break;}
      }
     }
    }
