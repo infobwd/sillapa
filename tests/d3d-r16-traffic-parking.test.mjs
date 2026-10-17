@@ -40,12 +40,13 @@ test('highway cars do not wait for vehicles queued before merge line',()=>{
  const highway=makeLane(1);
  const updates=computeHighwayProgress(highway,[],1);
  assert.ok(updates.get(highway[0])>highway[0].highwayProgress);
- const current={visible:true,onHighway:true,point:{x:13,z:47.1}};
- const wanted={visible:true,onHighway:true,point:{x:14.2,z:48.1}};
+ // The car is stopped BEFORE its body protrudes into the highway.
+ const current={visible:true,onHighway:false,point:{x:13,z:43.8}};
+ const wanted={visible:true,onHighway:true,point:{x:13,z:43.8}};
  const approaching=[{lane:49.25,direction:1,travel:114,highwayProgress:72,speed:2.9}];
  assert.equal(canEnterMainRoad(current,wanted,approaching),false);
  assert.equal(canEnterMainRoad(current,wanted,[]),true);
- assert.equal(canEnterMainRoad({...current,point:{x:17,z:49.25}},wanted,approaching),true);
+ assert.equal(canEnterMainRoad({...current,onHighway:true,point:{x:17,z:49.25}},wanted,approaching),true);
  assert.equal(canEnterMainRoad(current,wanted,[{...approaching[0],lane:54.75,direction:-1}]),true);
 });
 
@@ -79,12 +80,12 @@ test('R16B relocation adjoins REAR facade of extension, with road clearance',()=
  assert.match(scene,/\{x:18\.15,z:1\.4,angle:Math\.PI\/2\}/);
 });
 
-test('PWA refresh includes imported helpers and R16B venue URLs',()=>{
- assert.match(sw,/sillapa-public-v19-3d-r16b-20261017/);
+test('PWA refresh includes imported helpers and R16C venue URLs',()=>{
+ assert.match(sw,/sillapa-public-v20-3d-r16c-20261017/);
  assert.match(sw,/venues\/traffic-r16\.mjs/);
  assert.match(sw,/venues\/vehicle-models-r16b\.mjs/);
  assert.match(scene,/import \{computeHighwayProgress,canEnterMainRoad\}/);
  const index=readFileSync(new URL('../index.html',import.meta.url),'utf8');
- assert.match(index,/venue=kanchanaburi-pesa4&v=r16b/);
- assert.match(index,/venue=anuban-bophloi&v=r16b/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r16c/);
+ assert.match(index,/venue=anuban-bophloi&v=r16c/);
 });

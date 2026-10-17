@@ -13,7 +13,13 @@ export function computeHighwayProgress(vehicles, mergedOccupants, dt, safeHeadwa
     }
     const x=roadX(car,current);
     for (const occupant of mergedOccupants) {
-      if (Math.abs(occupant.z-car.lane)>2.1) continue;
+      // R16C: a vehicle that has committed to leaving the gate occupies
+      // the eastbound merge zone BEFORE its center reaches lane Z=49.25.
+      // Protect its full turning body from rear traffic, but never make
+      // public traffic yield for a car that is still WAITING at the stop line.
+      const inLane=Math.abs(occupant.z-car.lane)<=2.1;
+      const entering=occupant.exitMerge===true&&car.direction===1&&car.lane===49.25;
+      if (!inLane&&!entering) continue;
       const ahead=(occupant.x-x)*car.direction;
       if (ahead>=0&&ahead<car.travel/2) clearance=Math.min(clearance,ahead);
     }
@@ -23,16 +29,23 @@ export function computeHighwayProgress(vehicles, mergedOccupants, dt, safeHeadwa
   return updates;
 }
 
+// R16C: only the FIRST transition from the internal approach into the
+// committed exit curve requests a gap. Once the exit is committed, it must
+// keep moving through the junction while road users behind follow it.
+// Keeping the stop center upstream ensures the longest internal van does
+// not stick its nose into the eastbound traffic lane while waiting.
 export function canEnterMainRoad(currentPose, wantedPose, highway, gateX=15.5, safeGap=10) {
   if (!wantedPose.visible||!wantedPose.onHighway) return true;
-  // Once committed beyond the junction, the exit vehicle must clear the lane.
-  if (currentPose.visible&&currentPose.onHighway&&currentPose.point.x>=15.2&&currentPose.point.z>=48.6) return true;
-  // Before the junction, yield to moving eastbound traffic; never hold that traffic.
-  if (wantedPose.point.z<46.5&&(!currentPose.visible||currentPose.point.z<46.5)) return true;
+  if (currentPose.visible&&currentPose.onHighway) return true;
+  const rearClearance=safeGap+3;   // approaching traffic must have room to brake
+  const frontClearance=safeGap-1;  // eastbound traffic ahead continues away
   for (const car of highway) {
     if (car.direction!==1||Math.abs(car.lane-49.25)>2) continue;
     const x=-car.travel/2+car.highwayProgress;
-    if (Math.abs(x-gateX)<safeGap+Math.min(1,car.speed*.1)) return false;
+    const behind=gateX-x;
+    const ahead=x-gateX;
+    if ((behind>=0&&behind<rearClearance)
+      ||(ahead>=0&&ahead<frontClearance))return false;
   }
   return true;
 }

@@ -315,7 +315,7 @@ function decorateDistrict(){
  for(const x of [d.gate.entryX,d.gate.exitX]){
   slab(5,7.5,x,43.75,'#81888a',.19);
   // Give way marking before joining the public road.
-  slab(4.5,.12,x,46.2,'#f5efdd',.275);
+  slab(4.5,.12,x,x===d.gate.exitX?43.8:46.2,'#f5efdd',.275); // upstream exit stop line
  }
  // Direction arrows: entrance LEFT travels toward buildings (-Z); exit RIGHT travels toward road 3342 (+Z).
  // These are decorative road markings, not clickable meshes or vehicle simulation.
@@ -876,8 +876,8 @@ function addDistrictVehicles(activityCount){
   [[-13,45.8],[-13,33],[-10,29.7],[-5.4,30.0],[-3.5,31],[-3.5,33.4],[-3.5,36]]
  ];
  const departures=[
-  [[-7,30.7],[-8.3,29.7],[-10,26],[-10,22],[0,22],[10,22],[13,26],[13,40],[13,45.8]],
-  [[-3.5,30.7],[-5.8,29.3],[-9.2,25],[-10,22],[0,22],[10,22],[13,26],[13,40],[13,45.8]]
+  [[-7,30.7],[-8.3,29.7],[-10,26],[-10,22],[0,22],[10,22],[13,26],[13,40],[13,43.8]],
+  [[-3.5,30.7],[-5.8,29.3],[-9.2,25],[-10,22],[0,22],[10,22],[13,26],[13,40],[13,43.8]]
  ];
  for(let i=0;i<2;i++){
   const model=makeDistrictCar(colors[(i+4)%colors.length],i===0);
@@ -898,7 +898,7 @@ function addDistrictVehicles(activityCount){
   [-13,45.8],[-13,34],[-13,24],[-9.7,22],[-3,22],[2,22],[5.5,22]
  ]);
  const fromBuilding=pointsToCurve([
-  [5.5,22],[10,22],[13,26],[13,38],[13,45.8]
+  [5.5,22],[10,22],[13,26],[13,38],[13,43.8]
  ]);
  const buildingPassengers=[];
  for(let i=0;i<4;i++){
@@ -913,13 +913,13 @@ function addDistrictVehicles(activityCount){
   [3.4,-27],[3.4,-31],[3.4,-35]
  ]);
  const rearDeparture=pointsToCurve([
-  [3.4,-29.5],[7,-27],[10,-27],[13,-23],[13,5],[13,30],[13,45.8]
+  [3.4,-29.5],[7,-27],[10,-27],[13,-23],[13,5],[13,30],[13,43.8]
  ]);
  const rearPickup=makeBlueLowPolyPickup();root.add(rearPickup);
  buses.push({model:rearPickup,route:'rear-parking',arrive:rearApproach,
   depart:rearDeparture,bay:[3.4,-35],progress:.37,speed:.008});
  // Exiting vehicles connect to the eastbound highway lane after the right gate.
- const exitCurve=pointsToCurve([[13,45.8],[13,47.4],[15.5,49.25],[27,49.25],[49,49.25]]);
+ const exitCurve=pointsToCurve([[13,43.8],[13,47.4],[15.5,49.25],[27,49.25],[49,49.25]]);
  for(const car of buses)if(car.route!=='main-road')car.exitCurve=exitCurve;
  // Independent highway traffic keeps its lanes and minimum longitudinal spacing.
  addMainRoadTraffic(root);
@@ -1063,12 +1063,20 @@ function animateDistrictVehicles(t){
      const current=trafficPose(b,b.progress);
      const otherCurrent=trafficPose(other,other.progress);
      const gap=wanted.point.distanceTo(pose.point);
+     // The shared exit lane needs body-length headway, not merely a
+     // center-to-center point distance for sedan versus long van.
+     const sameExit=wanted.point.x>10&&pose.point.x>10
+       &&wanted.point.z>34&&pose.point.z>34;
+     const gapLimit=sameExit
+       ?((b.model.userData.vehicleLength||3.9)
+        +(other.model.userData.vehicleLength||3.9))/2+1
+       :3.6;
      const currentGap=current.visible&&otherCurrent.visible
        ?current.point.distanceTo(otherCurrent.point):Infinity;
      const crossing=current.visible&&otherCurrent.visible
        &&wanted.point.distanceTo(otherCurrent.point)<3.6
        &&pose.point.distanceTo(current.point)<3.6;
-     if(gap<3.6||crossing||(currentGap<3.6&&gap<currentGap)){
+     if(gap<gapLimit||crossing||(currentGap<gapLimit&&gap<currentGap)){
       blocked=true;break;
      }
     }
@@ -1088,13 +1096,14 @@ function animateDistrictVehicles(t){
   accepted.set(b,pose);
   animateDropoffPassengers(b,b.progress);
  }
- // R16: highway traffic has priority over the uncommitted exit queue.
- // Once merged, the exiting car becomes a moving occupant that other cars
- // follow; neither side waits for the other to start at the same stop line.
+ // R16C: highway cars have priority until the exit vehicle ACCEPTS a
+ // safe opening at the stop line. From that point onward, its whole
+ // turning envelope is reserved and following cars hold a safe headway.
+ // A car still waiting upstream is never registered as a lane occupant.
  const mergedOccupants=internal
   .map(b=>trafficPose(b,b.progress))
-  .filter(p=>p.visible&&p.onHighway&&p.point.x>=15.2&&p.point.z>=48.6)
-  .map(p=>({x:p.point.x,z:p.point.z}));
+  .filter(p=>p.visible&&p.onHighway&&p.point.x>=12&&p.point.z>=43.7)
+  .map(p=>({x:p.point.x,z:p.point.z,exitMerge:true}));
  const updates=computeHighwayProgress(highway,mergedOccupants,dt);
  for(const b of highway){
   b.highwayProgress=updates.get(b);
