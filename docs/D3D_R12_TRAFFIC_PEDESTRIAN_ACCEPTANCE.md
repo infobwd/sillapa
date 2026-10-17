@@ -1,6 +1,6 @@
 # D3D-R12 — Traffic and Pedestrian Acceptance
 
-Status: IN PROGRESS — audit branch created; implementation and browser acceptance pending.
+Status: IN PROGRESS — initial vehicle spacing/merge code committed; pedestrian changes and browser acceptance pending.
 
 ## Baseline
 - Repository: infobwd/sillapa, based on main after D3D-R11 (#69, 8fe2477).
@@ -28,3 +28,8 @@ Status: IN PROGRESS — audit branch created; implementation and browser accepta
 - Traffic/people/roof toggles, building click-to-focus and mobile detail panel still work.
 - Static checks and a real WebGL browser visual pass documented separately. Do not mark PASS before browser acceptance.
 - No changes to `history73.json` or scoring and registration logic.
+
+## Implementation log — 17 October 2026
+- Updated `venues/schematic-3d.html` in R12 branch to inspect current and candidate internal-vehicle positions and prevent close-gap swaps.
+- Added highway give-way check against both current and candidate merge positions.
+- Remaining: verify route transitions, pickup clearance, pedestrian flow and browser WebGL playback. These are **not accepted yet**.
