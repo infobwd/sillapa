@@ -77,7 +77,7 @@ export function makeModernSedan(color='#3375b7'){
  box(g,1.53,.18,.10,trim,0,.59,1.70);
  lights(g,1.67,-1.77,1.74,.94,.95);
  wheels(g,.85,[-1.05,1.08],.36);
- g.userData.vehicleKind='sedan';g.userData.vehicleLength=3.50;
+ g.userData.vehicleKind='sedan';g.userData.vehicleLength=3.50;g.userData.vehicleWidth=1.67;
  return g;
 }
 
@@ -106,7 +106,7 @@ export function makeModernVan(color='#eff1f0'){
  box(g,1.74,.20,.13,trim,0,.56,2.19);
  lights(g,1.9,-2.22,2.19,1.08,1.11);
  wheels(g,.95,[-1.31,1.34],.39);
- g.userData.vehicleKind='van';g.userData.vehicleLength=4.4;
+ g.userData.vehicleKind='van';g.userData.vehicleLength=4.4;g.userData.vehicleWidth=1.92;
  return g;
 }
 
@@ -140,7 +140,7 @@ export function makeModernBlueBus(color='#2670b8'){
  box(g,1.82,.13,.08,chrome,0,.53,-3.56);
  box(g,1.93,.12,6.50,chrome,0,2.77,0); // streamlined roof highlight
  wheels(g,1.1,[-2.10,2.20],.48);
- g.userData.vehicleKind='bus';g.userData.vehicleLength=7.10;
+ g.userData.vehicleKind='bus';g.userData.vehicleLength=7.10;g.userData.vehicleWidth=2.16;
  return g;
 }
 
@@ -174,6 +174,6 @@ export function makeTenWheelFreightTruck(){
  }
  wheels(g,1.08,[-2.78],.48,false);
  wheels(g,1.10,[1.18,2.82],.47,true); // 2 singles + 8 dual wheels
- g.userData.vehicleKind='truck10';g.userData.vehicleLength=7.7;
+ g.userData.vehicleKind='truck10';g.userData.vehicleLength=7.7;g.userData.vehicleWidth=2.20;
  return g;
 }
