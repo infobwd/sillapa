@@ -34,7 +34,7 @@ const NODES=Object.freeze({
  b1Corridor: [3.60,10.8,2.6],
  meeting2: [2.70,9.75,2.6],
  rearEast: [6.12,-11.5,0],
- building2: [5.45,-11.5,0]
+ building2: [6.35,-11.5,0]
 });
 const LINKS=Object.freeze([
  ['dropoff','shoulder'],['shoulder','walk16'],['walk16','east118'],
