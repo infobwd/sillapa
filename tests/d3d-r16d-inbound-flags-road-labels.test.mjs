@@ -118,7 +118,7 @@ test('four welcome pennants flutter in Thai flag animation loop',()=>{
  assert.match(scene,/const width=cloth\.userData\.flagWidth\|\|2\.45/);
  assert.match(scene,/const phase=cloth\.userData\.windPhase\|\|0/);
  assert.match(scene,/pos\.setZ\(i,free\*free\*ripple\)/);
- assert.match(scene,/function dispose\(\)\{venueBadges\.length=0;walkers\.length=0;buses\.length=0;flagCloths\.length=0/);
+ assert.match(scene,/function dispose\(\)\{if\(studentTourOn\)stopStudentTour\(\);studentTourGroup=null;studentTourFigures=\[\];venueBadges\.length=0;walkers\.length=0;buses\.length=0;flagCloths\.length=0/);
 });
 
 test('Road 3342 direction labels point right to U Thong and left to Bo Phloi',()=>{
