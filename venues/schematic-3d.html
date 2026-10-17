@@ -1324,7 +1324,12 @@ function animateDistrictVehicles(t){
      if(other===b)continue;
      const pose=accepted.get(other)||trafficPose(other,other.progress);
      if(vehicleFootprintOverlap(b,wanted,other,pose)){
-      blocked=true;break;
+      // Never deadlock a lead vehicle because a following car encroaches on
+      // its turning envelope. Let it move AWAY; brake the car closing the gap.
+      const current=trafficPose(b,b.progress);
+      const oldGap=current.point.distanceTo(pose.point);
+      const nextGap=wanted.point.distanceTo(pose.point);
+      if(nextGap<oldGap+0.002){blocked=true;break;}
      }
     }
    }
