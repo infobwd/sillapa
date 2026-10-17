@@ -52,9 +52,9 @@ test('R19B vehicles, R17B student route and R18 interaction retained',()=>{
  assert.match(scene,/function animateWayfindingFollow\(t\)/);
 });
 test('PWA v29 refreshes helper and both venue deep links',()=>{
- assert.match(sw,/sillapa-public-v31-3d-r20b1-20261018/);
+ assert.match(sw,/sillapa-public-v32-3d-r20c-20261018/);
  assert.match(sw,/venues\/visual-r20a\.mjs/);
  assert.match(sw,/venues\/junction-r19b\.mjs/);
- assert.match(index,/venue=kanchanaburi-pesa4&v=r20b1/);
- assert.match(index,/venue=anuban-bophloi&v=r20b1/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r20c/);
+ assert.match(index,/venue=anuban-bophloi&v=r20c/);
 });

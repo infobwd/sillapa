@@ -61,3 +61,7 @@ Owner-requested 3D style refresh based on an illustrative external screenshot: p
 ## R20B — informational overlay (18 October 2026)
 
 This separate visual subphase adds toggleable 3D building labels, historical edition-73 activity badges and **schematic-only** district service POIs. No official 74 readiness/count/source linkage or registration/scoring. Original D3D-R20 verified-data linkage remains independently gated. See `docs/D3D_R20B_VENUE_OVERLAY_ACCEPTANCE.md` for Local-First/device checks before owner Merge.
+
+## D3D-R20C historical executive UI and subdued forecourt — 18 October 2026
+
+A visual-only historical dashboard from **edition-73** source rows is separated from the original D3D-R20 publication gate. No verified edition-74 readiness, live team/staff/crowd KPI or official venue source data is claimed. The owner also requested reducing brightness of the existing forecourt behind the flagpole, so only the original surface colour and parking stripe tint are changed; all 3D geometry/traffic/student coordinates remain unchanged. See `docs/D3D_R20C_EXECUTIVE_DASHBOARD_ACCEPTANCE.md`. Local-First real-device acceptance PENDING.
