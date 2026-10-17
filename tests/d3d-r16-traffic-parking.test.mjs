@@ -58,12 +58,10 @@ test('main-road vehicle follows only an already-merged occupant',()=>{
 
 test('Building 1 paths bypass the actual sign x ±5.65 at z=12.6',()=>{
  assert.match(scene,/\[\[6\.12,16\.42\],\[6\.12,15\.3\],\[6\.12,14\.7\]/);
- assert.match(scene,/const bypassX=6\.09\+j\*\.055/);
- for(let passenger=0;passenger<4;passenger++){
-  const x=6.09+passenger*.055;
-  assert.ok(x-.2>5.65,'body clears sign');
-  assert.ok(x+.2<6.475,'body stays outside pavilion edge');
- }
+ assert.match(scene,/fromVanToRegistrationWaypoints\(j\)/);
+ const x=6.12; // every van passenger now shares the protected bypass
+ assert.ok(x-.2>5.65,'body clears sign');
+ assert.ok(x+.2<6.475,'body stays outside pavilion edge');
  assert.match(scene,/const bypass=isDistrict&&\(routeIndex===0\|\|routeIndex===1\)/);
 });
 
