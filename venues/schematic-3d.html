@@ -116,6 +116,13 @@ function building(label,i,total,isDistrict,competitionCount=0){const key=label.n
    add(new THREE.BoxGeometry(.13,.45,.82),'#93bed0',-1.78,base+2.04,zz,false);
   }
  }
+ // R17: upper-floor destination cue adjacent to the Building 1 stair.
+ // This is schematic and must not be used for real wayfinding.
+ if(key==='อาคาร1'){
+  const upperEntry=makeBuildingLabel('ห้องประชุม ชั้น 2 (จำลอง)',3.15);
+  upperEntry.position.set(-2.8,3.15,5.7);
+  upperEntry.scale.set(3.6,.86,1);group.add(upperEntry);
+ }
  // Upper-storey rooms: distinguish each room with wall piers, door frames, window panes and number plates.
  for(let bay=0;bay<7;bay++){
   const zz=-6+bay*2;
@@ -234,6 +241,41 @@ function building(label,i,total,isDistrict,competitionCount=0){const key=label.n
    cone.position.set(xx,y,-4.26);group.add(cone);
   }
  }
+ // R17: simulated check-in counters on the WEST end of the dome, away
+ // from the existing stage and chairs. Not an actual registration service.
+ const reception=new THREE.Group();group.add(reception);
+ const receptionWood=new THREE.MeshStandardMaterial({color:'#b98762',roughness:.86});
+ const receptionBase=new THREE.MeshStandardMaterial({color:'#e6d8c7',roughness:.89});
+ const receptionFrame=new THREE.MeshStandardMaterial({color:'#506b78',roughness:.85});
+ function receptionBox(w,h,d,x,y,z,material){
+  const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
+  m.position.set(x,y,z);reception.add(m);return m;
+ }
+ const staffRoot=new THREE.Group();staffRoot.visible=peopleVisible;
+ group.add(staffRoot);registrationStaff.push(staffRoot);
+ for(const lane of [-1.75,1.75]){
+  receptionBox(2.35,.12,.78,lane,.91,4.12,receptionWood);
+  receptionBox(2.1,.70,.15,lane,.53,3.94,receptionBase);
+  for(const side of [-1,1])
+   receptionBox(.10,.82,.65,lane+side*1.04,.47,4.11,receptionFrame);
+  receptionBox(.53,.035,.39,lane+.40,.99,4.08,
+   new THREE.MeshStandardMaterial({color:'#f6f5eb'}));
+  receptionBox(.46,.055,.07,lane-.43,1.02,4.11,receptionFrame);
+  const staff=makeDropoffPerson(true,Math.round(lane+3));
+  staff.visible=true;staff.scale.set(1.14,1.14,1.14);
+  staff.position.set(lane,.3,3.05);staff.rotation.y=Math.PI;
+  staffRoot.add(staff);
+  // Physical queue markers in both lanes, aligned with passenger slots.
+  for(const distance of [5.0,5.65,6.30]){
+   const mark=new THREE.Mesh(new THREE.CircleGeometry(.24,16),
+    new THREE.MeshBasicMaterial({color:'#f1dca9',side:THREE.DoubleSide}));
+   mark.rotation.x=-Math.PI/2;mark.position.set(lane,.288,distance);
+   reception.add(mark);
+  }
+ }
+ const receptionLabel=makeBuildingLabel('ลงทะเบียน (จำลอง)',2.75);
+ receptionLabel.position.set(0,2.75,6.55);
+ receptionLabel.scale.set(4.1,1.05,1);group.add(receptionLabel);
  // Photo-referenced welcome backdrop: a readable banner with floral decoration.
  const welcomeCanvas=document.createElement('canvas');
  welcomeCanvas.width=1024;welcomeCanvas.height=512;
@@ -1263,7 +1305,7 @@ function advanceCameraFlight(t){
 controls.addEventListener('start',()=>{cameraFlight=null});
 function show(v){dispose();tags.replaceChildren();const district=v.id==='kanchanaburi-pesa4';const roofToggle=document.querySelector('#toggleRoofs');roofToggle.disabled=!district;roofToggle.title=district?'ซ่อนหลังคาอาคาร 1 เพื่อดูห้องประชุมชั้นบน และเปิดหลังคากลับได้':'ใช้กับผังสำนักงานเขตพื้นที่ฯ';const busToggle=document.querySelector('#toggleTraffic');busToggle.disabled=!district;busToggle.title=district?'เปิดหรือปิดรถจำลอง (ไม่ใช่จำนวนรถจริง)':'ยังไม่มีถนนสำหรับจำลองรถในสนามนี้';busToggle.textContent=district?(trafficEnabled?'🚗 เปิด':'🚗 ปิด'):'🚗 รอผังถนน';if(district){decorateDistrict();camera.position.set(59,78,90);controls.target.set(0,0,0);controls.update()}else{camera.position.set(25,29,33);controls.target.set(0,0,0);controls.update()}const activityCount=v.rows.length;addWalkers(district,activityCount);if(district)addDistrictVehicles(activityCount);panel.classList.remove('open');panel.replaceChildren();list.replaceChildren();details.replaceChildren();heading.textContent='เลือกอาคาร';info.textContent=(v.id==='kanchanaburi-pesa4'?'ผังจำลอง: อาคารเรียงแนวลึก ขนานถนน 3342 (ยังไม่ยืนยันตำแหน่งจริง)':'อาคารในฉากจัดเรียงเพื่อสาธิตเท่านั้น')+' · อ้างอิงรายการย้อนหลัง '+activityCount+' รายการ · คน รถ และเส้นทางเป็นภาพจำลอง ไม่ใช่จำนวนผู้เข้าร่วม รถจริง หรือผังจราจรที่ยืนยัน · แตะอาคารหรือเลือกชื่ออาคารเพื่อซูมดูรายละเอียด'+(district?' · กดปุ่ม 🏠 หลังคา เพื่อดูห้องประชุมชั้นบนอาคาร 1':'');const groups=new Map();for(const row of v.rows){const label=row.building||'ไม่ระบุอาคาร';const key=label.normalize('NFKC').replace(/\s+/g,'').toLowerCase();if(!groups.has(key))groups.set(key,{label,rows:[]});groups.get(key).rows.push(row)}const entries=[...groups.values()];entries.forEach((g,i)=>{building(g.label,i,entries.length,v.id==='kanchanaburi-pesa4',g.rows.length);const btn=document.createElement('button');btn.textContent=g.label+' ('+g.rows.length+' รายการ)';btn.addEventListener('click',()=>choose(g));list.append(btn);if(v.id==='kanchanaburi-pesa4'){const tag=document.createElement('button');tag.textContent=g.label+' · '+g.rows.length+' รายการ';tag.addEventListener('click',()=>choose(g));tags.append(tag)}});function choose(g){flyToBuilding(g.label);heading.textContent=g.label+' — ครั้งที่ 73';info.textContent=g.rows.length+' รายการแข่งขันย้อนหลัง';details.replaceChildren();const ul=document.createElement('ul');for(const x of g.rows){const li=document.createElement('li');li.textContent=x.activity+' · '+[x.floor,x.room].filter(Boolean).join(' / ');ul.append(li)}details.append(ul);panel.replaceChildren();const close=document.createElement('button');close.textContent='ปิด ×';close.setAttribute('aria-label','ปิดรายการแข่งขันบนโมเดล');close.addEventListener('click',()=>panel.classList.remove('open'));const head=document.createElement('h3');head.textContent=g.label+' · '+g.rows.length+' รายการ';const hint=document.createElement('p');hint.textContent='รายการย้อนหลังครั้งที่ 73 (ไม่ใช่กำหนดการครั้งที่ 74)';const modelList=ul.cloneNode(true);panel.append(close,head,hint,modelList);panel.classList.add('open')}active={groups,choose}}
 document.querySelector('#zoomIn').addEventListener('click',()=>{cameraFlight=null;const delta=camera.position.clone().sub(controls.target).multiplyScalar(.82);camera.position.copy(controls.target).add(delta);controls.update()});document.querySelector('#zoomOut').addEventListener('click',()=>{cameraFlight=null;const delta=camera.position.clone().sub(controls.target).multiplyScalar(1.2);camera.position.copy(controls.target).add(delta);controls.update()});document.querySelector('#topView').addEventListener('click',()=>{cameraFlight=null;const district=select.value==='kanchanaburi-pesa4';camera.position.set(0,district?130:55,.01);controls.target.set(0,0,0);controls.update()});document.querySelector('#resetView').addEventListener('click',()=>{cameraFlight=null;const district=select.value==='kanchanaburi-pesa4';camera.position.set(...(district?[59,78,90]:[25,29,33]));controls.target.set(0,0,0);controls.update()});camera.position.set(25,29,33);renderer.domElement.addEventListener('click',e=>{const rect=renderer.domElement.getBoundingClientRect();pointer.set((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);ray.setFromCamera(pointer,camera);const hit=ray.intersectObjects(meshes)[0];if(hit&&active){const label=hit.object.userData.label;const key=label.normalize('NFKC').replace(/\s+/g,'').toLowerCase();active.choose(active.groups.get(key))}});
-document.querySelector('#toggleRoofs').addEventListener('click',e=>{roofVisible=!roofVisible;for(const roof of officeRoofs)roof.visible=roofVisible;e.currentTarget.setAttribute('aria-pressed',String(roofVisible));e.currentTarget.textContent=roofVisible?'🏠 หลังคา':'🏠 ดูชั้น 2'});document.querySelector('#toggleTraffic').addEventListener('click',e=>{trafficEnabled=!trafficEnabled;e.currentTarget.setAttribute('aria-pressed',String(trafficEnabled));e.currentTarget.textContent=trafficEnabled?'🚗 เปิด':'🚗 ปิด';for(const o of objects)if(o.userData.vehicles||o.userData.dropoffPeople)o.visible=trafficEnabled&&(o.userData.dropoffPeople?peopleVisible:true)});document.querySelector('#togglePeople').addEventListener('click',e=>{peopleVisible=!peopleVisible;e.currentTarget.setAttribute('aria-pressed',String(peopleVisible));e.currentTarget.textContent=peopleVisible?'👥 เปิด':'👥 ปิด';for(const o of objects)if(o.userData.people||o.userData.dropoffPeople)o.visible=peopleVisible&&(o.userData.dropoffPeople?trafficEnabled:true)});function resize(){const w=mount.clientWidth,h=mount.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(mount);resize();function loop(){const t=clock.getElapsedTime();if(peopleVisible)animateWalkers(t);animateBuses(t);animateRoadArrows(t);animateFlag(t);advanceCameraFlight(t);controls.update();updateVenueBadgeVisibility();renderer.render(scene,camera)}renderer.setAnimationLoop(loop);
+document.querySelector('#toggleRoofs').addEventListener('click',e=>{roofVisible=!roofVisible;for(const roof of officeRoofs)roof.visible=roofVisible;e.currentTarget.setAttribute('aria-pressed',String(roofVisible));e.currentTarget.textContent=roofVisible?'🏠 หลังคา':'🏠 ดูชั้น 2'});document.querySelector('#toggleTraffic').addEventListener('click',e=>{trafficEnabled=!trafficEnabled;e.currentTarget.setAttribute('aria-pressed',String(trafficEnabled));e.currentTarget.textContent=trafficEnabled?'🚗 เปิด':'🚗 ปิด';for(const o of objects)if(o.userData.vehicles||o.userData.dropoffPeople)o.visible=trafficEnabled&&(o.userData.dropoffPeople?peopleVisible:true)});document.querySelector('#togglePeople').addEventListener('click',e=>{peopleVisible=!peopleVisible;e.currentTarget.setAttribute('aria-pressed',String(peopleVisible));e.currentTarget.textContent=peopleVisible?'👥 เปิด':'👥 ปิด';for(const o of objects)if(o.userData.people||o.userData.dropoffPeople)o.visible=peopleVisible&&(o.userData.dropoffPeople?trafficEnabled:true);for(const staff of registrationStaff)staff.visible=peopleVisible});function resize(){const w=mount.clientWidth,h=mount.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(mount);resize();function loop(){const t=clock.getElapsedTime();if(peopleVisible)animateWalkers(t);animateBuses(t);animateRoadArrows(t);animateFlag(t);advanceCameraFlight(t);controls.update();updateVenueBadgeVisibility();renderer.render(scene,camera)}renderer.setAnimationLoop(loop);
 // Load venue data independently of external fonts; redraw canvas labels when Kanit arrives.
 const refreshLabels=()=>{if(venues.length){const v=venues.find(x=>x.id===select.value);if(v)show(v)}};
 document.fonts.load('700 45px Kanit','อาคาร ยินดีต้อนรับ').then(()=>document.fonts.load('700 105px Kanit','ยินดีต้อนรับ').then(()=>document.fonts.load('600 49px Kanit','สนามแข่งขัน'))).then(refreshLabels).catch(()=>{});
