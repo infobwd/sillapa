@@ -1077,13 +1077,49 @@ function addDistrictVehicles(activityCount){
  lastVehicleUpdate=null;
 }
 let lastVehicleUpdate=null;
-function highwayExitPose(b,q,start){
- const u=Math.max(0,Math.min(.999,(q-start)/(.94-start)));
- const point=b.exitCurve.getPointAt(u),dir=b.exitCurve.getTangentAt(u);
- return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI,onHighway:true};
+// D3D-R12: departure uses a protected road-gap reservation, then cruises at
+// the *same physical speed* as main-road traffic to avoid a following vehicle catching it.
+const MAIN_ROAD_SPEED=2.9;
+const HIGHWAY_JOIN_X=15.5;
+let roadSimTime=0;
+function mainRoadX(b,time){
+ const travelled=(time*b.speed+b.phase*b.travel)%b.travel;
+ return b.direction===1?-b.travel/2+travelled:b.travel/2-travelled;
+}
+function visibleRoadCar(b,time){
+ const x=mainRoadX(b,time);
+ return {x,z:b.lane,length:b.length||3.6,visible:Math.abs(x)<49};
+}
+function highwayGapAvailable(b,time){
+ // Check the expected *future* join point, not just where traffic is now.
+ // Reserve room for the full length of a ten-wheel truck and the entering car.
+ const future=time+2.7;
+ for(const roadCar of buses){
+  if(roadCar.route!=='main-road'||roadCar.direction!==1)continue;
+  const x=mainRoadX(roadCar,future);
+  const gap=(roadCar.length+(b.length||3.5))/2+5.7;
+  if(Math.abs(x-HIGHWAY_JOIN_X)<gap)return false;
+ }
+ // Only one vehicle may use the turn-in at a time.
+ for(const other of buses){
+  if(other===b||other.route==='main-road')continue;
+  if(other.exitMode==='turn')return false;
+  if(other.exitMode==='cruise'&&Math.abs(other.exitX-HIGHWAY_JOIN_X)<(other.length||3.5)+9)return false;
+ }
+ return true;
 }
 function trafficPose(b,q){
  const hidden={visible:false,point:new THREE.Vector3(-100,0,-100),yaw:0};
+ if(b.exitMode==='done')return hidden;
+ if(b.exitMode==='turn'){
+  const u=Math.min(.999,b.turnProgress);
+  const point=b.turnCurve.getPointAt(u),dir=b.turnCurve.getTangentAt(u);
+  return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
+ }
+ if(b.exitMode==='cruise'){
+  return {visible:b.exitX<49,point:new THREE.Vector3(b.exitX,0,49.25),
+   yaw:-Math.PI/2,onHighway:true};
+ }
  if(q>=.94)return hidden;
  if(b.route==='rear-parking'){
   if(q<.40){
@@ -1098,7 +1134,7 @@ function trafficPose(b,q){
    const u=(q-.64)/.14,point=b.depart.getPointAt(u),dir=b.depart.getTangentAt(Math.min(.999,u));
    return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
   }
-  return highwayExitPose(b,q,.78);
+  return {visible:true,point:new THREE.Vector3(13,0,45.8),yaw:Math.PI};
  }
  if(b.route==='front-park'){
   if(q<.29){
@@ -1113,22 +1149,26 @@ function trafficPose(b,q){
    const u=(q-.62)/.14,point=b.depart.getPointAt(u),dir=b.depart.getTangentAt(Math.min(.999,u));
    return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
   }
-  return highwayExitPose(b,q,.76);
+  return {visible:true,point:new THREE.Vector3(13,0,45.8),yaw:Math.PI};
  }
- if(b.route==='building-dropoff'){
-  if(q<.38){
-   const u=q/.38,point=b.arrive.getPointAt(u),dir=b.arrive.getTangentAt(Math.min(.999,u));
+ if(b.route==='building-dropoff'||b.route==='pickup-school'){
+  const pickup=b.route==='pickup-school';
+  const arrivingEnd=pickup?.35:.38,waitingEnd=pickup?.56:.59;
+  if(q<arrivingEnd){
+   const u=q/arrivingEnd,point=b.arrive.getPointAt(u),dir=b.arrive.getTangentAt(Math.min(.999,u));
    return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
   }
-  if(q<.59){
+  if(q<waitingEnd){
    const point=b.arrive.getPointAt(1),dir=b.arrive.getTangentAt(.999);
    return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
   }
-  if(q<.76){
-   const u=(q-.59)/.17,point=b.depart.getPointAt(u),dir=b.depart.getTangentAt(Math.min(.999,u));
+  if(q<b.exitStart){
+   const u=(q-waitingEnd)/(b.exitStart-waitingEnd);
+   const point=b.depart.getPointAt(Math.min(.999,u));
+   const dir=b.depart.getTangentAt(Math.min(.999,u));
    return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
   }
-  return highwayExitPose(b,q,.76);
+  return {visible:true,point:new THREE.Vector3(13,0,45.8),yaw:Math.PI};
  }
  return hidden;
 }
