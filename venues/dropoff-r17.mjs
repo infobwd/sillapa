@@ -1,6 +1,12 @@
 // D3D-R17 — small pure helpers for the illustrative drop-off and dome flow.
 // Schematic coordinates only; neither an official traffic nor check-in plan.
 export const DROP_OFF_BAY=Object.freeze({x:7,z:18.55,vehicleLength:4.4,vehicleWidth:1.92});
+export const BUILDING_DROPOFF_TIMING=Object.freeze({
+ arrivalEnd:.38,dwellEnd:.465,departEnd:.665
+});
+export const FRONT_PARK_TIMING=Object.freeze({
+ arrivalEnd:.29,reverseStart:.39,reverseEnd:.47,departEnd:.62
+});
 export const DOME_QUEUES=Object.freeze([
  Object.freeze({z:-5.75,deskX:3.21}),
  Object.freeze({z:-2.25,deskX:3.21})
