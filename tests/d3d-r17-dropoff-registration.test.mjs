@@ -60,7 +60,7 @@ test('drop-off vehicle pulls off cross-road and uses a marked waiting bay',()=>{
  assert.match(scene,/slab\(7\.2,2\.55,6\.65,18\.55/);
  assert.match(scene,/slab\(7\.4,\.72,6\.7,16\.88/);
  assert.match(scene,/inBayZone&&bodyBlocked/);
- assert.match(scene,/mustYieldAtDropoff\(wanted,pose/);
+ assert.match(scene,/shouldHoldDropoffRelease\(current,wanted,pose/);
  assert.match(scene,/for\(const staff of registrationStaff\)staff\.visible=peopleVisible/);
 });
 
