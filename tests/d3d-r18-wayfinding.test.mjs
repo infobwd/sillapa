@@ -135,6 +135,7 @@ test('URL fragment validates known identifiers and supports browser back',()=>{
  assert.equal(wayfindingHash('invalid','registration'),'');
  assert.match(scene,/location\.hash=hash/);
  assert.match(scene,/window\.addEventListener\('hashchange',applyWayfindingHash\)/);
+ assert.match(scene,/function applyWayfindingHash\(\)\{\s*if\(studentTourOn\)stopStudentTour\(\)/);
  assert.match(scene,/function applyWayfindingHash\(\)/);
 });
 
@@ -149,6 +150,7 @@ test('accessible selector/buttons, active route control and disabled second venu
  assert.match(scene,/wayfindingTo\.value='registration'/);
  assert.match(scene,/setWayfindingControlsAvailability\(false\)/);
  assert.match(scene,/if\(district\)createWayfindingPins\(\);applyWayfindingHash\(\)/);
+ assert.match(scene,/setWayfindingControlsAvailability\(false\);\s*document\.addEventListener\('keydown'/);
  assert.match(scene,/function setWayfindingSelection\(from,to\)/);
  assert.match(scene,/const routeStop=buildingWayfindingStop\(g\.label\)/);
  assert.match(scene,/const pin=hit\.object\.userData\.wayfindingStop/);
