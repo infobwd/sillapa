@@ -103,8 +103,8 @@ test('outbound / inbound highway guards and passenger path remain intact',()=>{
 });
 
 test('PWA R17A cache refresh and both shortcut URLs',()=>{
- assert.match(sw,/sillapa-public-v27-3d-r19-20261017/);
+ assert.match(sw,/sillapa-public-v28-3d-r19b-20261017/);
  assert.match(sw,/venues\/dropoff-r17\.mjs/);
- assert.match(index,/venue=kanchanaburi-pesa4&v=r19/);
- assert.match(index,/venue=anuban-bophloi&v=r19/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r19b/);
+ assert.match(index,/venue=anuban-bophloi&v=r19b/);
 });

@@ -92,10 +92,10 @@ test('10 vehicles on highway have two freight trucks and two blue buses',()=>{
  assert.ok(travel[1]/5>300,'westbound buses circulate');
 });
 test('R16C PWA retains R16B models and refreshes venue links',()=>{
- assert.match(sw,/sillapa-public-v27-3d-r19-20261017/);
+ assert.match(sw,/sillapa-public-v28-3d-r19b-20261017/);
  assert.match(sw,/venues\/traffic-r16\.mjs/);
  assert.match(sw,/venues\/vehicle-models-r16b\.mjs/);
  assert.match(sw,/m\?js/);
- assert.match(index,/venue=kanchanaburi-pesa4&v=r19/);
- assert.match(index,/venue=anuban-bophloi&v=r19/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r19b/);
+ assert.match(index,/venue=anuban-bophloi&v=r19b/);
 });

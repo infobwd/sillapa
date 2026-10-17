@@ -127,6 +127,7 @@ import {getQualityProfile,validQualityMode,limitAmbientCount,shouldDrawFrame,bou
 import {WAYFINDING_STOPS,WAYFINDING_NODE_COORDINATES,isWayfindingStop,buildingWayfindingStop,planWayfindingRoute,sampleWayfindingRoute,wayfindingHash,parseWayfindingHash} from './wayfinding-r18.mjs';
 import {computeHighwayProgress,canEnterMainRoad,canAdvanceInboundRoad} from './traffic-r16.mjs';
 import {makeModernSedan,makeModernVan,makeModernBlueBus,makeTenWheelFreightTruck} from './vehicle-models-r16b.mjs';
+import {dropoffJunctionEntry,selectDropoffJunctionOwner} from './junction-r19b.mjs';
 import {DROP_OFF_BAY,BUILDING_DROPOFF_TIMING,FRONT_PARK_TIMING,SAFE_ALIGHT_Z,fromVanToRegistrationWaypoints,shouldHoldFollowerAtDropoff,shouldVanWaitForLink,shouldHoldVehicleCorridor,inDropoffZone,shouldHoldDropoffRelease,registrationQueuePoint,toRegistrationWaypoints,fromRegistrationToBuildingWaypoints,registrationPhase} from './dropoff-r17.mjs';
 
 /* R19: update notification on the standalone 3D page (the main PWA
@@ -648,7 +649,9 @@ function decorateDistrict(){
  asphaltText('ถนนหมายเลข 3342',0,52,18.5,3.0,86);
  // Two continuous side roads; ONLY one transverse road in front of อาคาร 1.
  for(const x of d.sideRoadsX)slab(5,83,x,-1.5,'#777f83',.19);
- for(const z of d.frontRoadsZ)slab(38,4,0,z,'#81888a',.2);
+ // R19B: incoming van lane Z=22, outbound bay traffic Z=25.2;
+  // widen asphalt toward parking, retaining the safe curbside edge Z=20.
+  for(const z of d.frontRoadsZ)slab(38,7.5,0,z+1.75,'#81888a',.2);
  // R17: pull the van off the travelled eastbound cross-road (z=20..24).
  // The vehicle lies parallel to X at z=18.55, leaving the traffic lane free.
  slab(7.2,2.55,6.65,18.55,'#bdc2bf',.215);
@@ -1255,8 +1258,8 @@ function addDistrictVehicles(activityCount){
   [[-13,45.8],[-13,33],[-10,29.7],[-5.4,30.0],[-3.5,31],[-3.5,33.4],[-3.5,36]]
  ];
  const departures=[
-  [[-7,30.7],[-8.3,29.7],[-10,26],[-10,22],[0,22],[10,22],[13,26],[13,40],[13,43.8]],
-  [[-3.5,30.7],[-5.8,29.3],[-9.2,25],[-10,22],[0,22],[10,22],[13,26],[13,40],[13,43.8]]
+  [[-7,30.7],[-8.3,29.7],[-10,26],[-10,25.2],[0,25.2],[10,25.2],[13,29],[13,40],[13,43.8]],
+  [[-3.5,30.7],[-5.8,29.3],[-9.2,25],[-10,25.2],[0,25.2],[10,25.2],[13,29],[13,40],[13,43.8]]
  ];
  for(let i=0;i<2;i++){
   const model=makeDistrictCar(colors[(i+4)%colors.length],i===0);
@@ -1316,8 +1319,10 @@ function addDistrictVehicles(activityCount){
  peopleRoot.visible=trafficEnabled&&peopleVisible;peopleRoot.userData.dropoffPeople=true;
  scene.add(root,peopleRoot);objects.push(root,peopleRoot);
  lastVehicleUpdate=null;
+ dropoffJunctionOwner=null;
 }
 let lastVehicleUpdate=null;
+let dropoffJunctionOwner=null;
 function highwayExitPose(b,q,start){
  const u=Math.max(0,Math.min(.999,(q-start)/(.94-start)));
  const point=b.exitCurve.getPointAt(u),dir=b.exitCurve.getTangentAt(u);
@@ -1452,6 +1457,9 @@ function animateDistrictVehicles(t){
  // Compute prospective poses before committing. Cars share a simple visual safe-gap rule,
  // so vehicles queue rather than occupying the same space at road junctions.
  const accepted=new Map();
+ // R19B: reserve the entire crossing for one vehicle before it enters.
+ dropoffJunctionOwner=selectDropoffJunctionOwner(internal,dropoffJunctionOwner,
+  c=>trafficPose(c,c.progress));
  for(const b of internal){
   const next=(b.progress+dt*b.speed)%1;
   const wanted=trafficPose(b,next);
@@ -1543,6 +1551,12 @@ function animateDistrictVehicles(t){
     dropVan.progress,accepted.get(dropVan)||trafficPose(dropVan,dropVan.progress),
     BUILDING_DROPOFF_TIMING.dwellEnd,BUILDING_DROPOFF_TIMING.departEnd)){
    blocked=true;
+  }
+  // Do not let another vehicle cross its upstream approach stop line.
+  if(dropoffJunctionEntry(b,b.progress,next,currentPose,wanted)
+    &&dropoffJunctionOwner!==b){
+   if(dropoffJunctionOwner)blocked=true;
+   else if(!blocked)dropoffJunctionOwner=b;
   }
   if(!blocked)b.progress=next;
   const pose=blocked?trafficPose(b,b.progress):wanted;

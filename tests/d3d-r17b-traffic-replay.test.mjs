@@ -15,6 +15,7 @@ import {
 import {
  computeHighwayProgress,canEnterMainRoad,canAdvanceInboundRoad
 } from '../venues/traffic-r16.mjs';
+import {dropoffJunctionEntry,selectDropoffJunctionOwner} from '../venues/junction-r19b.mjs';
 const html=readFileSync(new URL('../venues/schematic-3d.html',import.meta.url),'utf8');
 class V3 {
  constructor(x,y,z){this.x=x;this.y=y;this.z=z}
@@ -39,26 +40,26 @@ class LinearCurve {
 }
 const curve=points=>new LinearCurve(points.map(([x,z])=>new V3(x,0,z)));
 const model=(length,width)=>({visible:false,position:{set(x,y,z){this.x=x;this.z=z}},rotation:{y:0},userData:{vehicleLength:length,vehicleWidth:width}});
-function replay(seconds=360){
+function replay(seconds=360,initial=[0,.5,.73,.37]){
  const entry=curve([[-65,49.25],[-52,49.25],[-36,49.25],[-24,49.25],
   [-17,49.25],[-13,46.2],[-13,45.8]]);
  const exit=curve([[13,43.8],[13,47.4],[15.5,49.25],[27,49.25],[49,49.25]]);
  const inner=[
-  {route:'front-park',bay:[-7,36],progress:0,speed:.01,
+  {route:'front-park',bay:[-7,36],progress:initial[0],speed:.01,
    arrive:curve([[-13,45.8],[-13,34],[-10,30.3],[-7,30.7],[-7,33],[-7,36]]),
-   depart:curve([[-7,30.7],[-8.3,29.7],[-10,26],[-10,22],[0,22],[10,22],[13,26],[13,40],[13,43.8]]),
+   depart:curve([[-7,30.7],[-8.3,29.7],[-10,26],[-10,25.2],[0,25.2],[10,25.2],[13,29],[13,40],[13,43.8]]),
    model:model(3.9,1.56)},
-  {route:'front-park',bay:[-3.5,36],progress:.5,speed:.01,
+  {route:'front-park',bay:[-3.5,36],progress:initial[1],speed:.01,
    arrive:curve([[-13,45.8],[-13,33],[-10,29.7],[-5.4,30],[-3.5,31],[-3.5,33.4],[-3.5,36]]),
-   depart:curve([[-3.5,30.7],[-5.8,29.3],[-9.2,25],[-10,22],[0,22],[10,22],[13,26],[13,40],[13,43.8]]),
+   depart:curve([[-3.5,30.7],[-5.8,29.3],[-9.2,25],[-10,25.2],[0,25.2],[10,25.2],[13,29],[13,40],[13,43.8]]),
    model:model(3.5,1.67)},
-  {route:'building-dropoff',progress:.73,speed:.009,
+  {route:'building-dropoff',progress:initial[2],speed:.009,
    arrive:curve([[-13,45.8],[-13,34],[-13,24],[-9.7,22],[-3,22],
      [1.6,22],[3.1,19.65],[5.5,18.55],[DROP_OFF_BAY.x,DROP_OFF_BAY.z]]),
    depart:curve([[DROP_OFF_BAY.x,DROP_OFF_BAY.z],[9.25,18.55],
      [11.35,18.55],[13,19],[13,23.7],[13,29],[13,38],[13,43.8]]),
    model:model(4.4,1.92)},
-  {route:'rear-parking',bay:[3.4,-35],progress:.37,speed:.008,
+  {route:'rear-parking',bay:[3.4,-35],progress:initial[3],speed:.008,
    arrive:curve([[-13,45.8],[-13,18],[-13,-15],[-10,-27],
      [-4,-27],[1,-27],[3.4,-27],[3.4,-31],[3.4,-35]]),
    depart:curve([[3.4,-29.5],[7,-27],[10,-27],[13,-23],[13,5],[13,30],[13,43.8]]),
@@ -77,11 +78,12 @@ function replay(seconds=360){
  const extras={
   DROP_OFF_BAY,BUILDING_DROPOFF_TIMING,FRONT_PARK_TIMING,inDropoffZone,
   shouldHoldDropoffRelease,shouldHoldFollowerAtDropoff,shouldVanWaitForLink,shouldHoldVehicleCorridor,
-  computeHighwayProgress,canEnterMainRoad,canAdvanceInboundRoad
+  computeHighwayProgress,canEnterMainRoad,canAdvanceInboundRoad,
+  dropoffJunctionEntry,selectDropoffJunctionOwner
  };
  const keys=Object.keys(extras),values=Object.values(extras);
  const logic=new Function('THREE','buses','animateDropoffPassengers',...keys,
-  'let lastVehicleUpdate=null;\n'+html.slice(start,end)+'\n'
+  'let lastVehicleUpdate=null;let dropoffJunctionOwner=null;\n'+html.slice(start,end)+'\n'
    +html.slice(move,moveEnd)+'\nreturn {animateDistrictVehicles,trafficPose};')(
     {Vector3:V3},buses,()=>{},...values);
  const record=inner.map(c=>({route:c.route,progress:c.progress,cycles:0,
@@ -115,5 +117,15 @@ test('all four internal vehicles complete multiple cycles without mutual deadloc
  for(const r of results){
   assert.ok(r.cycles>=2,r.route+' did not complete at least 2 loops: '+JSON.stringify(r));
   assert.ok(r.longestHold<55,r.route+' stuck for '+r.longestHold.toFixed(1)+' s');
+ }
+});
+
+test('R19B: two formerly frozen phase arrangements clear junction without overlap',()=>{
+ for(const initial of [[0,.55,.39,.69],[.51,.48,.464,.77],[.45,.6,.465,.72]]){
+  const runs=replay(240,initial);
+  for(const car of runs){
+   assert.ok(car.cycles>=2,car.route+' stalled: '+JSON.stringify({initial,...car}));
+   assert.ok(car.longestHold<55,car.route+' held too long: '+JSON.stringify({initial,...car}));
+  }
  }
 });
