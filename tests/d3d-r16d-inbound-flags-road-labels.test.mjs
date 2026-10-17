@@ -13,7 +13,7 @@ const sw=readFileSync(new URL('../sw.js',import.meta.url),'utf8');
 const index=readFileSync(new URL('../index.html',import.meta.url),'utf8');
 
 test('all arriving vehicles use the same left-road approach before internal arrival',()=>{
- assert.match(scene,/const entryCurve=pointsToCurve\(\[\s*\[-62,49\.25\],\[-52,49\.25\]/);
+ assert.match(scene,/const entryCurve=pointsToCurve\(\[\s*\[-65,49\.25\],\[-52,49\.25\]/);
  assert.match(scene,/\[-17,49\.25\],\[-13,46\.2\],\[-13,45\.8\]/);
  assert.match(scene,/car\.entryCurve=entryCurve/);
  assert.match(scene,/function inboundArrivalPose\(b,q,arrivalEnd\)/);
@@ -52,9 +52,9 @@ test('traffic behind a committed inbound car respects eastbound separation',()=>
 
 test('six-minute approach simulation has repeated arrivals and no highway overlap',()=>{
  const cars=[49.25,54.75].flatMap((lane,dir)=>[0,.2,.4,.6,.8].map(phase=>({
-  lane,direction:dir?-1:1,travel:114,speed:2.9,highwayProgress:114*phase
+  lane,direction:dir?-1:1,travel:154,speed:2.9,highwayProgress:154*phase
  })));
- const points=[[-62,49.25],[-52,49.25],[-36,49.25],[-24,49.25],
+ const points=[[-65,49.25],[-52,49.25],[-36,49.25],[-24,49.25],
   [-17,49.25],[-13,46.2],[-13,45.8]];
  const distances=points.slice(1).map((p,i)=>Math.hypot(p[0]-points[i][0],p[1]-points[i][1]));
  const length=distances.reduce((a,b)=>a+b,0);
@@ -87,12 +87,12 @@ test('six-minute approach simulation has repeated arrivals and no highway overla
   for(const c of cars){
    const before=c.highwayProgress;
    c.highwayProgress=updates.get(c);
-   if(c===cars[0])travel+=(c.highwayProgress-before+114)%114;
+   if(c===cars[0])travel+=(c.highwayProgress-before+154)%154;
   }
   for(const group of [cars.slice(0,5),cars.slice(5)]){
    const ps=group.map(c=>c.highwayProgress).sort((a,b)=>a-b);
    for(let j=0;j<5;j++)
-    assert.ok((ps[(j+1)%5]-ps[j]+114)%114>=9.99);
+    assert.ok((ps[(j+1)%5]-ps[j]+154)%154>=9.99);
   }
   if(q>0&&q<.15){
    const p=pose(q).point;
@@ -106,6 +106,8 @@ test('six-minute approach simulation has repeated arrivals and no highway overla
  assert.ok(completed>=2,'vehicle arrived repeatedly');
  assert.ok(blocked>0,'yielding was exercised');
  assert.ok(travel>500,'highway buses keep moving');
+ assert.match(scene,/slab\(140,d\.road3342\.width,0,d\.road3342\.z/);
+ assert.match(scene,/b\.model\.visible=Math\.abs\(x\)<68/);
 });
 
 test('four welcome pennants flutter in Thai flag animation loop',()=>{
