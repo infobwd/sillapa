@@ -66,23 +66,24 @@ test('Building 1 paths bypass the actual sign x ±5.65 at z=12.6',()=>{
  assert.match(scene,/const bypass=isDistrict&&routeIndex===1/);
 });
 
-test('new Building 2 awning adjoins extension but avoids road and pavilion',()=>{
- const match=scene.match(/const epX=([\d.]+),epZ=(-?[\d.]+),epW=([\d.]+),epL=([\d.]+)/);
- assert.ok(match,'attached parking dimensions found');
+test('R16B relocation adjoins REAR facade of extension, with road clearance',()=>{
+ const match=scene.match(/const epX=([\\d.]+),epZ=(-?[\\d.]+),epW=([\\d.]+),epL=([\\d.]+)/);
+ assert.ok(match,'extension-front parking dimensions found');
  const [x,z,w,l]=match.slice(1).map(Number);
- assert.ok(Math.abs(x-w/2-5.4)<.15,'extension wall adjacency');
- assert.ok(x+w/2<10.5,'east road remains clear');
- assert.ok(z+l/2< -13.25,'parking does not intrude into pavilion platform');
- assert.match(scene,/\{x:7\.85,z:-18\.6,angle:Math\.PI\/2\}/);
- assert.match(scene,/\{x:7\.85,z:-15\.5,angle:Math\.PI\/2\}/);
- assert.match(scene,/\{x:18\.15,z:1\.4,angle:Math\.PI\/2\}/);
+ assert.ok(Math.abs(z+l/2-(-19.2))<.02,'attached to negative-Z extension wall');
+ assert.ok(z-l/2>-25,'rear transverse road has its full pavement');
+ assert.ok(x+w/2<10.5&&x-w/2>-10.5,'both side roads remain clear');
+ for(const px of [-3.5,0,3.5])assert.ok(Math.abs(px)+.85<w/2,'parked sedan inside canopy');
+ assert.match(scene,/\\{x:-3\\.50,z:-21\\.30,angle:0\\}/);
+ assert.match(scene,/\\{x:3\\.50,z:-21\\.30,angle:0\\}/);
+ assert.match(scene,/\\{x:18\\.15,z:1\\.4,angle:Math\\.PI\\/2\\}/);
 });
 
-test('PWA refresh includes imported helper and links to R16',()=>{
- assert.match(sw,/sillapa-public-v18-3d-r16-20261017/);
+test('PWA refresh includes imported helpers and R16B venue URLs',()=>{
+ assert.match(sw,/sillapa-public-v19-3d-r16b-20261017/);
  assert.match(sw,/venues\/traffic-r16\.mjs/);
  assert.match(scene,/import \{computeHighwayProgress,canEnterMainRoad\}/);
  const index=readFileSync(new URL('../index.html',import.meta.url),'utf8');
- assert.match(index,/venue=kanchanaburi-pesa4&v=r16/);
- assert.match(index,/venue=anuban-bophloi&v=r16/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r16b/);
+ assert.match(index,/venue=anuban-bophloi&v=r16b/);
 });
