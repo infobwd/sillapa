@@ -118,7 +118,8 @@ test('four welcome pennants flutter in Thai flag animation loop',()=>{
  assert.match(scene,/const width=cloth\.userData\.flagWidth\|\|2\.45/);
  assert.match(scene,/const phase=cloth\.userData\.windPhase\|\|0/);
  assert.match(scene,/pos\.setZ\(i,free\*free\*ripple\)/);
- assert.match(scene,/function dispose\(\)\{stopWayfindingFollow\(\);wayfindingGroup=null;wayfindingMarker=null;wayfindingPins=null;wayfindingRoute=null;wayfindingHidden=false;if\(studentTourOn\)stopStudentTour\(\);studentTourGroup=null;studentTourFigures=\[\];venueBadges\.length=0;walkers\.length=0;buses\.length=0;flagCloths\.length=0/);
+ assert.match(scene,/function dispose\(\)\{buildingLabelSprites\.length=0;poiRoot=null;currentOverlayVenue=null;stopWayfindingFollow\(\);/);
+ assert.match(scene,/venueBadges\.length=0;walkers\.length=0;buses\.length=0;flagCloths\.length=0/);
 });
 
 test('Road 3342 direction labels point right to U Thong and left to Bo Phloi',()=>{
@@ -130,9 +131,9 @@ test('Road 3342 direction labels point right to U Thong and left to Bo Phloi',()
 });
 
 test('PWA cache and venue links refreshed for R16D',()=>{
- assert.match(sw,/sillapa-public-v29-3d-r20a-20261017/);
+ assert.match(sw,/sillapa-public-v30-3d-r20b-20261018/);
  assert.match(sw,/venues\/traffic-r16\.mjs/);
  assert.match(sw,/venues\/vehicle-models-r16b\.mjs/);
- assert.match(index,/venue=kanchanaburi-pesa4&v=r20a/);
- assert.match(index,/venue=anuban-bophloi&v=r20a/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r20b/);
+ assert.match(index,/venue=anuban-bophloi&v=r20b/);
 });

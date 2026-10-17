@@ -41,8 +41,8 @@ test('scene road and geometry separate arrival and departure while preserving pe
  assert.match(scene,/7\.4,\.72,6\.7,16\.88/);
 });
 test('PWA cache and both scene links refresh with the fix',()=>{
- assert.match(sw,/sillapa-public-v29-3d-r20a-20261017/);
+ assert.match(sw,/sillapa-public-v30-3d-r20b-20261018/);
  assert.match(sw,/venues\/junction-r19b\.mjs/);
- assert.match(index,/venue=kanchanaburi-pesa4&v=r20a/);
- assert.match(index,/venue=anuban-bophloi&v=r20a/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r20b/);
+ assert.match(index,/venue=anuban-bophloi&v=r20b/);
 });

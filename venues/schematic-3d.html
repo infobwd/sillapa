@@ -104,10 +104,26 @@
  .venue-shell.venue-3d .scene-visual-key .unverified{grid-column:1/-1}
 }
 
+
+/* R20B: accessible, independent 3D information layers. No live status. */
+.venue-shell.venue-3d .venue-layers{border:1px solid var(--line);border-radius:13px;background:var(--surface);margin:8px 0 10px;color:var(--ink)}
+.venue-shell.venue-3d .venue-layers summary{min-height:44px;padding:11px 14px;cursor:pointer;font-size:14px;font-weight:700;list-style:revert}
+.venue-shell.venue-3d .venue-layers .venue-layer-controls{display:flex;flex-wrap:wrap;gap:8px;padding:0 12px 10px}
+.venue-shell.venue-3d .venue-layers label{display:inline-flex;align-items:center;gap:9px;min-height:44px;min-width:0;padding:7px 11px;border:1px solid var(--line);border-radius:11px;background:var(--surface-2);font-size:13px;font-weight:650;cursor:pointer}
+.venue-shell.venue-3d .venue-layers input{width:19px;height:19px;flex:none;accent-color:#175e9f;cursor:pointer}
+.venue-shell.venue-3d .venue-layers output{display:block;padding:0 13px 10px;line-height:1.5;color:var(--ink-2);font-size:12px}
+.venue-shell.venue-3d #venuePoiNames{margin:0;padding:0 13px 12px;font-size:12px;color:var(--ink-2);line-height:1.5}
+.venue-shell.venue-3d #venuePoiNames[hidden],.venue-shell.venue-3d #mapTags[hidden]{display:none!important}
+@media(max-width:680px){
+ .venue-shell.venue-3d .venue-layers summary{font-size:13px}
+ .venue-shell.venue-3d .venue-layers .venue-layer-controls{display:grid;grid-template-columns:1fr;gap:6px}
+ .venue-shell.venue-3d .venue-layers label{width:100%;font-size:12px}
+}
+
 </style><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="./venue-shell.css"></head><body class="venue-shell venue-3d"><header><a href="./">← ข้อมูลสนามแข่งขัน</a><h1>ต้นแบบผังสนาม 3D จากข้อมูลครั้งที่ 73</h1><small>ฉากจำลองเพื่อทดสอบการกดอาคาร · ไม่ใช่ผังอาคารจริงหรือแผนที่นำทาง</small><nav class="venue-nav" aria-label="เมนูสนามแข่งขัน"><a href="../#venue">ภาพรวมสนาม</a><a href="./" >ค้นหาสนามและห้อง</a><a href="./schematic-3d.html" aria-current="page">สนาม 3D</a></nav></header><main><div class="row"><label for="venue">สนาม</label><select id="venue"><option value="kanchanaburi-pesa4">สำนักงานเขตพื้นที่ฯ เขต 4</option><option value="anuban-bophloi">โรงเรียนอนุบาลบ่อพลอย</option></select></div><section id="wayfindingBar" class="wayfinding-bar" aria-label="เส้นทางเดินในฉาก 3D" role="region"><strong>🧭 เส้นทางเดิน (จำลอง)</strong><label for="routeFrom">จาก <select id="routeFrom" aria-label="ต้นทางเดิน"></select></label><label for="routeTo">ไป <select id="routeTo" aria-label="จุดหมายเดิน"></select></label><button id="routeShow" type="button">แสดงเส้นทาง</button><details id="routeMore" class="wayfinding-more" open><summary aria-label="ขยายหรือยุบเครื่องมือนำทาง">⚙ เครื่องมือนำทางเพิ่มเติม</summary><div class="wayfinding-actions"><button id="routeOverview" type="button" disabled>🗺 ภาพรวม</button><button id="routeFollow" type="button" aria-pressed="false" disabled>▶ ติดตามเส้นทาง</button><button id="vehicleFollow" type="button" aria-pressed="false">🚐 ติดตามรถตู้</button><button id="routeLayer" type="button" aria-pressed="true" disabled>🙈 ซ่อนเส้น</button><button id="routeClear" type="button" disabled>✕ ปิดเส้นทาง</button></div></details><output id="routeStatus" role="status" aria-live="polite">เลือกต้นทางและจุดหมาย แล้วกดแสดงเส้นทาง</output><span class="wayfinding-note">ตำแหน่งและเส้นทางเป็นแบบจำลอง ไม่ใช้เดินทางจริง</span></section><section id="performanceBar" class="performance-bar" aria-label="ตั้งค่าประสิทธิภาพฉาก 3D"><details id="performanceMore" class="performance-more" open><summary aria-label="ขยายหรือยุบการตั้งค่าประสิทธิภาพ">⚡ คุณภาพและการเคลื่อนไหว 3D</summary><div class="performance-controls">
 <label for="qualityMode">⚙ คุณภาพ 3D <select id="qualityMode" aria-label="คุณภาพการแสดงผล 3D"><option value="auto">อัตโนมัติ</option><option value="low">ประหยัดเครื่อง</option><option value="balanced">สมดุล</option><option value="high">คมชัด</option></select></label>
 <button id="motionMode" type="button" aria-pressed="false">🌀 ลดการเคลื่อนไหว: ปิด</button>
-<output id="performanceStatus" role="status" aria-live="polite">กำลังตรวจสอบการแสดงผล…</output></div></details></section><div class="scene-visual-key" aria-label="คำอธิบายสีและข้อมูลในฉาก"><span class="history"><i aria-hidden="true"></i>ข้อมูลย้อนหลังครั้งที่ 73</span><span class="simulation"><i aria-hidden="true"></i>รถ คน และเส้นทางเป็นภาพจำลอง</span><span class="unverified"><i aria-hidden="true"></i>ผังอาคารยังไม่ผ่านการยืนยัน</span></div><div id="scene"><div id="sceneHealth" role="alert" hidden><strong id="sceneHealthTitle">ไม่สามารถแสดงฉาก 3D</strong><p id="sceneHealthMessage">จำเป็นต้องเชื่อมต่ออินเทอร์เน็ตเพื่อโหลด Three.js ในครั้งแรก</p><button id="sceneRetry" type="button">↻ ลองโหลดใหม่</button><a href="./">ดูข้อมูลสนามแบบรายการ</a></div><div id="sceneUpdate" role="status" class="scene-update" hidden><span>มีผัง 3D เวอร์ชันใหม่พร้อมใช้งาน</span><button id="sceneUpdateReload" type="button">อัปเดต</button></div><div id="wayfindingTip" class="wayfinding-tip" role="status" hidden></div><div class="overlay"><span class="note">ตำแหน่ง ขนาด ทิศทาง และรูปร่างอาคารเป็นภาพจำลองเท่านั้น ต้องตรวจสอบกับแผนผังต้นฉบับก่อนใช้นำทาง</span></div><div class="map-tags" id="mapTags"></div><div id="modelPanel" class="model-panel" role="dialog" aria-modal="false" aria-label="รายละเอียดกิจกรรมย้อนหลังภายในอาคาร" aria-live="polite"></div><div id="studentTourStatus" role="status" aria-live="polite" hidden></div><div class="scene-tools"><button id="studentTour" data-mobile-label="👣 นักเรียน" type="button" aria-pressed="false" title="ติดตามนักเรียนตั้งแต่ลงรถ ผ่านโดมจนถึงอาคาร 1">👣 ดูนักเรียน</button><button id="toggleTraffic" data-mobile-label="🚗 รถ" aria-pressed="true" title="เปิดหรือปิดรถรับส่ง">🚌 เปิด</button><button id="togglePeople" data-mobile-label="👥 คน" aria-pressed="true" title="เปิดหรือปิดนักเรียนและครู">👥 เปิด</button><button id="toggleRoofs" data-mobile-label="🏠 หลังคา" aria-pressed="true" title="ซ่อนหลังคาอาคาร 1 และ 2 เพื่อดูห้องชั้นสอง">🏠 หลังคา</button><button id="zoomIn" data-mobile-label="＋" aria-label="ขยาย">＋</button><button id="zoomOut" data-mobile-label="－" aria-label="ย่อ">－</button><button id="topView" data-mobile-label="▣ บน" aria-label="มุมมองจากด้านบน" title="มุมมองจากด้านบน">▣ บน</button><button id="resetView" data-mobile-label="↺ กลับ" aria-label="กลับมุมมองเริ่มต้น">↺</button></div></div><section class="card"><h2 id="heading">เลือกอาคาร</h2><p id="info">แตะอาคารในฉากหรือเลือกชื่อด้านล่างเพื่อซูมไปยังอาคารนั้นและดูรายการแข่งขันย้อนหลัง</p><div id="list"></div><div id="details"></div></section><p><a href="./">ดูรายการแข่งขันทั้งหมด</a></p></main><script>
+<output id="performanceStatus" role="status" aria-live="polite">กำลังตรวจสอบการแสดงผล…</output></div></details></section><details id="venueLayers" class="venue-layers" aria-label="ชั้นข้อมูลในฉาก 3D"><summary>🧩 ชั้นข้อมูลบนผัง 3D (ข้อมูลย้อนหลัง / จำลอง)</summary><div class="venue-layer-controls"><label for="layerLabels"><input id="layerLabels" type="checkbox" checked>🏷️ ป้ายชื่ออาคาร</label><label for="layerHistorical"><input id="layerHistorical" type="checkbox" checked>📚 จำนวนกิจกรรมย้อนหลัง 73</label><label for="layerPoints"><input id="layerPoints" type="checkbox">📍 จุดบริการในผังจำลอง</label></div><output id="venueLayersStatus" role="status" aria-live="polite">ไม่มีข้อมูลความพร้อมครั้งที่ 74 ที่ได้รับการรับรอง</output><p id="venuePoiNames" hidden></p></details><div class="scene-visual-key" aria-label="คำอธิบายสีและข้อมูลในฉาก"><span class="history"><i aria-hidden="true"></i>ข้อมูลย้อนหลังครั้งที่ 73</span><span class="simulation"><i aria-hidden="true"></i>รถ คน และเส้นทางเป็นภาพจำลอง</span><span class="unverified"><i aria-hidden="true"></i>ผังอาคารยังไม่ผ่านการยืนยัน</span></div><div id="scene"><div id="sceneHealth" role="alert" hidden><strong id="sceneHealthTitle">ไม่สามารถแสดงฉาก 3D</strong><p id="sceneHealthMessage">จำเป็นต้องเชื่อมต่ออินเทอร์เน็ตเพื่อโหลด Three.js ในครั้งแรก</p><button id="sceneRetry" type="button">↻ ลองโหลดใหม่</button><a href="./">ดูข้อมูลสนามแบบรายการ</a></div><div id="sceneUpdate" role="status" class="scene-update" hidden><span>มีผัง 3D เวอร์ชันใหม่พร้อมใช้งาน</span><button id="sceneUpdateReload" type="button">อัปเดต</button></div><div id="wayfindingTip" class="wayfinding-tip" role="status" hidden></div><div class="overlay"><span class="note">ตำแหน่ง ขนาด ทิศทาง และรูปร่างอาคารเป็นภาพจำลองเท่านั้น ต้องตรวจสอบกับแผนผังต้นฉบับก่อนใช้นำทาง</span></div><div class="map-tags" id="mapTags"></div><div id="modelPanel" class="model-panel" role="dialog" aria-modal="false" aria-label="รายละเอียดกิจกรรมย้อนหลังภายในอาคาร" aria-live="polite"></div><div id="studentTourStatus" role="status" aria-live="polite" hidden></div><div class="scene-tools"><button id="studentTour" data-mobile-label="👣 นักเรียน" type="button" aria-pressed="false" title="ติดตามนักเรียนตั้งแต่ลงรถ ผ่านโดมจนถึงอาคาร 1">👣 ดูนักเรียน</button><button id="toggleTraffic" data-mobile-label="🚗 รถ" aria-pressed="true" title="เปิดหรือปิดรถรับส่ง">🚌 เปิด</button><button id="togglePeople" data-mobile-label="👥 คน" aria-pressed="true" title="เปิดหรือปิดนักเรียนและครู">👥 เปิด</button><button id="toggleRoofs" data-mobile-label="🏠 หลังคา" aria-pressed="true" title="ซ่อนหลังคาอาคาร 1 และ 2 เพื่อดูห้องชั้นสอง">🏠 หลังคา</button><button id="zoomIn" data-mobile-label="＋" aria-label="ขยาย">＋</button><button id="zoomOut" data-mobile-label="－" aria-label="ย่อ">－</button><button id="topView" data-mobile-label="▣ บน" aria-label="มุมมองจากด้านบน" title="มุมมองจากด้านบน">▣ บน</button><button id="resetView" data-mobile-label="↺ กลับ" aria-label="กลับมุมมองเริ่มต้น">↺</button></div></div><section class="card"><h2 id="heading">เลือกอาคาร</h2><p id="info">แตะอาคารในฉากหรือเลือกชื่อด้านล่างเพื่อซูมไปยังอาคารนั้นและดูรายการแข่งขันย้อนหลัง</p><div id="list"></div><div id="details"></div></section><p><a href="./">ดูรายการแข่งขันทั้งหมด</a></p></main><script>
 /* R19: surface a useful error even when the external Three.js module fails
    BEFORE the ES-module script can execute (common on offline first load). */
 (function(){
@@ -147,6 +163,7 @@ import {computeHighwayProgress,canEnterMainRoad,canAdvanceInboundRoad} from './t
 import {makeModernSedan,makeModernVan,makeModernBlueBus,makeTenWheelFreightTruck} from './vehicle-models-r16b.mjs';
 import {dropoffJunctionEntry,selectDropoffJunctionOwner} from './junction-r19b.mjs';
 import {VISUAL_R20A,getSceneCameraPreset,getVenueLabelStyle} from './visual-r20a.mjs';
+import {LAYER_DEFAULTS,LAYER_KEYS,normalizeVenueLayers,withVenueLayer,historyOverlaySummary,schematicPointsForVenue} from './overlay-r20b.mjs';
 import {DROP_OFF_BAY,BUILDING_DROPOFF_TIMING,FRONT_PARK_TIMING,SAFE_ALIGHT_Z,fromVanToRegistrationWaypoints,shouldHoldFollowerAtDropoff,shouldVanWaitForLink,shouldHoldVehicleCorridor,inDropoffZone,shouldHoldDropoffRelease,registrationQueuePoint,toRegistrationWaypoints,fromRegistrationToBuildingWaypoints,registrationPhase} from './dropoff-r17.mjs';
 
 /* R19: update notification on the standalone 3D page (the main PWA
@@ -189,14 +206,26 @@ const performanceDisclosure=document.querySelector('#performanceMore');
 function syncPerformanceDisclosure(event){performanceDisclosure.open=!event.matches}
 syncPerformanceDisclosure(mobileWayfindingQuery);
 mobileWayfindingQuery.addEventListener('change',syncPerformanceDisclosure);
+function syncVenueLayerDisclosure(query){venueLayerDisclosure.open=!query.matches}
+syncVenueLayerDisclosure(mobileWayfindingQuery);
+mobileWayfindingQuery.addEventListener('change',syncVenueLayerDisclosure);
 const qualitySelector=document.querySelector('#qualityMode');
 const motionModeButton=document.querySelector('#motionMode');
 const performanceStatus=document.querySelector('#performanceStatus');
+const venueLayerDisclosure=document.querySelector('#venueLayers');
+const venueLayersStatus=document.querySelector('#venueLayersStatus');
+const venuePoiNames=document.querySelector('#venuePoiNames');
+const venueLayerInputs={labels:document.querySelector('#layerLabels'),historical:document.querySelector('#layerHistorical'),points:document.querySelector('#layerPoints')};
 const sceneHealth=document.querySelector('#sceneHealth'),sceneHealthTitle=document.querySelector('#sceneHealthTitle');
 const sceneHealthMessage=document.querySelector('#sceneHealthMessage');
 document.querySelector('#sceneRetry').addEventListener('click',()=>location.reload());
 function savedSetting(key){try{return localStorage.getItem(key)}catch(_){return null}}
 function saveSetting(key,value){try{localStorage.setItem(key,value)}catch(_){}}
+let venueLayers=normalizeVenueLayers(LAYER_DEFAULTS);
+try{const raw=savedSetting('sillapa-3d-venue-layers');if(raw!==null)venueLayers=normalizeVenueLayers(JSON.parse(raw));}catch(_){}
+let currentOverlayVenue=null;
+const buildingLabelSprites=[];
+let poiRoot=null;
 const reducedMotionQuery=window.matchMedia('(prefers-reduced-motion: reduce)');
 let savedQuality=savedSetting('sillapa-3d-quality');
 let qualityMode=validQualityMode(savedQuality)?savedQuality:'auto';
@@ -305,7 +334,7 @@ function monitorDisplayRate(frameMs){
  performanceSamples=0;performanceWindowStart=null;
 }
 
-function dispose(){stopWayfindingFollow();wayfindingGroup=null;wayfindingMarker=null;wayfindingPins=null;wayfindingRoute=null;wayfindingHidden=false;if(studentTourOn)stopStudentTour();studentTourGroup=null;studentTourFigures=[];venueBadges.length=0;walkers.length=0;buses.length=0;flagCloths.length=0;registrationStaff.length=0;buildingTargets.clear();cameraFlight=null;lastVehicleUpdate=null;for(const o of objects){scene.remove(o);o.traverse(n=>{if(n.geometry)n.geometry.dispose();if(n.material){const mats=Array.isArray(n.material)?n.material:[n.material];for(const mat of mats){if(mat.map&&mat.map.isCanvasTexture)mat.map.dispose();mat.dispose()}}})}objects.length=0;meshes.length=0;officeRoofs.length=0}
+function dispose(){buildingLabelSprites.length=0;poiRoot=null;currentOverlayVenue=null;stopWayfindingFollow();wayfindingGroup=null;wayfindingMarker=null;wayfindingPins=null;wayfindingRoute=null;wayfindingHidden=false;if(studentTourOn)stopStudentTour();studentTourGroup=null;studentTourFigures=[];venueBadges.length=0;walkers.length=0;buses.length=0;flagCloths.length=0;registrationStaff.length=0;buildingTargets.clear();cameraFlight=null;lastVehicleUpdate=null;for(const o of objects){scene.remove(o);o.traverse(n=>{if(n.geometry)n.geometry.dispose();if(n.material){const mats=Array.isArray(n.material)?n.material:[n.material];for(const mat of mats){if(mat.map&&mat.map.isCanvasTexture)mat.map.dispose();mat.dispose()}}})}objects.length=0;meshes.length=0;officeRoofs.length=0}
 function makeBuildingLabel(name,y){
  const style=getVenueLabelStyle(name),canvas=document.createElement('canvas');
  canvas.width=640;canvas.height=160;
@@ -319,8 +348,60 @@ function makeBuildingLabel(name,y){
  ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(name,334,79,570);
  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
  const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,transparent:true,depthTest:false,depthWrite:false}));
- sprite.scale.set(7.3,1.82,1);sprite.position.set(0,y,0);sprite.renderOrder=5;return sprite;
+ sprite.scale.set(7.3,1.82,1);sprite.position.set(0,y,0);sprite.renderOrder=5;
+ sprite.visible=venueLayers.labels;buildingLabelSprites.push(sprite);return sprite;
 }
+
+/* R20B — informational overlays only. The POIs are visual markers floating
+ * above existing schematic locations; none is a surveyed or approved route. */
+function makePoiOverlayMarker(point){
+ const canvas=document.createElement('canvas');canvas.width=768;canvas.height=144;
+ const ctx=canvas.getContext('2d');
+ ctx.fillStyle='rgba(17,66,92,.95)';ctx.beginPath();ctx.roundRect(7,9,754,122,24);ctx.fill();
+ ctx.strokeStyle='#a1e6f4';ctx.lineWidth=4;ctx.stroke();
+ ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
+ ctx.font='700 43px Kanit,"Noto Sans Thai",sans-serif';
+ ctx.fillText(point.icon+' '+point.label,384,73,714);
+ const map=new THREE.CanvasTexture(canvas);map.colorSpace=THREE.SRGBColorSpace;
+ const marker=new THREE.Sprite(new THREE.SpriteMaterial({map,transparent:true,depthTest:false,depthWrite:false}));
+ marker.position.set(point.x,point.y,point.z);
+ marker.scale.set(7.0,1.32,1);marker.renderOrder=8;
+ return marker;
+}
+function buildVenuePoiOverlay(venueId){
+ const points=schematicPointsForVenue(venueId);
+ if(!points.length)return;
+ poiRoot=new THREE.Group();
+ poiRoot.userData.poiOverlay=true;
+ for(const point of points)poiRoot.add(makePoiOverlayMarker(point));
+ poiRoot.visible=venueLayers.points;scene.add(poiRoot);objects.push(poiRoot);
+}
+function renderVenueLayerStatus(){
+ const data=currentOverlayVenue?historyOverlaySummary(currentOverlayVenue.rows):historyOverlaySummary([]);
+ venueLayersStatus.textContent='ย้อนหลังครั้งที่ 73: '+data.activities+' รายการ / '+data.buildings+
+  ' อาคาร (ข้อมูลรอตรวจสอบ) · ยังไม่มีสถานะความพร้อมครั้งที่ 74 ที่ได้รับการรับรอง';
+ const points=currentOverlayVenue?schematicPointsForVenue(currentOverlayVenue.id):[];
+ venuePoiNames.hidden=!venueLayers.points;
+ venuePoiNames.textContent=points.length
+  ?'จุดในผังจำลองเท่านั้น: '+points.map(p=>p.label).join(' · ')
+  :'สนามนี้ยังไม่มีพิกัดจุดบริการที่ยืนยันสำหรับการแสดงผล 3D';
+}
+function applyVenueLayers(){
+ for(const key of LAYER_KEYS)venueLayerInputs[key].checked=venueLayers[key];
+ for(const label of buildingLabelSprites)label.visible=venueLayers.labels;
+ if(poiRoot)poiRoot.visible=venueLayers.points;
+ tags.hidden=!venueLayers.historical;
+ updateVenueBadgeVisibility();
+ renderVenueLayerStatus();
+}
+for(const key of LAYER_KEYS){
+ venueLayerInputs[key].addEventListener('change',()=>{
+  venueLayers=withVenueLayer(venueLayers,key,venueLayerInputs[key].checked);
+  saveSetting('sillapa-3d-venue-layers',JSON.stringify(venueLayers));
+  applyVenueLayers();
+ });
+}
+
 // Historic competition indicator: only derived from rows present in history73.json.
 // D3D-R4: keep venue indicators readable without covering buildings on narrow screens.
 const venueBadges=[];
@@ -329,7 +410,7 @@ function updateVenueBadgeVisibility(){
  const topDown=camera.position.clone().sub(controls.target).normalize().y>.87;
  const camDistance=camera.position.distanceTo(controls.target);
  for(const badge of venueBadges){
-  badge.visible=!topDown&&camDistance<=qualityProfile.detailDistance;
+  badge.visible=venueLayers.historical&&!topDown&&camDistance<=qualityProfile.detailDistance;
   const factor=narrow?.72:1;
   badge.scale.set(6.8*factor,1.7*factor,1);
  }
@@ -2067,11 +2148,12 @@ studentTourButton.addEventListener('click',()=>{
  studentTourButton.dataset.mobileLabel='⏹ หยุด';
  studentTourButton.setAttribute('aria-pressed','true');
 });
-function show(v){dispose();tags.replaceChildren();const district=v.id==='kanchanaburi-pesa4';const roofToggle=document.querySelector('#toggleRoofs');roofToggle.disabled=!district;roofToggle.textContent=roofVisible?'🏠 หลังคา':'🏠 ดูภายใน';roofToggle.setAttribute('aria-pressed',String(roofVisible));roofToggle.title=district?'ซ่อน/เปิดหลังคาอาคารและโดมเพื่อดูห้องประชุมกับโต๊ะลงทะเบียน':'ใช้กับผังสำนักงานเขตพื้นที่ฯ';
+function show(v){dispose();tags.replaceChildren();currentOverlayVenue=v;const district=v.id==='kanchanaburi-pesa4';const roofToggle=document.querySelector('#toggleRoofs');roofToggle.disabled=!district;roofToggle.textContent=roofVisible?'🏠 หลังคา':'🏠 ดูภายใน';roofToggle.setAttribute('aria-pressed',String(roofVisible));roofToggle.title=district?'ซ่อน/เปิดหลังคาอาคารและโดมเพื่อดูห้องประชุมกับโต๊ะลงทะเบียน':'ใช้กับผังสำนักงานเขตพื้นที่ฯ';
  roofToggle.dataset.mobileLabel=roofVisible?'🏠 หลังคา':'🏠 เปิด';const busToggle=document.querySelector('#toggleTraffic');busToggle.disabled=!district;busToggle.title=district?'เปิดหรือปิดรถจำลอง (ไม่ใช่จำนวนรถจริง)':'ยังไม่มีถนนสำหรับจำลองรถในสนามนี้';busToggle.textContent=district?(trafficEnabled?'🚗 เปิด':'🚗 ปิด'):'🚗 รอผังถนน';
  busToggle.dataset.mobileLabel=district?(trafficEnabled?'🚗 รถ':'🚗 ปิด'):'🚗 รอผัง';if(district){decorateDistrict();camera.position.set(...getSceneCameraPreset(true,mount.clientWidth<680));controls.target.set(0,0,0);controls.update()}else{camera.position.set(25,29,33);controls.target.set(0,0,0);controls.update()}const activityCount=v.rows.length;activeSceneActivityCount=activityCount;activeSceneIsDistrict=district;addWalkers(district,activityCount);refreshAmbientWalkerVisibility();animateWalkers(simulationTime);if(district){addDistrictVehicles(activityCount);buildStudentTour()}studentTourButton.disabled=!district;
  studentTourButton.dataset.mobileLabel=district?'👣 นักเรียน':'👣 รอผัง';
- panel.classList.remove('open');panel.replaceChildren();list.replaceChildren();details.replaceChildren();heading.textContent='เลือกอาคาร';info.textContent=(v.id==='kanchanaburi-pesa4'?'ผังจำลอง: อาคารเรียงแนวลึก ขนานถนน 3342 (ยังไม่ยืนยันตำแหน่งจริง)':'อาคารในฉากจัดเรียงเพื่อสาธิตเท่านั้น')+' · อ้างอิงรายการย้อนหลัง '+activityCount+' รายการ · คน รถ และเส้นทางเป็นภาพจำลอง ไม่ใช่จำนวนผู้เข้าร่วม รถจริง หรือผังจราจรที่ยืนยัน · แตะอาคารหรือเลือกชื่ออาคารเพื่อซูมดูรายละเอียด'+(district?' · กด 🏠 หลังคา เพื่อดูโต๊ะลงทะเบียนภายในโดมและห้องประชุมชั้นบนอาคาร 1':'');const groups=new Map();for(const row of v.rows){const label=row.building||'ไม่ระบุอาคาร';const key=label.normalize('NFKC').replace(/\s+/g,'').toLowerCase();if(!groups.has(key))groups.set(key,{label,rows:[]});groups.get(key).rows.push(row)}const entries=[...groups.values()];entries.forEach((g,i)=>{building(g.label,i,entries.length,v.id==='kanchanaburi-pesa4',g.rows.length);const btn=document.createElement('button');btn.textContent=g.label+' ('+g.rows.length+' รายการ)';btn.addEventListener('click',()=>choose(g));list.append(btn);if(v.id==='kanchanaburi-pesa4'){const tag=document.createElement('button');tag.textContent=g.label+' · '+g.rows.length+' รายการ';tag.addEventListener('click',()=>choose(g));tags.append(tag)}});function choose(g){flyToBuilding(g.label);if(district){const routeStop=buildingWayfindingStop(g.label);if(routeStop)setWayfindingSelection(wayfindingFrom.value,routeStop)}heading.textContent=g.label+' — ครั้งที่ 73';info.textContent=g.rows.length+' รายการแข่งขันย้อนหลัง';details.replaceChildren();const ul=document.createElement('ul');for(const x of g.rows){const li=document.createElement('li');li.textContent=x.activity+' · '+[x.floor,x.room].filter(Boolean).join(' / ');ul.append(li)}details.append(ul);panel.replaceChildren();const close=document.createElement('button');close.type='button';close.textContent='ปิด ×';close.setAttribute('aria-label','ปิดรายละเอียดอาคาร');close.addEventListener('click',()=>{panel.classList.remove('open','expanded')});const head=document.createElement('h3');head.textContent=g.label+' · '+g.rows.length+' รายการ';const sheetHead=document.createElement('div');sheetHead.className='sheet-head';const expand=document.createElement('button');expand.type='button';expand.className='sheet-expand';expand.textContent='↕ ขยาย';expand.setAttribute('aria-expanded','false');expand.setAttribute('aria-label','ขยายหรือย่อรายละเอียดอาคาร');expand.addEventListener('click',()=>{const open=panel.classList.toggle('expanded');expand.setAttribute('aria-expanded',String(open));expand.textContent=open?'↕ ย่อ':'↕ ขยาย'});sheetHead.append(head,expand,close);const hint=document.createElement('p');hint.textContent='รายการย้อนหลังครั้งที่ 73 (ไม่ใช่กำหนดการครั้งที่ 74)';const modelList=ul.cloneNode(true);panel.append(sheetHead,hint,modelList);panel.classList.remove('expanded');panel.classList.add('open')}active={groups,choose};if(district)createWayfindingPins();applyWayfindingHash()}
+ panel.classList.remove('open');panel.replaceChildren();list.replaceChildren();details.replaceChildren();heading.textContent='เลือกอาคาร';info.textContent=(v.id==='kanchanaburi-pesa4'?'ผังจำลอง: อาคารเรียงแนวลึก ขนานถนน 3342 (ยังไม่ยืนยันตำแหน่งจริง)':'อาคารในฉากจัดเรียงเพื่อสาธิตเท่านั้น')+' · อ้างอิงรายการย้อนหลัง '+activityCount+' รายการ · คน รถ และเส้นทางเป็นภาพจำลอง ไม่ใช่จำนวนผู้เข้าร่วม รถจริง หรือผังจราจรที่ยืนยัน · แตะอาคารหรือเลือกชื่ออาคารเพื่อซูมดูรายละเอียด'+(district?' · กด 🏠 หลังคา เพื่อดูโต๊ะลงทะเบียนภายในโดมและห้องประชุมชั้นบนอาคาร 1':'');const groups=new Map();for(const row of v.rows){const label=row.building||'ไม่ระบุอาคาร';const key=label.normalize('NFKC').replace(/\s+/g,'').toLowerCase();if(!groups.has(key))groups.set(key,{label,rows:[]});groups.get(key).rows.push(row)}const entries=[...groups.values()];entries.forEach((g,i)=>{building(g.label,i,entries.length,v.id==='kanchanaburi-pesa4',g.rows.length);const btn=document.createElement('button');btn.textContent=g.label+' ('+g.rows.length+' รายการ)';btn.addEventListener('click',()=>choose(g));list.append(btn);if(v.id==='kanchanaburi-pesa4'){const tag=document.createElement('button');tag.textContent=g.label+' · '+g.rows.length+' รายการ';tag.addEventListener('click',()=>choose(g));tags.append(tag)}});function choose(g){flyToBuilding(g.label);if(district){const routeStop=buildingWayfindingStop(g.label);if(routeStop)setWayfindingSelection(wayfindingFrom.value,routeStop)}heading.textContent=g.label+' — ครั้งที่ 73';info.textContent=g.rows.length+' รายการแข่งขันย้อนหลัง';details.replaceChildren();const ul=document.createElement('ul');for(const x of g.rows){const li=document.createElement('li');li.textContent=x.activity+' · '+[x.floor,x.room].filter(Boolean).join(' / ');ul.append(li)}details.append(ul);panel.replaceChildren();const close=document.createElement('button');close.type='button';close.textContent='ปิด ×';close.setAttribute('aria-label','ปิดรายละเอียดอาคาร');close.addEventListener('click',()=>{panel.classList.remove('open','expanded')});const head=document.createElement('h3');head.textContent=g.label+' · '+g.rows.length+' รายการ';const sheetHead=document.createElement('div');sheetHead.className='sheet-head';const expand=document.createElement('button');expand.type='button';expand.className='sheet-expand';expand.textContent='↕ ขยาย';expand.setAttribute('aria-expanded','false');expand.setAttribute('aria-label','ขยายหรือย่อรายละเอียดอาคาร');expand.addEventListener('click',()=>{const open=panel.classList.toggle('expanded');expand.setAttribute('aria-expanded',String(open));expand.textContent=open?'↕ ย่อ':'↕ ขยาย'});sheetHead.append(head,expand,close);const hint=document.createElement('p');hint.textContent='รายการย้อนหลังครั้งที่ 73 (ไม่ใช่กำหนดการครั้งที่ 74)';const modelList=ul.cloneNode(true);panel.append(sheetHead,hint,modelList);panel.classList.remove('expanded');panel.classList.add('open')}active={groups,choose};if(district){buildVenuePoiOverlay(v.id);createWayfindingPins()}
+ applyVenueLayers();applyWayfindingHash()}
 document.querySelector('#zoomIn').addEventListener('click',()=>{stopWayfindingFollow();cameraFlight=null;const delta=camera.position.clone().sub(controls.target).multiplyScalar(.82);camera.position.copy(controls.target).add(delta);controls.update()});document.querySelector('#zoomOut').addEventListener('click',()=>{stopWayfindingFollow();cameraFlight=null;const delta=camera.position.clone().sub(controls.target).multiplyScalar(1.2);camera.position.copy(controls.target).add(delta);controls.update()});document.querySelector('#topView').addEventListener('click',()=>{stopWayfindingFollow();cameraFlight=null;const district=select.value==='kanchanaburi-pesa4';camera.position.set(0,district?130:55,.01);controls.target.set(0,0,0);controls.update()});document.querySelector('#resetView').addEventListener('click',()=>{stopWayfindingFollow();cameraFlight=null;const district=select.value==='kanchanaburi-pesa4';camera.position.set(...getSceneCameraPreset(district,mount.clientWidth<680));controls.target.set(0,0,0);controls.update()});camera.position.set(25,29,33);renderer.domElement.addEventListener('click',e=>{const rect=renderer.domElement.getBoundingClientRect();pointer.set((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);ray.setFromCamera(pointer,camera);const hit=ray.intersectObjects(meshes)[0];if(hit&&active){const pin=hit.object.userData.wayfindingStop;if(pin){setWayfindingSelection(wayfindingFrom.value,pin);return}const label=hit.object.userData.label;if(!label)return;const key=label.normalize('NFKC').replace(/\s+/g,'').toLowerCase();active.choose(active.groups.get(key))}});
 document.querySelector('#toggleRoofs').addEventListener('click',e=>{roofVisible=!roofVisible;for(const roof of officeRoofs)roof.visible=roofVisible;e.currentTarget.setAttribute('aria-pressed',String(roofVisible));e.currentTarget.textContent=roofVisible?'🏠 หลังคา':'🏠 ดูภายใน';e.currentTarget.dataset.mobileLabel=roofVisible?'🏠 หลังคา':'🏠 เปิด'});document.querySelector('#toggleTraffic').addEventListener('click',e=>{trafficEnabled=!trafficEnabled;if(!trafficEnabled&&wayfindingFollowMode==='vehicle')stopWayfindingFollow();e.currentTarget.setAttribute('aria-pressed',String(trafficEnabled));e.currentTarget.textContent=trafficEnabled?'🚗 เปิด':'🚗 ปิด';e.currentTarget.dataset.mobileLabel=trafficEnabled?'🚗 รถ':'🚗 ปิด';for(const o of objects)if(o.userData.vehicles||o.userData.dropoffPeople)o.visible=trafficEnabled&&(o.userData.dropoffPeople?peopleVisible:true)});document.querySelector('#togglePeople').addEventListener('click',e=>{peopleVisible=!peopleVisible;e.currentTarget.setAttribute('aria-pressed',String(peopleVisible));e.currentTarget.textContent=peopleVisible?'👥 เปิด':'👥 ปิด';e.currentTarget.dataset.mobileLabel=peopleVisible?'👥 คน':'👥 ปิด';for(const o of objects)if(o.userData.people||o.userData.dropoffPeople)o.visible=peopleVisible&&(o.userData.dropoffPeople?trafficEnabled:true);for(const staff of registrationStaff)staff.visible=peopleVisible;if(studentTourGroup)studentTourGroup.visible=studentTourOn&&peopleVisible;if(studentTourOn&&!peopleVisible)stopStudentTour()});function resize(){
  const w=mount.clientWidth,h=mount.clientHeight;

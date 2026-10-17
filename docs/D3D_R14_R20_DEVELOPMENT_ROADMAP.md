@@ -57,3 +57,7 @@ R14 stability/acceptance → R15 student journey → R16 traffic scenarios → R
 ## R20A visual-only handoff (17 October 2026)
 
 Owner-requested 3D style refresh based on an illustrative external screenshot: palette, nameplates, informational legend and default responsive camera only. **This is not the original R20 approved-data integration gate.** R19B traffic, historical 73 records, source/PDPA controls, publication status and official 74 statistics remain untouched. Accept Local-First/browser checks on the exact PR SHA before merge.
+
+## R20B — informational overlay (18 October 2026)
+
+This separate visual subphase adds toggleable 3D building labels, historical edition-73 activity badges and **schematic-only** district service POIs. No official 74 readiness/count/source linkage or registration/scoring. Original D3D-R20 verified-data linkage remains independently gated. See `docs/D3D_R20B_VENUE_OVERLAY_ACCEPTANCE.md` for Local-First/device checks before owner Merge.

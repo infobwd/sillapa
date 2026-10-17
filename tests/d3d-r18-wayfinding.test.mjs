@@ -149,7 +149,8 @@ test('accessible selector/buttons, active route control and disabled second venu
  assert.match(scene,/wayfindingFrom\.value='dropoff'/);
  assert.match(scene,/wayfindingTo\.value='registration'/);
  assert.match(scene,/setWayfindingControlsAvailability\(false\)/);
- assert.match(scene,/if\(district\)createWayfindingPins\(\);applyWayfindingHash\(\)/);
+ assert.match(scene,/if\(district\)\{buildVenuePoiOverlay\(v\.id\);createWayfindingPins\(\)\}/);
+ assert.match(scene,/applyVenueLayers\(\);applyWayfindingHash\(\)/);
  assert.match(scene,/setWayfindingControlsAvailability\(false\);\s*document\.addEventListener\('keydown'/);
  assert.match(scene,/function setWayfindingSelection\(from,to\)/);
  assert.match(scene,/const routeStop=buildingWayfindingStop\(g\.label\)/);
@@ -186,11 +187,11 @@ test('layers and camera modes do not compete with R17B student tour or vehicle m
 });
 
 test('the R18 release updates public PWA without touching score or registration',()=>{
- assert.match(sw,/sillapa-public-v29-3d-r20a-20261017/);
+ assert.match(sw,/sillapa-public-v30-3d-r20b-20261018/);
  assert.match(sw,/venues\/wayfinding-r18\.mjs/);
  assert.match(sw,/venues\/dropoff-r17\.mjs/);
- assert.match(index,/venue=kanchanaburi-pesa4&v=r20a/);
- assert.match(index,/venue=anuban-bophloi&v=r20a/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r20b/);
+ assert.match(index,/venue=anuban-bophloi&v=r20b/);
  assert.match(scene,/ไม่ใช่เส้นทางจริง/);
  assert.match(scene,/ผังอาคารจริงหรือแผนที่นำทาง/);
 });
