@@ -17,6 +17,8 @@
 
 - **R16D (รถขาเข้า/ธงพริ้ว/ป้ายชื่อถนน · รอตรวจภาพจริง):** [เกณฑ์ตรวจรับ R16D](docs/D3D_R16D_INBOUND_FLAGS_ROAD_MARKINGS_ACCEPTANCE.md) — รถขาเข้าเริ่มจากถนนหลักฝั่งซ้ายแล้วเลี้ยวเข้าประตูซ้าย, ธงประดับ 4 ผืนพริ้วเหมือนธงชาติ, แสดง “← บ่อพลอย” / “ถนนหมายเลข 3342” / “ไปอู่ทอง →” บนถนน · PWA `sillapa-public-v21-3d-r16d-20261017` · ทดสอบ Local-First ทั้ง R16–R16D ด้วย `node --test tests/d3d-r16-traffic-parking.test.mjs tests/d3d-r16b-vehicles-parking-paths.test.mjs tests/d3d-r16c-exit-merge.test.mjs tests/d3d-r16d-inbound-flags-road-labels.test.mjs` (ไม่ใช้ GitHub Actions) · ยังไม่ผ่าน WebGL Acceptance จริง
 
+- **D3D-R17 (รอตรวจรับ WebGL จริง):** [Drop-off Spacing & Dome Registration Acceptance](docs/D3D_R17_DROPOFF_DOME_REGISTRATION_ACCEPTANCE.md) — รถตู้แวะช่องริมทางแยกจากรถวิ่งและคุมระยะจากรถกระบะ/รถเก๋งด้วยขนาดรถ, โดมมีโต๊ะลงทะเบียนจำลอง 2 โต๊ะ เจ้าหน้าที่ 2 คน จุดต่อคิว 2 แถว, นักเรียนเดินจากรถ → โดมลงทะเบียน → อาคาร 1 / ทางขึ้นห้องประชุมแบบจำลอง · PWA `sillapa-public-v22-3d-r17-20261017` · Local-First: `node --test tests/d3d-r16-traffic-parking.test.mjs tests/d3d-r16b-vehicles-parking-paths.test.mjs tests/d3d-r16c-exit-merge.test.mjs tests/d3d-r16d-inbound-flags-road-labels.test.mjs tests/d3d-r17-dropoff-registration.test.mjs` (ไม่ใช้ GitHub Actions)
+
 ## ทดลอง Three.js — แผนผังสนาม 3D (ต้นแบบ)
 
 [เปิดต้นแบบ 3D](threejs-demo/index.html) · เมื่อ Merge และ GitHub Pages เผยแพร่แล้ว: https://infobwd.github.io/sillapa/threejs-demo/
