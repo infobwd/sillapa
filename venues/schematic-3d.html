@@ -218,6 +218,8 @@ const studentTourButton=document.querySelector('#studentTour'),studentTourStatus
 const wayfindingMore=document.querySelector('#routeMore');
 // R20B1: initialize before syncVenueLayerDisclosure() reads the binding.
 const venueLayerDisclosure=document.querySelector('#venueLayers');
+// R20C: declared before the responsive disclosure's first synchronous call.
+const executiveDisclosure=document.querySelector('#executiveOverview');
 const mobileWayfindingQuery=window.matchMedia('(max-width:680px)');
 function syncWayfindingDisclosure(event){
  // Expanded on desktop, initially collapsed on a small screen.
@@ -246,7 +248,7 @@ const qualitySelector=document.querySelector('#qualityMode');
 const motionModeButton=document.querySelector('#motionMode');
 const performanceStatus=document.querySelector('#performanceStatus');
 // R20C: all DOM bindings declared before registering any immediate handlers.
-const executiveDisclosure=document.querySelector('#executiveOverview');
+
 const execStats={
  venues:document.querySelector('#execVenues'),
  total:document.querySelector('#execTotalRows'),
