@@ -128,6 +128,8 @@ test('dome contains two reception desks and two staff, clear of the original sta
  assert.match(scene,/makeBuildingLabel\('ลงทะเบียน \(จำลอง\)'/);
  assert.match(scene,/makeBuildingLabel\('ห้องประชุม ชั้น 2 \(จำลอง\)'/);
  assert.match(scene,/stage\.position\.set\(0,\.48,-5\.25\)/);
+ assert.match(scene,/officeRoofs\.push\(roof\);roof\.visible=roofVisible/);
+ assert.match(scene,/roofToggle\.textContent=roofVisible\?'🏠 หลังคา':'🏠 ดูภายใน'/);
 });
 
 test('R17 service worker and both venue URLs refresh with drop-off helper',()=>{
