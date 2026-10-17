@@ -63,16 +63,36 @@ export function vehicleFootprintMargin(a,b,aLength=3.7,bLength=3.7,
  }
  return best;
 }
+export function vehicleOverlapDepth(a,b,aLength=3.7,bLength=3.7,
+ aWidth=1.8,bWidth=1.8,clearance=.85) {
+ if(!a?.visible||!b?.visible)return 0;
+ const ax=rectAxis(a.yaw),bx=rectAxis(b.yaw);
+ const dx=b.point.x-a.point.x,dz=b.point.z-a.point.z;
+ let overlap=0;
+ for(const axis of [...ax,...bx]){
+  const dot=(u)=>Math.abs(u[0]*axis[0]+u[1]*axis[1]);
+  const ra=(aLength/2+clearance/2)*dot(ax[0])
+   +(aWidth/2+clearance/2)*dot(ax[1]);
+  const rb=(bLength/2+clearance/2)*dot(bx[0])
+   +(bWidth/2+clearance/2)*dot(bx[1]);
+  overlap+=Math.max(0,ra+rb-Math.abs(dx*axis[0]+dz*axis[1]));
+ }
+ return overlap;
+}
 export function shouldHoldDropoffRelease(current,wanted,other,
  aLength,bLength,aWidth=1.8,bWidth=1.8,isDeparting=false) {
  if(!mustYieldAtDropoff(wanted,other,aLength,bLength,aWidth,bWidth))return false;
  if(!isDeparting||!current?.visible)return true;
  const before=vehicleFootprintMargin(current,other,aLength,bLength,aWidth,bWidth);
  if(before>=0)return true; // newly entering someone else's safety margin
- const after=vehicleFootprintMargin(wanted,other,aLength,bLength,aWidth,bWidth);
+ // A lateral body overlap can remain constant while a departing
+ // vehicle moves longitudinally away. A maximum-SAT-axis comparison alone
+ // would still freeze it, so require decreasing TOTAL penetration instead.
+ const oldDepth=vehicleOverlapDepth(current,other,aLength,bLength,aWidth,bWidth);
+ const newDepth=vehicleOverlapDepth(wanted,other,aLength,bLength,aWidth,bWidth);
  const oldDistance=Math.hypot(current.point.x-other.point.x,current.point.z-other.point.z);
  const newDistance=Math.hypot(wanted.point.x-other.point.x,wanted.point.z-other.point.z);
- return !(after>before+0.00001&&newDistance>oldDistance+0.00001);
+ return !(newDepth<oldDepth-0.00001&&newDistance>oldDistance+0.00001);
 }
 
 export function registrationQueuePoint(queueIndex,personIndex){
