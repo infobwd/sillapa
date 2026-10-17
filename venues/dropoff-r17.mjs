@@ -35,6 +35,40 @@ export function mustYieldAtDropoff(wanted,other,aLength,bLength,aWidth=1.8,bWidt
  return !!(inDropoffZone(wanted?.point)&&inDropoffZone(other?.point)
   &&vehicleFootprintsConflict(wanted,other,aLength,bLength,aWidth,bWidth,.85));
 }
+
+// R17A: positive values indicate a separating axis has physical space.
+// If both positions still overlap, the candidate is allowed ONLY when
+// the departing vehicle increases BOTH center distance and body clearance.
+// This prevents an existing too-close pair from being permanently frozen,
+// without granting a free pass to drive deeper into another vehicle.
+export function vehicleFootprintMargin(a,b,aLength=3.7,bLength=3.7,
+ aWidth=1.8,bWidth=1.8,clearance=.85) {
+ if(!a?.visible||!b?.visible)return Infinity;
+ const ax=rectAxis(a.yaw),bx=rectAxis(b.yaw);
+ const dx=b.point.x-a.point.x,dz=b.point.z-a.point.z;
+ let best=-Infinity;
+ for(const axis of [...ax,...bx]){
+  const project=(u)=>Math.abs(u[0]*axis[0]+u[1]*axis[1]);
+  const rA=(aLength/2+clearance/2)*project(ax[0])
+    +(aWidth/2+clearance/2)*project(ax[1]);
+  const rB=(bLength/2+clearance/2)*project(bx[0])
+    +(bWidth/2+clearance/2)*project(bx[1]);
+  best=Math.max(best,Math.abs(dx*axis[0]+dz*axis[1])-rA-rB);
+ }
+ return best;
+}
+export function shouldHoldDropoffRelease(current,wanted,other,
+ aLength,bLength,aWidth=1.8,bWidth=1.8,isDeparting=false) {
+ if(!mustYieldAtDropoff(wanted,other,aLength,bLength,aWidth,bWidth))return false;
+ if(!isDeparting||!current?.visible)return true;
+ const before=vehicleFootprintMargin(current,other,aLength,bLength,aWidth,bWidth);
+ if(before>=0)return true; // newly entering someone else's safety margin
+ const after=vehicleFootprintMargin(wanted,other,aLength,bLength,aWidth,bWidth);
+ const oldDistance=Math.hypot(current.point.x-other.point.x,current.point.z-other.point.z);
+ const newDistance=Math.hypot(wanted.point.x-other.point.x,wanted.point.z-other.point.z);
+ return !(after>before+0.00001&&newDistance>oldDistance+0.00001);
+}
+
 export function registrationQueuePoint(queueIndex,personIndex){
  const queue=DOME_QUEUES[Math.abs(queueIndex)%DOME_QUEUES.length];
  // Dome group rotates +90° about Y with local Z scaled to .78. The
