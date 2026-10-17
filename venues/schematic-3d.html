@@ -857,6 +857,7 @@ function makeBlueLowPolyPickup(){
   part(new THREE.BoxGeometry(.27,.13,.065),silver,x,1.13,-1.65);
   part(new THREE.BoxGeometry(.16,.12,.04),new THREE.MeshStandardMaterial({color:'#c44547'}),x,1.10,2.03);
  }
+ truck.userData.vehicleKind='pickup';truck.userData.vehicleLength=3.9;truck.userData.vehicleWidth=1.56;
  return truck;
 }
 // D3D-R16B: modern vehicle silhouettes derived from owner's photo references.
