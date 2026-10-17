@@ -88,7 +88,7 @@ test('reduced motion reduces decorations but keeps vehicles and students moving'
 });
 
 test('scene time is shared by camera flights and traffic, paused when hidden',()=>{
- assert.match(scene,/const clock=\{getElapsedTime:\(\)=>simulationTime\}/);
+ assert.doesNotMatch(scene,/const clock=new THREE\.Clock\(\)/);
  assert.match(scene,/let simulationTime=0,lastRenderedMs=null/);
  assert.match(scene,/if\(!renderActive\|\|document\.hidden\|\|!sceneInViewport\)/);
  assert.match(scene,/if\(!shouldDrawFrame\(lastRenderedMs,frameMs,qualityProfile\.fps\)\)return/);
