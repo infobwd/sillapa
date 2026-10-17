@@ -1359,7 +1359,7 @@ function buildStudentTour(){
  studentTourFigures=[];
  for(let i=0;i<3;i++){
   const figure=makeDropoffPerson(false,i);
-  figure.scale.setScalar(1.45);
+  figure.visible=true;figure.scale.setScalar(1.45);
   const ring=new THREE.Mesh(new THREE.RingGeometry(.26,.38,16),
    new THREE.MeshBasicMaterial({color:'#f7d66c',side:THREE.DoubleSide,depthTest:false}));
   ring.rotation.x=-Math.PI/2;ring.position.y=.075;figure.add(ring);
