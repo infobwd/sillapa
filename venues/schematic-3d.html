@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {computeHighwayProgress,canEnterMainRoad,canAdvanceInboundRoad} from './traffic-r16.mjs';
 import {makeModernSedan,makeModernVan,makeModernBlueBus,makeTenWheelFreightTruck} from './vehicle-models-r16b.mjs';
-import {DROP_OFF_BAY,BUILDING_DROPOFF_TIMING,FRONT_PARK_TIMING,SAFE_ALIGHT_Z,fromVanToRegistrationWaypoints,shouldHoldFollowerAtDropoff,inDropoffZone,shouldHoldDropoffRelease,registrationQueuePoint,toRegistrationWaypoints,fromRegistrationToBuildingWaypoints,registrationPhase} from './dropoff-r17.mjs';
+import {DROP_OFF_BAY,BUILDING_DROPOFF_TIMING,FRONT_PARK_TIMING,SAFE_ALIGHT_Z,fromVanToRegistrationWaypoints,shouldHoldFollowerAtDropoff,shouldHoldVehicleCorridor,inDropoffZone,shouldHoldDropoffRelease,registrationQueuePoint,toRegistrationWaypoints,fromRegistrationToBuildingWaypoints,registrationPhase} from './dropoff-r17.mjs';
 const mount=document.querySelector('#scene'),select=document.querySelector('#venue'),list=document.querySelector('#list'),details=document.querySelector('#details'),heading=document.querySelector('#heading'),info=document.querySelector('#info'),panel=document.querySelector('#modelPanel'),tags=document.querySelector('#mapTags');
 const scene=new THREE.Scene();scene.background=new THREE.Color('#dceeff');const camera=new THREE.PerspectiveCamera(48,1,.1,320);camera.position.set(19,22,27);const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,2));mount.prepend(renderer.domElement);scene.add(new THREE.HemisphereLight(0xffffff,0x91a9a0,2));const sun=new THREE.DirectionalLight(0xffffff,2);sun.position.set(15,25,10);scene.add(sun);const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.maxPolarAngle=Math.PI/2.08;controls.minDistance=10;controls.maxDistance=210;const ground=new THREE.Mesh(new THREE.PlaneGeometry(180,180),new THREE.MeshStandardMaterial({color:'#b9d8af'}));ground.rotation.x=-Math.PI/2;scene.add(ground);const ray=new THREE.Raycaster(),pointer=new THREE.Vector2(),meshes=[],objects=[],walkers=[];let peopleVisible=true,roofVisible=true;const officeRoofs=[];const clock=new THREE.Clock();const buses=[];const flagCloths=[];const registrationStaff=[];const buildingTargets=new Map();let cameraFlight=null;let trafficEnabled=true;let active=null,venues=[];
 function dispose(){venueBadges.length=0;walkers.length=0;buses.length=0;flagCloths.length=0;registrationStaff.length=0;buildingTargets.clear();cameraFlight=null;lastVehicleUpdate=null;for(const o of objects){scene.remove(o);o.traverse(n=>{if(n.geometry)n.geometry.dispose();if(n.material){const mats=Array.isArray(n.material)?n.material:[n.material];for(const mat of mats){if(mat.map&&mat.map.isCanvasTexture)mat.map.dispose();mat.dispose()}}})}objects.length=0;meshes.length=0;officeRoofs.length=0}
@@ -1190,11 +1190,17 @@ function animateDistrictVehicles(t){
      // when the proposed step increases BOTH its actual oriented-body
      // clearance and distance. New incursions must continue to yield.
      const releasing=b.route==='building-dropoff'&&b.progress>=BUILDING_DROPOFF_TIMING.dwellEnd&&b.progress<BUILDING_DROPOFF_TIMING.departEnd;
+     const lenB=b.model.userData.vehicleLength||3.8;
+     const lenOther=other.model.userData.vehicleLength||3.8;
+     const widthB=b.model.userData.vehicleWidth||1.8;
+     const widthOther=other.model.userData.vehicleWidth||1.8;
      const bodyBlocked=inBayZone&&shouldHoldDropoffRelease(current,wanted,pose,
-       b.model.userData.vehicleLength||3.8,
-       other.model.userData.vehicleLength||3.8,
-       b.model.userData.vehicleWidth||1.8,
-       other.model.userData.vehicleWidth||1.8,releasing);
+       lenB,lenOther,widthB,widthOther,releasing);
+     // A van clearing the bay and the following blue pickup may both be
+     // inside the connecting road while center-point gaps look acceptable.
+     // Swept rectangular bodies prevent overtaking / rear-end collisions.
+     const corridorBlocked=shouldHoldVehicleCorridor(current,wanted,
+       otherCurrent,pose,lenB,lenOther,widthB,widthOther,releasing);
      // The shared exit lane needs body-length headway, not merely a
      // center-to-center point distance for sedan versus long van.
      const sameExit=wanted.point.x>10&&pose.point.x>10
@@ -1213,7 +1219,7 @@ function animateDistrictVehicles(t){
      const releasingAway=releasing&&currentGap<gapLimit
        &&gap>currentGap+0.00001;
      const pointBlocked=gap<gapLimit&&!releasingAway;
-     if((inBayZone&&bodyBlocked)
+     if(corridorBlocked||(inBayZone&&bodyBlocked)
        ||(!inBayZone&&(pointBlocked||crossing))){
       blocked=true;break;
      }
@@ -1227,6 +1233,16 @@ function animateDistrictVehicles(t){
   // Public-road cars have priority; inbound traffic can join the eastbound
   // lane only with a gap. Afterwards those behind follow the inbound car.
   if(!canAdvanceInboundRoad(currentPose,wanted,highway))blocked=true;
+  // R17B junction reservation: a car approaching from the front parking
+  // must WAIT before the crossing if the van has reserved its outbound
+  // path. A car already inside the junction continues to clear it while
+  // the van yields to swept-body clearance checks above.
+  const dropVan=internal.find(other=>other.route==='building-dropoff');
+  if(dropVan&&shouldHoldFollowerAtDropoff(b.route,currentPose,wanted,
+    dropVan.progress,accepted.get(dropVan)||trafficPose(dropVan,dropVan.progress),
+    BUILDING_DROPOFF_TIMING.dwellEnd,BUILDING_DROPOFF_TIMING.departEnd)){
+   blocked=true;
+  }
   if(!blocked)b.progress=next;
   const pose=blocked?trafficPose(b,b.progress):wanted;
   b.model.visible=pose.visible;
