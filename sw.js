@@ -1,8 +1,8 @@
 /* Sillapa standalone public dashboard cache (no private API, names, or school plans separately stored). */
-const CACHE_NAME = 'sillapa-public-v26-3d-r18a-20261017';
+const CACHE_NAME = 'sillapa-public-v27-3d-r19-20261017';
 const CACHE_PREFIX = 'sillapa-public-';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './pwa.css', './pwa.js', './ia1.css', './ia2.css', './ia2-registry.js', './ia3.css', './ia3-readiness.js', './ia4.css', './ia4-workspace.js', './ia5.css', './desktop-shell.css', './ia5-judge-venue.js', './ia6.css', './ia6-executive.js',
-  './round70-catalog.js', './pull-refresh.js', './venues/traffic-r16.mjs', './venues/vehicle-models-r16b.mjs', './venues/dropoff-r17.mjs', './venues/wayfinding-r18.mjs',
+  './round70-catalog.js', './pull-refresh.js', './venues/traffic-r16.mjs', './venues/vehicle-models-r16b.mjs', './venues/dropoff-r17.mjs', './venues/wayfinding-r18.mjs', './venues/performance-r19.mjs', './venues/schematic-3d.html', './venues/venue-shell.css', './venues/history73.json',
   './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 const INDEX = new URL('./index.html', self.registration.scope).href;
 const SCOPE = new URL(self.registration.scope);
@@ -38,12 +38,27 @@ self.addEventListener('fetch', event => {
         const response = await fetch(request, {cache: 'no-store'});
         if (response.ok) {
           const cache = await caches.open(CACHE_NAME);
-          try { await cache.put(INDEX, response.clone()); }
-          catch (_) { /* quota error does not invalidate the fresh response */ }
+          // Never put a venue HTML page into INDEX: offline navigations must
+          // recover the requested venue or show a browser error, NOT the wrong
+          // competition landing page.
+          const isIndex = url.pathname === INDEX.pathname || url.pathname === SCOPE.pathname;
+          const isVenue = url.pathname.endsWith('/venues/schematic-3d.html');
+          if (isIndex || isVenue) {
+            try { await cache.put(isIndex ? INDEX : request, response.clone()); }
+            catch (_) { /* quota should not invalidate the network response */ }
+          }
         }
         return response;
       } catch (_) {
-        return (await caches.match(INDEX)) || Response.error();
+        if (url.pathname === INDEX.pathname || url.pathname === SCOPE.pathname) {
+          return (await caches.match(INDEX)) || Response.error();
+        }
+        if (url.pathname.endsWith('/venues/schematic-3d.html')) {
+          // The HTML may be cached, but external Three.js CDN modules are
+          // NOT offline guaranteed; the page displays an explicit warning.
+          return (await caches.match(request, {ignoreSearch: true})) || Response.error();
+        }
+        return Response.error();
       }
     })());
     return;
@@ -54,7 +69,7 @@ self.addEventListener('fetch', event => {
   event.respondWith((async () => {
     // Network-first for code/style assets: deployed UI fixes should reach installed PWAs.
     // Keep cached assets as offline fallback.
-    if (/\.(?:css|m?js)$/.test(url.pathname)) {
+    if (/\.(?:css|m?js|json)$/.test(url.pathname)) {
       try {
         const fresh = await fetch(request, {cache: 'no-store'});
         if (fresh.ok) {
