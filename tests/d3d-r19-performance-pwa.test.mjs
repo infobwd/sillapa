@@ -96,8 +96,8 @@ test('scene time is shared by camera flights and traffic, paused when hidden',()
  assert.match(scene,/lastRenderedMs=frameMs;simulationTime\+=dt/);
  assert.match(scene,/new IntersectionObserver\(entries=>/);
  assert.match(scene,/document\.addEventListener\('visibilitychange'/);
- assert.match(scene,/wayfindingFollowStart=clock\.getElapsedTime\(\)/);
- assert.match(scene,/studentTourStart=clock\.getElapsedTime\(\)/);
+ assert.match(scene,/wayfindingFollowStart=simulationTime/);
+ assert.match(scene,/studentTourStart=simulationTime/);
 });
 
 test('quality dropdown and motion controls persist only explicit display settings',()=>{
