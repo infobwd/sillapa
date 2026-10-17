@@ -935,42 +935,58 @@ function addDistrictVehicles(activityCount){
  lastVehicleUpdate=null;
 }
 let lastVehicleUpdate=null;
+function highwayExitPose(b,q,start){
+ const u=Math.max(0,Math.min(.999,(q-start)/(.94-start)));
+ const point=b.exitCurve.getPointAt(u),dir=b.exitCurve.getTangentAt(u);
+ return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI,onHighway:true};
+}
 function trafficPose(b,q){
  const hidden={visible:false,point:new THREE.Vector3(-100,0,-100),yaw:0};
  if(q>=.94)return hidden;
- if(b.route==='rear-internal'){
-  const point=b.curve.getPointAt(Math.min(.999,q/.94));
-  const tangent=b.curve.getTangentAt(Math.min(.999,q/.94));
-  return {visible:true,point,yaw:Math.atan2(tangent.x,tangent.z)+Math.PI};
+ if(b.route==='rear-parking'){
+  if(q<.40){
+   const u=q/.40,point=b.arrive.getPointAt(u),dir=b.arrive.getTangentAt(Math.min(.999,u));
+   return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
+  }
+  if(q<.64){
+   const reverse=q<.54?0:(q-.54)/.10;
+   return {visible:true,point:new THREE.Vector3(3.4,0,-35+reverse*5.5),yaw:0};
+  }
+  if(q<.78){
+   const u=(q-.64)/.14,point=b.depart.getPointAt(u),dir=b.depart.getTangentAt(Math.min(.999,u));
+   return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
+  }
+  return highwayExitPose(b,q,.78);
  }
  if(b.route==='front-park'){
   if(q<.29){
-   const u=q/.29,point=b.arrive.getPointAt(u);
-   const tangent=b.arrive.getTangentAt(Math.min(.999,u));
-   return {visible:true,point,yaw:Math.atan2(tangent.x,tangent.z)+Math.PI};
+   const u=q/.29,point=b.arrive.getPointAt(u),dir=b.arrive.getTangentAt(Math.min(.999,u));
+   return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
   }
   if(q<.62){
-   // The car remains parked until .52 and backs straight out by .62.
    const reverse=q<.52?0:(q-.52)/.10;
    return {visible:true,point:new THREE.Vector3(b.bay[0],0,b.bay[1]-reverse*5.3),yaw:Math.PI};
   }
-  const u=Math.min(.999,(q-.62)/.32),point=b.depart.getPointAt(u);
-  const tangent=b.depart.getTangentAt(u);
-  return {visible:true,point,yaw:Math.atan2(tangent.x,tangent.z)+Math.PI};
+  if(q<.76){
+   const u=(q-.62)/.14,point=b.depart.getPointAt(u),dir=b.depart.getTangentAt(Math.min(.999,u));
+   return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
+  }
+  return highwayExitPose(b,q,.76);
  }
  if(b.route==='building-dropoff'){
   if(q<.38){
-   const u=q/.38,point=b.arrive.getPointAt(u);
-   const tangent=b.arrive.getTangentAt(Math.min(.999,u));
-   return {visible:true,point,yaw:Math.atan2(tangent.x,tangent.z)+Math.PI};
+   const u=q/.38,point=b.arrive.getPointAt(u),dir=b.arrive.getTangentAt(Math.min(.999,u));
+   return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
   }
   if(q<.59){
-   const point=b.arrive.getPointAt(1),tangent=b.arrive.getTangentAt(.999);
-   return {visible:true,point,yaw:Math.atan2(tangent.x,tangent.z)+Math.PI};
+   const point=b.arrive.getPointAt(1),dir=b.arrive.getTangentAt(.999);
+   return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
   }
-  const u=Math.min(.999,(q-.59)/.35),point=b.depart.getPointAt(u);
-  const tangent=b.depart.getTangentAt(u);
-  return {visible:true,point,yaw:Math.atan2(tangent.x,tangent.z)+Math.PI};
+  if(q<.76){
+   const u=(q-.59)/.17,point=b.depart.getPointAt(u),dir=b.depart.getTangentAt(Math.min(.999,u));
+   return {visible:true,point,yaw:Math.atan2(dir.x,dir.z)+Math.PI};
+  }
+  return highwayExitPose(b,q,.76);
  }
  return hidden;
 }
@@ -1013,6 +1029,12 @@ function animateDistrictVehicles(t){
  const dt=Math.min(.06,Math.max(0,lastVehicleUpdate===null?1/60:t-lastVehicleUpdate));
  lastVehicleUpdate=t;
  const internal=buses.filter(b=>b.route!=='main-road');
+ // Keep highway cars in their own lane; a departing car yields before joining it.
+ const highway=buses.filter(b=>b.route==='main-road').map(b=>{
+  const traveled=(t*b.speed+b.phase*b.travel)%b.travel;
+  const x=b.direction===1?-b.travel/2+traveled:b.travel/2-traveled;
+  return {x,z:b.lane,visible:Math.abs(x)<49};
+ });
  // Compute prospective poses before committing. Cars share a simple visual safe-gap rule,
  // so vehicles queue rather than occupying the same space at road junctions.
  const accepted=new Map();
@@ -1025,6 +1047,14 @@ function animateDistrictVehicles(t){
     if(other===b)continue;
     const pose=accepted.get(other)||trafficPose(other,other.progress);
     if(pose.visible&&wanted.point.distanceTo(pose.point)<3.25){
+     blocked=true;break;
+    }
+   }
+  }
+  if(wanted.visible&&wanted.point.z>46.4&&wanted.point.z<50.6){
+   // The entering vehicle waits when an eastbound road user is too close to merge.
+   for(const car of highway){
+    if(car.visible&&Math.hypot(wanted.point.x-car.x,wanted.point.z-car.z)<7.0){
      blocked=true;break;
     }
    }
