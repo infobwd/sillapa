@@ -663,8 +663,10 @@ function addWalkers(isDistrict,activityCount=0){
  // District walkways stop short of car lanes (x=±13 and z=22/-27) and parking bays.
  // The right forecourt path stays clear of the side carport (z around 3).
  const routes=isDistrict?[
-  [[-8.5,19],[-8.5,17],[-7,14],[-7,11.3]],
-  [[18,40],[18,35],[18,30],[18,25]],
+  // Registration route: students visibly walk from the forecourt to the dome.
+  [[-8.5,19],[-8.5,15],[-8.5,9],[-8.5,1],[-5,-2],[-3,-4]],
+  // Building 1: students approach its front entrance from the drop-off curb.
+  [[5.5,19],[5.5,16],[3.5,13],[2.5,10]],
   [[-18,39],[-18,34],[-18,29],[-18,25]],
   [[-8,-18],[-8,-21],[-8,-24]],
   [[8,-18],[8,-21],[8,-24]]
@@ -702,7 +704,7 @@ function addWalkers(isDistrict,activityCount=0){
   const segments=points.slice(1).map((point,j)=>point.distanceTo(points[j]));
   const length=segments.reduce((a,v)=>a+v,0);
   root.add(person);
-  walkers.push({person,points,segments,length,limbs,speed:.33+(i%3)*.04,
+  walkers.push({person,points,segments,length,limbs,speed:(isDistrict?1.05:.33)+(i%3)*.08,
    phase:(slot+.25)/peers,stepOffset:i*.73});
  }
  root.visible=peopleVisible;root.userData.people=true;scene.add(root);objects.push(root);
@@ -810,7 +812,7 @@ function addMainRoadTraffic(root){
  ];
  for(const item of fleet){
   root.add(item.model);
-  buses.push({...item,route:'main-road',speed:2.9,travel:114});
+  buses.push({...item,route:'main-road',speed:2.9,travel:114,highwayProgress:item.phase*114});
  }
 }
 // D3D-R7: front open forecourt is a parking and drop-off zone, not grass.
@@ -1031,9 +1033,9 @@ function animateDistrictVehicles(t){
  const internal=buses.filter(b=>b.route!=='main-road');
  // Keep highway cars in their own lane; a departing car yields before joining it.
  const highway=buses.filter(b=>b.route==='main-road').map(b=>{
-  const traveled=(t*b.speed+b.phase*b.travel)%b.travel;
+  const traveled=b.highwayProgress;
   const x=b.direction===1?-b.travel/2+traveled:b.travel/2-traveled;
-  return {x,z:b.lane,visible:Math.abs(x)<49};
+  return {x,z:b.lane,visible:Math.abs(x)<49,vehicle:b};
  });
  // Compute prospective poses before committing. Cars share a simple visual safe-gap rule,
  // so vehicles queue rather than occupying the same space at road junctions.
@@ -1086,10 +1088,36 @@ function animateDistrictVehicles(t){
   accepted.set(b,pose);
   animateDropoffPassengers(b,b.progress);
  }
+ // R13: advance highway traffic with lane headway, including vehicles that
+ // have merged from the compound. Do not place two vehicle bodies in one lane.
  for(const b of buses){
   if(b.route!=='main-road')continue;
-  const travelled=(t*b.speed+b.phase*b.travel)%b.travel;
-  const x=b.direction===1?-b.travel/2+travelled:b.travel/2-travelled;
+  const oldX=b.direction===1?-b.travel/2+b.highwayProgress:b.travel/2-b.highwayProgress;
+  const candidate=(b.highwayProgress+dt*b.speed)%b.travel;
+  const nextX=b.direction===1?-b.travel/2+candidate:b.travel/2-candidate;
+  let blocked=false;
+  for(const other of buses){
+   if(other===b)continue;
+   let ox,oz;
+   if(other.route==='main-road'){
+    if(other.lane!==b.lane)continue;
+    ox=other.model.position.x;oz=other.lane;
+   }else{
+    const pose=trafficPose(other,other.progress);
+    if(!pose.visible||pose.point.z<47.5)continue;
+    ox=pose.point.x;oz=pose.point.z;
+   }
+   // Only hold a vehicle behind traffic ahead, not a vehicle it has passed.
+   const ahead=(ox-oldX)*b.direction;
+   if(ahead>=0&&ahead<8.5&&Math.abs(oz-b.lane)<2.0){
+    blocked=true;break;
+   }
+   if(Math.abs(nextX-ox)<4.5&&Math.abs(oz-b.lane)<2.0){
+    blocked=true;break;
+   }
+  }
+  if(!blocked)b.highwayProgress=candidate;
+  const x=b.direction===1?-b.travel/2+b.highwayProgress:b.travel/2-b.highwayProgress;
   b.model.position.set(x,.20,b.lane);
   b.model.rotation.y=-b.direction*Math.PI/2;
   b.model.visible=Math.abs(x)<49;
