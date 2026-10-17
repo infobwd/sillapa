@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {
  DROP_OFF_BAY,BUILDING_DROPOFF_TIMING,FRONT_PARK_TIMING,
- inDropoffZone,shouldHoldDropoffRelease,
+ inDropoffZone,inDropoffConflictArea,vehicleFootprintsConflict,shouldHoldDropoffRelease,
  shouldHoldFollowerAtDropoff,shouldHoldVehicleCorridor
 } from '../venues/dropoff-r17.mjs';
 import {
@@ -88,6 +88,18 @@ function replay(seconds=360){
   longestHold:0,hold:0,total:0}));
  for(let i=0;i<seconds*60;i++){
   logic.animateDistrictVehicles(i/60);
+  // Detect real model BODY overlap, not just successful loop completion.
+  for(let a=0;a<inner.length;a++)for(let b=a+1;b<inner.length;b++){
+   const va=inner[a],vb=inner[b],
+    pa=logic.trafficPose(va,va.progress),pb=logic.trafficPose(vb,vb.progress);
+   if(!pa.visible||!pb.visible
+    ||!inDropoffConflictArea(pa.point)||!inDropoffConflictArea(pb.point))continue;
+   assert.ok(!vehicleFootprintsConflict(pa,pb,
+    va.model.userData.vehicleLength,vb.model.userData.vehicleLength,
+    va.model.userData.vehicleWidth,vb.model.userData.vehicleWidth,0),
+    'actual vehicle bodies overlap at t='+(i/60).toFixed(2)
+     +': '+va.route+' and '+vb.route);
+  }
   for(let j=0;j<inner.length;j++){
    const c=inner[j],r=record[j],difference=(c.progress-r.progress+1)%1;
    if(c.progress<r.progress)r.cycles++;
