@@ -23,6 +23,8 @@
 
 - **D3D-R17B (รอตรวจรับ WebGL จริง):** [Drop-off Safety & Visible Student Flow](docs/D3D_R17B_SAFE_DROPOFF_VISIBLE_STUDENT_FLOW_ACCEPTANCE.md) — เอาต้นไม้ 2 ต้นออกจากจุดรับ–ส่งและกั้นแนวทางเดินนักเรียน, รถคันหลังต้องรอก่อนจุดตัดขณะรถตู้ออกพร้อมตรวจตัวถังรถตลอดแนว, นักเรียนจากรถตู้เดินไปโดมลงทะเบียนก่อนอาคาร 1, เพิ่มปุ่ม **👣 ดูนักเรียน** สาธิต 46 วินาทีพร้อมกล้องติดตามจนถึงห้องประชุมชั้น 2; ทดสอบ JS 46/46 ผ่านในแชทและจำลองรถ 4 คัน + ถนนหลัก 10 คัน 6 นาทีครบ 3 รอบต่อคัน · PWA `sillapa-public-v24-3d-r17b-20261017` · Local-First/ไม่ใช้ GitHub Actions
 
+- **D3D-R18 (Interactive Wayfinding · รอตรวจรับ WebGL จริง):** [เส้นทางเดิน/คลิกจุดหมาย/ติดตามรถตู้และนักเรียน](docs/D3D_R18_INTERACTIVE_WAYFINDING_ACCEPTANCE.md) — เลือกต้นทาง–ปลายทาง 5 จุดในสนามสำนักงานเขต, แตะอาคาร/หมุด, เส้นทางสีเขียวฟ้าพร้อมลูกศร, ปุ่มภาพรวม/ติดตามเส้นทาง/ติดตามรถตู้/ซ่อนแสดงเส้น, คีย์บอร์ด Escape และ browser Back/Forward; เส้นทางเดินใช้พิกัดจำลองที่หลบเขตรถ ไม่ใช่ผังเดินจริง · PWA `sillapa-public-v25-3d-r18-20261017` · Local-First: `node --test tests/d3d-r18-wayfinding.test.mjs` (พร้อมรันชุด R16–R17B ทั้งหมด, **ไม่ใช้ GitHub Actions**) · JavaScript 58/58 ผ่านในแชท, รอตรวจ Node CLI และ Chrome/iPhone/iPad WebGL
+
 ## ทดลอง Three.js — แผนผังสนาม 3D (ต้นแบบ)
 
 [เปิดต้นแบบ 3D](threejs-demo/index.html) · เมื่อ Merge และ GitHub Pages เผยแพร่แล้ว: https://infobwd.github.io/sillapa/threejs-demo/
