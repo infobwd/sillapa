@@ -35,7 +35,7 @@ test('marked pedestrian shoulder clears Building 1 and dome restrooms',()=>{
  assert.ok(minimumSeparation(wcBypass,[-10.5,-7,-6.1,-1.9])>.30);
  assert.match(scene,/slab\(\.58,25\.5,-11\.38,4\.7/);
  assert.match(scene,/const bypass=isDistrict&&\(routeIndex===0\|\|routeIndex===1\)/);
- assert.match(scene,/route=\[\[x,35\.2\],[\s\S]*\[-11\.38,-7\.45\]/);
+ assert.match(scene,/toRegistrationWaypoints\(b\.bay\[0\]-1\.4-j\*\.34,line,j\)/);
 });
 test('extension parking sits at photographed rear frontage, not east wall',()=>{
  const match=scene.match(/const epX=([\d.]+),epZ=(-?[\d.]+),epW=([\d.]+),epL=([\d.]+)/);
