@@ -1,5 +1,5 @@
 /* Sillapa standalone public dashboard cache (no private API, names, or school plans separately stored). */
-const CACHE_NAME = 'sillapa-public-v30-3d-r20b-20261018';
+const CACHE_NAME = 'sillapa-public-v31-3d-r20b1-20261018';
 const CACHE_PREFIX = 'sillapa-public-';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './pwa.css', './pwa.js', './ia1.css', './ia2.css', './ia2-registry.js', './ia3.css', './ia3-readiness.js', './ia4.css', './ia4-workspace.js', './ia5.css', './desktop-shell.css', './ia5-judge-venue.js', './ia6.css', './ia6-executive.js',
   './round70-catalog.js', './pull-refresh.js', './venues/traffic-r16.mjs', './venues/vehicle-models-r16b.mjs', './venues/dropoff-r17.mjs', './venues/junction-r19b.mjs', './venues/visual-r20a.mjs', './venues/overlay-r20b.mjs', './venues/wayfinding-r18.mjs', './venues/performance-r19.mjs', './venues/schematic-3d.html', './venues/venue-shell.css', './venues/history73.json',

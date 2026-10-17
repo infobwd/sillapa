@@ -42,3 +42,7 @@ New `tests/d3d-r20b-venue-overlay.test.mjs` checks defaults, invalid stored pref
 - [ ] Record screenshots/videos from desktop/iOS, commit SHA, date and actual local Node output; request explicit owner Merge approval before release
 
 Owner Merge is separate from real-device acceptance and deployment verification.
+
+## R20B1 JavaScript initialization hotfix (18 October 2026)
+
+Owner screenshot: `Uncaught ReferenceError: Cannot access 'venueLayerDisclosure' before initialization`, `syncVenueLayerDisclosure`, scene module line 210. Root cause: module called the mobile disclosure synchronizer at line 210 before the `const venueLayerDisclosure` DOM binding at line 215. R20B1 moves the one binding ahead of all synchronizer calls and adds an executable Node `vm` regression that verifies mobile initial collapse and viewport-change callbacks. PWA cache v31 and both entry links `v=r20b1` invalidate stale viewer references. Real browser/PWA visual acceptance still PENDING; original R20B historical source, 74 data permissions, vehicles and student routing remain unchanged.
