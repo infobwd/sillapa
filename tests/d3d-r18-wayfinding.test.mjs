@@ -167,7 +167,7 @@ test('the 3D layer draws line, arrow, endpoints and followable animated marker',
  assert.match(scene,/const pose=sampleWayfindingRoute\(wayfindingRoute\.points,fraction\)/);
  assert.match(scene,/wayfindingMarker\.position\.set\(pose\.x,pose\.y\+\.82,pose\.z\)/);
  assert.match(scene,/function animateWayfindingFollow\(t\)/);
- assert.match(scene,/animateStudentTour\(t\);animateWayfindingFollow\(t\);controls\.update\(\)/);
+ assert.match(scene,/animateStudentTour\(t\);animateWayfindingFollow\(t\);\s*controls\.update\(\)/);
  assert.match(scene,/controls\.target\.lerp\(target,\.065\)/);
  assert.match(scene,/const hash=wayfindingHash\(from,to\)/);
 });
