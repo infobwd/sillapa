@@ -12,6 +12,7 @@
 - **ระยะ 4:** R20 เชื่อมข้อมูลเตรียมการแข่งขัน 74 ที่ได้รับอนุมัติ โดยไม่แตะข้อมูลย้อนหลัง 73 หรือระบบรับสมัคร/คะแนน
 - **R16 (กำลังตรวจรับ):** [Traffic / Sign Bypass / Parking Acceptance](docs/D3D_R16_TRAFFIC_PARKING_ACCEPTANCE.md) — แก้ deadlock รถเมล์, หลีกป้ายอาคาร 1, หมุนแนวจอดข้างอาคาร 1 และเพิ่มที่จอดติดส่วนต่อเติมอาคาร 2; ยังต้องทดสอบ WebGL จริง
 - **Local-First R16:** `node --test tests/d3d-r16-traffic-parking.test.mjs` (ไม่ใช้ GitHub Actions) · PWA cache `sillapa-public-v18-3d-r16-20261017`
+- **R16B (รอตรวจรับภาพจริง):** [ที่จอดรถจุดขีดแดงหน้า/หลังส่วนต่อเติมอาคาร 2, ทางเดินหลบสุขา และโมเดลรถตามภาพ](docs/D3D_R16B_REFERENCE_VEHICLES_PARKING_WALKERS_ACCEPTANCE.md) — รถเก๋งสีน้ำเงิน รถตู้สีขาว รถเมล์สีน้ำเงิน รถบรรทุกสิบล้อบนถนนหลัก รวมรถจำลอง 10 คัน; PWA cache `sillapa-public-v19-3d-r16b-20261017` · ตรวจ Local-First ด้วย `node --test tests/d3d-r16-traffic-parking.test.mjs tests/d3d-r16b-vehicles-parking-paths.test.mjs`
 
 ## ทดลอง Three.js — แผนผังสนาม 3D (ต้นแบบ)
 

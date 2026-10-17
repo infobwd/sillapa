@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {computeHighwayProgress,canEnterMainRoad} from './traffic-r16.mjs';
+import {makeModernSedan,makeModernVan,makeModernBlueBus,makeTenWheelFreightTruck} from './vehicle-models-r16b.mjs';
 const mount=document.querySelector('#scene'),select=document.querySelector('#venue'),list=document.querySelector('#list'),details=document.querySelector('#details'),heading=document.querySelector('#heading'),info=document.querySelector('#info'),panel=document.querySelector('#modelPanel'),tags=document.querySelector('#mapTags');
 const scene=new THREE.Scene();scene.background=new THREE.Color('#dceeff');const camera=new THREE.PerspectiveCamera(48,1,.1,320);camera.position.set(19,22,27);const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,2));mount.prepend(renderer.domElement);scene.add(new THREE.HemisphereLight(0xffffff,0x91a9a0,2));const sun=new THREE.DirectionalLight(0xffffff,2);sun.position.set(15,25,10);scene.add(sun);const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.maxPolarAngle=Math.PI/2.08;controls.minDistance=10;controls.maxDistance=210;const ground=new THREE.Mesh(new THREE.PlaneGeometry(180,180),new THREE.MeshStandardMaterial({color:'#b9d8af'}));ground.rotation.x=-Math.PI/2;scene.add(ground);const ray=new THREE.Raycaster(),pointer=new THREE.Vector2(),meshes=[],objects=[],walkers=[];let peopleVisible=true,roofVisible=true;const officeRoofs=[];const clock=new THREE.Clock();const buses=[];const flagCloths=[];const buildingTargets=new Map();let cameraFlight=null;let trafficEnabled=true;let active=null,venues=[];
 function dispose(){venueBadges.length=0;walkers.length=0;buses.length=0;flagCloths.length=0;buildingTargets.clear();cameraFlight=null;lastVehicleUpdate=null;for(const o of objects){scene.remove(o);o.traverse(n=>{if(n.geometry)n.geometry.dispose();if(n.material)n.material.dispose()})}objects.length=0;meshes.length=0;officeRoofs.length=0}
@@ -443,6 +444,9 @@ function decorateDistrict(){
  }
  // Pedestrian bands are separate from the vehicle corridors.
  for(const x of [-11,11])slab(1,63,x,-8,'#d9d6c9',.2);
+ // R16B: narrow marked shoulder WEST of Building 1's WC
+ // (wall ends x=-10.5). Center x=-11.38, while cars drive at x=-13.
+ slab(.58,25.5,-11.38,4.7,'#e4ded0',.26);
  // Full-width single-storey office annex directly behind อาคาร 1, adjoining the dome.
  // Building long axes run along world X; annex spans the same frontage width.
  const annex=new THREE.Group();
@@ -607,22 +611,21 @@ function decorateDistrict(){
  }
  const rearRidge=new THREE.Mesh(new THREE.BoxGeometry(.18,.2,6.1),mat('#d8d8d0'));
  rearRidge.position.set(0,3.11,-16.6);g.add(rearRidge);
- // R16: NEW two-space parking canopy directly adjoining Building 2's rear
- // extension east wall (x=5.4); it stops before the east footpath/road.
- // This is additional parking, distinct from the existing rear carport.
+ // R16B: owner's red-marked parking is on the REAR (negative-Z) facade
+ // of Building 2's extension, not on its east-side wall.
+ // Extension rear wall is z=-19.2; roof attaches flush and ends at -23.35.
  const extParking=new THREE.Group();
- const epX=7.87,epZ=-17.0,epW=4.82,epL=6.15;
+ const epX=0,epZ=-21.275,epW=10.6,epL=4.15;
  slab(epW,epL,epX,epZ,'#c2c4bc',.20);
- for(const z of [epZ-epL/2+.15,epZ,epZ+epL/2-.15]){
-  slab(epW-.35,.085,epX,z,'#f7f0dd',.275);
- }
- const extAwning=new THREE.Mesh(new THREE.BoxGeometry(epW,.23,epL),mat('#607b89'));
- extAwning.position.set(epX,2.93,epZ);extParking.add(extAwning);
- const wallConnector=new THREE.Mesh(new THREE.BoxGeometry(.28,.23,epL),mat('#4e6572'));
- wallConnector.position.set(5.43,2.88,epZ);extParking.add(wallConnector);
- for(const z of [epZ-epL/2+.42,epZ+epL/2-.42]){
-  const post=new THREE.Mesh(new THREE.BoxGeometry(.15,2.65,.15),mat('#657983'));
-  post.position.set(epX+epW/2-.30,1.5,z);extParking.add(post);
+ for(const x of [-epW/2+.20,-epW/6,epW/6,epW/2-.20])
+  slab(.09,epL-.34,x,epZ,'#f7f0dd',.275);
+ const extAwning=new THREE.Mesh(new THREE.BoxGeometry(epW,.22,epL),mat('#607b89'));
+ extAwning.position.set(epX,2.95,epZ);extParking.add(extAwning);
+ const wallConnector=new THREE.Mesh(new THREE.BoxGeometry(epW,.23,.24),mat('#4e6572'));
+ wallConnector.position.set(0,2.91,-19.20);extParking.add(wallConnector);
+ for(const x of [-4.96,4.96]){
+  const post=new THREE.Mesh(new THREE.BoxGeometry(.16,2.68,.16),mat('#657983'));
+  post.position.set(x,1.54,-23.05);extParking.add(post);
  }
  g.add(extParking);
  // Open-sided parking canopy BEHIND อาคาร 2, before the rear pond.
@@ -683,8 +686,9 @@ function addWalkers(isDistrict,activityCount=0){
  // District walkways stop short of car lanes (x=±13 and z=22/-27) and parking bays.
  // The right forecourt path stays clear of the side carport (z around 3).
  const routes=isDistrict?[
-  // Registration route: students visibly walk from the forecourt to the dome.
-  [[-8.5,19],[-8.5,15],[-8.5,9],[-8.5,1],[-5,-2],[-3,-4]],
+  // R16B: WC bypass on the west shoulder and around the dome WC behind it.
+  [[-8.5,19],[-11.38,18],[-11.38,14.7],[-11.38,10.8],
+   [-11.38,5],[-11.38,-7.45],[-6.65,-7.45],[-5.0,-6.9],[-4.3,-6.2]],
   // Building 1: students approach its front entrance from the drop-off curb.
   // Sign spans x=-5.65..5.65 at z=12.6; bypass its east edge.
   [[5.5,19],[6.12,17],[6.12,14.7],[6.12,11.2],[6.12,9.8]],
@@ -721,9 +725,8 @@ function addWalkers(isDistrict,activityCount=0){
   const routeIndex=i%routes.length,slot=Math.floor(i/routes.length);
   const peers=Math.ceil((totalPeople-routeIndex)/routes.length);
   const lane=(slot-(peers-1)/2)*.68;
-  // The Building 1 sign bypass is narrow: separate walkers by time/phase
-  // rather than lateral shift that could put a person through the sign.
-  const bypass=isDistrict&&routeIndex===1;
+  // WC and sign bypasses are narrow: stagger walkers in time, not into walls.
+  const bypass=isDistrict&&(routeIndex===0||routeIndex===1);
   const points=routes[routeIndex].map(([x,z])=>
    new THREE.Vector3(x+(bypass?0:lane),0,z+(bypass?0:lane)));
   const segments=points.slice(1).map((point,j)=>point.distanceTo(points[j]));
@@ -737,17 +740,9 @@ function addWalkers(isDistrict,activityCount=0){
 // Illustrative vehicle flow scaled by historic activity rows, not actual team or vehicle counts.
 // D3D-R6: shared vehicle geometry for moving and parked cars.
 function makeDistrictCar(color,pickup=false){
- const model=new THREE.Group(),paint=new THREE.MeshStandardMaterial({color,roughness:.55,metalness:.12});
- const body=new THREE.Mesh(new THREE.BoxGeometry(1.35,.62,2.45),paint);
- body.position.y=.68;model.add(body);
- const cabin=new THREE.Mesh(new THREE.BoxGeometry(1.12,.55,1.25),new THREE.MeshStandardMaterial({color:'#a9c5d0',metalness:.12,roughness:.42}));
- cabin.position.set(0,1.24,-.22);model.add(cabin);
- for(const xx of [-.7,.7])for(const zz of [-.78,.78]){
-  const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.27,.27,.15,10),new THREE.MeshStandardMaterial({color:'#29353e'}));
-  wheel.rotation.z=Math.PI/2;wheel.position.set(xx,.42,zz);model.add(wheel);
- }
- if(pickup){const bed=new THREE.Mesh(new THREE.BoxGeometry(1.3,.16,1.04),new THREE.MeshStandardMaterial({color:'#424a50'}));bed.position.set(0,.83,1.37);model.add(bed);const tail=new THREE.Mesh(new THREE.BoxGeometry(1.3,.3,.12),paint);tail.position.set(0,.78,1.91);model.add(tail);body.scale.z=.73;body.position.z=-.3;cabin.position.z=-.57;}
- return model;
+ // The still/moving car uses the new faceted modern sedan reference;
+ // dedicated pickups retain the existing low-poly open-bed silhouette.
+ return pickup?makeBlueLowPolyPickup():makeModernSedan(color);
 }
 // D3D-R11: photo-guided low-poly blue pickup, built from procedural Three.js primitives.
 // Reference image is a visual guide only, not imported geometry or a photogrammetric asset.
@@ -787,53 +782,23 @@ function makeBlueLowPolyPickup(){
  }
  return truck;
 }
-// D3D-R9: stylized municipal bus on main road (visual simulation, not live transport).
-function makeRoadBus(color){
- const vehicle=new THREE.Group();
- const bodyMat=new THREE.MeshStandardMaterial({color,roughness:.64});
- const glazing=new THREE.MeshStandardMaterial({color:'#4d7689',roughness:.38,metalness:.12});
- const bumperMat=new THREE.MeshStandardMaterial({color:'#dde2e3',roughness:.8});
- const body=new THREE.Mesh(new THREE.BoxGeometry(2.05,1.78,5.7),bodyMat);
- body.position.y=1.33;vehicle.add(body);
- const top=new THREE.Mesh(new THREE.BoxGeometry(1.98,.22,5.4),bumperMat);
- top.position.y=2.33;vehicle.add(top);
- for(const side of [-1,1]){
-  for(let j=0;j<5;j++){
-   const window=new THREE.Mesh(new THREE.BoxGeometry(.045,.67,.75),glazing);
-   window.position.set(side*1.035,1.65,-1.88+j*.91);vehicle.add(window);
-  }
-  for(const z of [-1.85,1.84]){
-   const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.40,.40,.14,12),
-    new THREE.MeshStandardMaterial({color:'#283037',roughness:.93}));
-   wheel.rotation.z=Math.PI/2;
-   wheel.position.set(side*1.06,.50,z);vehicle.add(wheel);
-  }
- }
- for(const z of [-2.88,2.88]){
-  const windshield=new THREE.Mesh(new THREE.BoxGeometry(1.72,.70,.05),glazing);
-  windshield.position.set(0,1.67,z);vehicle.add(windshield);
- }
- const band=new THREE.Mesh(new THREE.BoxGeometry(2.08,.22,5.75),
-  new THREE.MeshStandardMaterial({color:'#f0e6ba',roughness:.85}));
- band.position.y=1.06;vehicle.add(band);
- return vehicle;
-}
-function makeRoadVan(color){
- const van=makeDistrictCar(color,false);
- const top=new THREE.Mesh(new THREE.BoxGeometry(1.15,.62,1.75),
-  new THREE.MeshStandardMaterial({color:'#a9bdc4',roughness:.55}));
- top.position.set(0,1.26,0);van.add(top);
- return van;
-}
+// D3D-R16B: modern vehicle silhouettes derived from owner's photo references.
+function makeRoadBus(color='#2873b9'){return makeModernBlueBus(color)}
+function makeRoadVan(color='#edf1f0'){return makeModernVan(color)}
 function addMainRoadTraffic(root){
- // Road 3342 runs east-west at z=52. Use fixed spacing and equal speed per lane.
+ // Ten illustrative road users: five in each direction, 22.8-unit initial
+ // separation on the 114-unit wrap, with the R16 10-unit headway preserved.
  const fleet=[
-  {model:makeRoadBus('#f0d49b'),lane:49.25,direction:1,phase:0},
-  {model:makeDistrictCar('#f3f4f3'),lane:49.25,direction:1,phase:1/3},
-  {model:makeBlueLowPolyPickup(),lane:49.25,direction:1,phase:2/3},
-  {model:makeRoadVan('#d5e3ea'),lane:54.75,direction:-1,phase:0},
-  {model:makeRoadBus('#e5a863'),lane:54.75,direction:-1,phase:1/3},
-  {model:makeDistrictCar('#b7d1b9'),lane:54.75,direction:-1,phase:2/3}
+  {model:makeRoadBus('#2974b9'),lane:49.25,direction:1,phase:0},
+  {model:makeModernSedan('#3d82c7'),lane:49.25,direction:1,phase:.2},
+  {model:makeTenWheelFreightTruck(),lane:49.25,direction:1,phase:.4},
+  {model:makeBlueLowPolyPickup(),lane:49.25,direction:1,phase:.6},
+  {model:makeRoadVan('#e9ecec'),lane:49.25,direction:1,phase:.8},
+  {model:makeRoadVan('#f2f3f2'),lane:54.75,direction:-1,phase:0},
+  {model:makeTenWheelFreightTruck(),lane:54.75,direction:-1,phase:.2},
+  {model:makeRoadBus('#2f75b9'),lane:54.75,direction:-1,phase:.4},
+  {model:makeModernSedan('#3376b9'),lane:54.75,direction:-1,phase:.6},
+  {model:makeBlueLowPolyPickup(),lane:54.75,direction:-1,phase:.8}
  ];
  for(const item of fleet){
   root.add(item.model);
@@ -893,11 +858,13 @@ function addDistrictVehicles(activityCount){
   const [x,z]=bays[i],model=makeDistrictCar(colors[i%colors.length],i%3===1);
   model.position.set(x,.24,z);model.rotation.y=Math.PI;root.add(model);
  }
- // R16: side canopy reoriented across X; two extra spaces attach to Building 2.
+ // R16B: three spaces behind the extension on the user's red marking;
+ // preserve the detached carport and its moving pickup bay.
  const parked=[
   {x:18.15,z:1.4,angle:Math.PI/2},{x:18.15,z:5.2,angle:Math.PI/2},
-  {x:7.85,z:-18.6,angle:Math.PI/2},{x:7.85,z:-15.5,angle:Math.PI/2},
-  {x:-3.4,z:-35,angle:0},{x:0,z:-35,angle:0} // rear third bay for arriving pickup
+  {x:-3.50,z:-21.30,angle:0},{x:0,z:-21.30,angle:0},
+  {x:3.50,z:-21.30,angle:0},
+  {x:-3.4,z:-35,angle:0},{x:0,z:-35,angle:0}
  ];
  for(let i=0;i<parked.length;i++){
   const p=parked[i],model=makeDistrictCar(colors[(i+2)%colors.length],false);
@@ -1058,8 +1025,10 @@ function animateDropoffPassengers(b,q){
   }else{
    const x=b.bay[0]-1.4-j*.34;
    // Front-bay pickup → western walkway → registration dome.
-   route=[[x,35.2],[x,30],[x,25],[x,19],[-8.5-j*.24,15],
-    [-8.5-j*.24,9],[-8.5-j*.24,1],[-5-j*.24,-2],[-3-j*.24,-4]];
+   // Follow the restroom bypass rather than crossing Buildings 1 / WC.
+   route=[[x,35.2],[x,30],[x,25],[x,19],[-11.38,18],
+    [-11.38,14.7],[-11.38,10.8],[-11.38,5],[-11.38,-7.45],
+    [-6.65,-7.45],[-5.0,-6.9],[-4.3,-6.2]];
   }
   // Full route within the vehicle dwell/departure cycle. Pause at destination.
   const travelEnd=building?.84:.86;
