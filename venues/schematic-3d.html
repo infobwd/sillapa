@@ -4,7 +4,7 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {WAYFINDING_STOPS,WAYFINDING_NODE_COORDINATES,isWayfindingStop,buildingWayfindingStop,planWayfindingRoute,sampleWayfindingRoute,wayfindingHash,parseWayfindingHash} from './wayfinding-r18.mjs';
 import {computeHighwayProgress,canEnterMainRoad,canAdvanceInboundRoad} from './traffic-r16.mjs';
 import {makeModernSedan,makeModernVan,makeModernBlueBus,makeTenWheelFreightTruck} from './vehicle-models-r16b.mjs';
-import {DROP_OFF_BAY,BUILDING_DROPOFF_TIMING,FRONT_PARK_TIMING,SAFE_ALIGHT_Z,fromVanToRegistrationWaypoints,shouldHoldFollowerAtDropoff,shouldHoldVehicleCorridor,inDropoffZone,shouldHoldDropoffRelease,registrationQueuePoint,toRegistrationWaypoints,fromRegistrationToBuildingWaypoints,registrationPhase} from './dropoff-r17.mjs';
+import {DROP_OFF_BAY,BUILDING_DROPOFF_TIMING,FRONT_PARK_TIMING,SAFE_ALIGHT_Z,fromVanToRegistrationWaypoints,shouldHoldFollowerAtDropoff,shouldVanWaitForLink,shouldHoldVehicleCorridor,inDropoffZone,shouldHoldDropoffRelease,registrationQueuePoint,toRegistrationWaypoints,fromRegistrationToBuildingWaypoints,registrationPhase} from './dropoff-r17.mjs';
 const studentTourButton=document.querySelector('#studentTour'),studentTourStatus=document.querySelector('#studentTourStatus');
 const wayfindingFrom=document.querySelector('#routeFrom'),wayfindingTo=document.querySelector('#routeTo');
 const wayfindingStatus=document.querySelector('#routeStatus'),wayfindingTip=document.querySelector('#wayfindingTip');
@@ -1245,6 +1245,21 @@ function animateDistrictVehicles(t){
   // R16: yield at the exit gate; once established on the highway,
   // let the merging car clear it while road traffic follows behind.
   const currentPose=trafficPose(b,b.progress);
+  // R18A: if a front-bay or rear-lot car already owns the shared
+  // crossing, the van stays in its bay until that car is through.
+  // Only after van departure starts do upstream followers stop.
+  if(b.route==='building-dropoff'
+    &&b.progress<=BUILDING_DROPOFF_TIMING.dwellEnd+0.000001
+    &&next>=BUILDING_DROPOFF_TIMING.dwellEnd){
+   for(const other of internal){
+    if(other===b)continue;
+    const occupied=accepted.get(other)||trafficPose(other,other.progress);
+    if(shouldVanWaitForLink(currentPose,wanted,other.route,occupied,
+      BUILDING_DROPOFF_TIMING.dwellEnd,BUILDING_DROPOFF_TIMING.dwellEnd)){
+     blocked=true;break;
+    }
+   }
+  }
   if(!canEnterMainRoad(currentPose,wanted,highway))blocked=true;
   // Public-road cars have priority; inbound traffic can join the eastbound
   // lane only with a gap. Afterwards those behind follow the inbound car.
