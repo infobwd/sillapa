@@ -24,6 +24,13 @@ Develop `venues/schematic-3d.html` from an illustrative 3D venue scene into a re
 | 3 | **D3D-R19 — Mobile, Performance & PWA** | Adaptive model density, touch gestures, bottom sheet, reduced-motion option, offline/error handling, update notice regression | iPhone/iPad/desktop checks, usable FPS and no crashes, app update prompt works; offline behavior accurately disclosed |
 | 4 | **D3D-R20 — Sillapa 74 Planning Data Integration** | Link 3D venue/building/room to approved preparation metadata, activities and coordinators; data provenance/version and permission review | Only authorized public data shown, source and approval status explicit, 73 history untouched; no registration/results workflow introduced |
 
+## D3D-R19 implementation handoff (17 October 2026)
+
+- **Code / tests in review, not production acceptance:** [R19 Mobile, Performance & PWA Acceptance](D3D_R19_MOBILE_PERFORMANCE_PWA_ACCEPTANCE.md). Branch `feat/d3d-r19-mobile-performance-pwa`, PR pending approval. R18A remains the merged base; traffic and student route geometry are not rewritten in R19.
+- **Shipped into review branch:** device-adaptive render quality/DPR/FPS, ambient model density, offscreen/background render suspension, reduced decorative motion, touch-aware bottom sheet, error fallback for unavailable WebGL/Three.js/history, corrected PWA offline venue response and Service Worker update notice.
+- **Verification:** Local-First JavaScript V8 harness 77/77 PASS, including prior R16–R18A traffic/route suites. Direct Node CLI and Chrome/iPhone/iPad GPU/UI acceptance remain **PENDING**; frame-rate targets are not certified measurements. No GitHub Actions.
+- **Release dependency:** Owner reviews PR, merges explicitly, GitHub Pages publishes and PWA updates, then records actual WebGL evidence. Only then continue to R20 planning data integration and permissions review.
+
 ## R14 — first PR execution checklist
 1. Inventory moving entities and their actual occupied bounding dimensions; distinguish static parked objects and main-road traffic.
 2. Replace time-only traffic movement and simple point-distance checks where needed with deterministic lane headway, merge priority, occupancy/segment conflict checks, and no jump at wrap/phase transitions.
