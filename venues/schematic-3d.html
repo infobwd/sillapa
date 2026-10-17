@@ -718,6 +718,44 @@ function makeDistrictCar(color,pickup=false){
  if(pickup){const bed=new THREE.Mesh(new THREE.BoxGeometry(1.3,.16,1.04),new THREE.MeshStandardMaterial({color:'#424a50'}));bed.position.set(0,.83,1.37);model.add(bed);const tail=new THREE.Mesh(new THREE.BoxGeometry(1.3,.3,.12),paint);tail.position.set(0,.78,1.91);model.add(tail);body.scale.z=.73;body.position.z=-.3;cabin.position.z=-.57;}
  return model;
 }
+// D3D-R11: photo-guided low-poly blue pickup, built from procedural Three.js primitives.
+// Reference image is a visual guide only, not imported geometry or a photogrammetric asset.
+function makeBlueLowPolyPickup(){
+ const truck=new THREE.Group();
+ const blue=new THREE.MeshStandardMaterial({color:'#2d6595',roughness:.67,flatShading:true});
+ const deepBlue=new THREE.MeshStandardMaterial({color:'#1a476c',roughness:.75,flatShading:true});
+ const glass=new THREE.MeshStandardMaterial({color:'#263d4e',roughness:.4,metalness:.10,flatShading:true});
+ const black=new THREE.MeshStandardMaterial({color:'#242b32',roughness:.91,flatShading:true});
+ const silver=new THREE.MeshStandardMaterial({color:'#b7c2c9',roughness:.55,metalness:.25});
+ function part(geometry,mat,x,y,z){const m=new THREE.Mesh(geometry,mat);m.position.set(x,y,z);truck.add(m);return m}
+ // Nose points along local -Z. Faceted hood, crew cab, open truck bed.
+ part(new THREE.BoxGeometry(1.56,.47,1.12),blue,0,.94,-1.06);
+ part(new THREE.BoxGeometry(1.48,.9,1.53),blue,0,1.33,.20);
+ part(new THREE.BoxGeometry(1.52,.23,1.45),deepBlue,0,1.81,.21);
+ const windshield=part(new THREE.BoxGeometry(1.30,.55,.045),glass,0,1.53,-.59);
+ windshield.rotation.x=-.17;
+ for(const side of [-1,1]){
+  part(new THREE.BoxGeometry(.05,.46,.93),glass,side*.765,1.53,.20);
+  part(new THREE.BoxGeometry(.22,.16,.19),deepBlue,side*.91,1.38,-.49);
+  part(new THREE.BoxGeometry(.13,.07,2.68),black,side*.77,.49,.08);
+  part(new THREE.BoxGeometry(.09,.35,1.16),blue,side*.75,.93,1.19);
+  for(const z of [-1.0,1.23]){
+   const tyre=part(new THREE.CylinderGeometry(.40,.40,.25,9),black,side*.87,.49,z);
+   tyre.rotation.z=Math.PI/2;
+   const hub=part(new THREE.CylinderGeometry(.22,.22,.27,9),silver,side*.89,.49,z);
+   hub.rotation.z=Math.PI/2;
+  }
+ }
+ part(new THREE.BoxGeometry(1.55,.16,1.30),black,0,.70,1.24);
+ part(new THREE.BoxGeometry(1.51,.42,.13),blue,0,1.0,1.95);
+ part(new THREE.BoxGeometry(1.51,.44,.13),black,0,.78,-1.65);
+ part(new THREE.BoxGeometry(1.19,.20,.08),silver,0,.75,-1.73);
+ for(const x of [-.57,.57]){
+  part(new THREE.BoxGeometry(.27,.13,.065),silver,x,1.13,-1.65);
+  part(new THREE.BoxGeometry(.16,.12,.04),new THREE.MeshStandardMaterial({color:'#c44547'}),x,1.10,2.03);
+ }
+ return truck;
+}
 // D3D-R9: stylized municipal bus on main road (visual simulation, not live transport).
 function makeRoadBus(color){
  const vehicle=new THREE.Group();
@@ -761,7 +799,7 @@ function addMainRoadTraffic(root){
  const fleet=[
   {model:makeRoadBus('#f0d49b'),lane:49.25,direction:1,phase:0},
   {model:makeDistrictCar('#f3f4f3'),lane:49.25,direction:1,phase:1/3},
-  {model:makeDistrictCar('#8cabbc',true),lane:49.25,direction:1,phase:2/3},
+  {model:makeBlueLowPolyPickup(),lane:49.25,direction:1,phase:2/3},
   {model:makeRoadVan('#d5e3ea'),lane:54.75,direction:-1,phase:0},
   {model:makeRoadBus('#e5a863'),lane:54.75,direction:-1,phase:1/3},
   {model:makeDistrictCar('#b7d1b9'),lane:54.75,direction:-1,phase:2/3}
@@ -877,7 +915,7 @@ function addDistrictVehicles(activityCount){
   [-13,45.8],[-13,26],[-13,5],[-13,-19],[-10,-27],
   [0,-27],[10,-27],[13,-19],[13,8],[13,28],[13,45.8]
  ]);
- const rearCar=makeDistrictCar('#c9d7e3',true);root.add(rearCar);
+ const rearCar=makeBlueLowPolyPickup();root.add(rearCar);
  buses.push({model:rearCar,route:'rear-internal',curve:rearRoute,progress:.37,speed:.007});
  // Independent highway traffic keeps its lanes and minimum longitudinal spacing.
  addMainRoadTraffic(root);
