@@ -1265,6 +1265,31 @@ function animateDropoffPassengers(b,q,now){
   setStudentOpacity(person,q>.495?Math.max(0,1-(q-.495)/.025):1);
  }
 }
+// Oriented rectangle overlap (2D separating-axis test). Side-by-side cars in
+// neighbouring parking bays are legal; crossed or nose-to-tail vehicles are not.
+function vehicleFootprintOverlap(a,pa,b,pb){
+ if(!pa.visible||!pb.visible)return false;
+ const dx=pb.point.x-pa.point.x,dz=pb.point.z-pa.point.z;
+ const shape=(v,pose)=>{
+  const angle=pose.yaw;
+  return {
+   right:[Math.cos(angle),-Math.sin(angle)],
+   forward:[-Math.sin(angle),-Math.cos(angle)],
+   halfW:(v.width||1.72)/2+.13,
+   halfL:(v.length||3.5)/2+.35
+  };
+ };
+ const A=shape(a,pa),B=shape(b,pb);
+ for(const axis of [A.right,A.forward,B.right,B.forward]){
+  const offset=Math.abs(dx*axis[0]+dz*axis[1]);
+  const ext=(rect)=>{
+   return rect.halfW*Math.abs(axis[0]*rect.right[0]+axis[1]*rect.right[1])+
+     rect.halfL*Math.abs(axis[0]*rect.forward[0]+axis[1]*rect.forward[1]);
+  };
+  if(offset>ext(A)+ext(B))return false;
+ }
+ return true;
+}
 function animateDistrictVehicles(t){
  const dt=Math.min(.05,Math.max(0,lastVehicleUpdate===null?1/60:t-lastVehicleUpdate));
  lastVehicleUpdate=t;
@@ -1298,9 +1323,7 @@ function animateDistrictVehicles(t){
     for(const other of internal){
      if(other===b)continue;
      const pose=accepted.get(other)||trafficPose(other,other.progress);
-     // Include half-lengths so a longer pickup cannot clip a stopped car.
-     const minimum=(b.length||3.5)/2+(other.length||3.5)/2+1;
-     if(pose.visible&&wanted.point.distanceTo(pose.point)<minimum){
+     if(vehicleFootprintOverlap(b,wanted,other,pose)){
       blocked=true;break;
      }
     }
