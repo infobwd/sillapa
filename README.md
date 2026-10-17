@@ -21,6 +21,8 @@
 
 - **D3D-R17A (Hotfix รถไม่ออกจากจุดรับ–ส่ง · รอตรวจ WebGL จริง):** [เกณฑ์ตรวจรับและสาเหตุ](docs/D3D_R17A_DROPOFF_DEPARTURE_ACCEPTANCE.md) — ลดเวลาจอดส่งรถตู้จาก ~23 วินาทีเหลือ ~9.4 วินาที รถกระบะ/เก๋งจาก ~23 วินาทีเหลือ 10 วินาที, แยกทางออกของรถตู้ไปยังถนนด้านขวา, ปลดรถค้างได้เฉพาะเมื่อระยะห่างจากรถคันอื่นดีขึ้น · PWA `sillapa-public-v23-3d-r17a-20261017` · Local-First เพิ่ม `node --test tests/d3d-r17a-dropoff-departure.test.mjs` และต้องรันชุดเดิมร่วมด้วย (ไม่ใช้ GitHub Actions)
 
+- **D3D-R17B (รอตรวจรับ WebGL จริง):** [Drop-off Safety & Visible Student Flow](docs/D3D_R17B_SAFE_DROPOFF_VISIBLE_STUDENT_FLOW_ACCEPTANCE.md) — เอาต้นไม้ 2 ต้นออกจากจุดรับ–ส่งและกั้นแนวทางเดินนักเรียน, รถคันหลังต้องรอก่อนจุดตัดขณะรถตู้ออกพร้อมตรวจตัวถังรถตลอดแนว, นักเรียนจากรถตู้เดินไปโดมลงทะเบียนก่อนอาคาร 1, เพิ่มปุ่ม **👣 ดูนักเรียน** สาธิต 46 วินาทีพร้อมกล้องติดตามจนถึงห้องประชุมชั้น 2; ทดสอบ JS 46/46 ผ่านในแชทและจำลองรถ 4 คัน + ถนนหลัก 10 คัน 6 นาทีครบ 3 รอบต่อคัน · PWA `sillapa-public-v24-3d-r17b-20261017` · Local-First/ไม่ใช้ GitHub Actions
+
 ## ทดลอง Three.js — แผนผังสนาม 3D (ต้นแบบ)
 
 [เปิดต้นแบบ 3D](threejs-demo/index.html) · เมื่อ Merge และ GitHub Pages เผยแพร่แล้ว: https://infobwd.github.io/sillapa/threejs-demo/
