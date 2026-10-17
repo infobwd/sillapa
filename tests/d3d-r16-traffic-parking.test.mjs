@@ -57,13 +57,11 @@ test('main-road vehicle follows only an already-merged occupant',()=>{
 });
 
 test('Building 1 paths bypass the actual sign x ±5.65 at z=12.6',()=>{
- assert.match(scene,/\[\[5\.5,19\],\[6\.12,17\],\[6\.12,14\.7\]/);
- assert.match(scene,/const bypassX=6\.09\+j\*\.055/);
- for(let passenger=0;passenger<4;passenger++){
-  const x=6.09+passenger*.055;
-  assert.ok(x-.2>5.65,'body clears sign');
-  assert.ok(x+.2<6.475,'body stays outside pavilion edge');
- }
+ assert.match(scene,/\[\[6\.12,16\.42\],\[6\.12,15\.3\],\[6\.12,14\.7\]/);
+ assert.match(scene,/fromVanToRegistrationWaypoints\(j\)/);
+ const x=6.12; // every van passenger now shares the protected bypass
+ assert.ok(x-.2>5.65,'body clears sign');
+ assert.ok(x+.2<6.475,'body stays outside pavilion edge');
  assert.match(scene,/const bypass=isDistrict&&\(routeIndex===0\|\|routeIndex===1\)/);
 });
 
@@ -81,11 +79,11 @@ test('R16B relocation adjoins REAR facade of extension, with road clearance',()=
 });
 
 test('PWA refresh includes imported helpers and R16C venue URLs',()=>{
- assert.match(sw,/sillapa-public-v23-3d-r17a-20261017/);
+ assert.match(sw,/sillapa-public-v24-3d-r17b-20261017/);
  assert.match(sw,/venues\/traffic-r16\.mjs/);
  assert.match(sw,/venues\/vehicle-models-r16b\.mjs/);
  assert.match(scene,/import \{computeHighwayProgress,canEnterMainRoad,canAdvanceInboundRoad\}/);
  const index=readFileSync(new URL('../index.html',import.meta.url),'utf8');
- assert.match(index,/venue=kanchanaburi-pesa4&v=r17a/);
- assert.match(index,/venue=anuban-bophloi&v=r17a/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r17b/);
+ assert.match(index,/venue=anuban-bophloi&v=r17b/);
 });

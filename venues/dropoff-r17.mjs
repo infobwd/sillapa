@@ -12,6 +12,41 @@ export const DOME_QUEUES=Object.freeze([
  Object.freeze({z:-2.25,deskX:3.21})
 ]);
 
+// R17B: passengers alight SOUTH of the van and never enter its occupied
+// parking strip (vehicle bay is x≈3..10.2, z≈17.28..19.83).
+// Keep visual pedestrian spacing even with the two trees removed.
+export const SAFE_ALIGHT_Z=16.52;
+export const PEDESTRIAN_EXCLUSION=Object.freeze({
+ minX:3.0,maxX:10.35,minZ:17.24,maxZ:24.45
+});
+export function inVehicleOnlyArea(point){
+ return !!point&&point[0]>=PEDESTRIAN_EXCLUSION.minX
+  &&point[0]<=PEDESTRIAN_EXCLUSION.maxX
+  &&point[1]>=PEDESTRIAN_EXCLUSION.minZ
+  &&point[1]<=PEDESTRIAN_EXCLUSION.maxZ;
+}
+export function fromVanToRegistrationWaypoints(personIndex=0){
+ const j=Math.max(0,Math.min(3,personIndex));
+ const startX=7+(j-1.5)*.36;
+ const destination=registrationQueuePoint(j%2,Math.floor(j/2));
+ // Start on the protected landing, move to the EAST sign bypass, then
+ // reach the dome counter from the accessible schematic east aisle.
+ return [[startX,SAFE_ALIGHT_Z],[6.12,16.0],[6.12,14.5],
+  [6.12,11.8],[6.12,8.0],[6.12,5.0],[6.12,-1.15],
+  [5.18,-1.15],[5.18,destination[1]],destination];
+}
+export function shouldHoldFollowerAtDropoff(actorRoute,current,wanted,
+ vanProgress,vanPose,vanDepartStart,vanDepartEnd){
+ if(actorRoute!=='front-park'||!current?.visible||!wanted?.visible
+  ||!vanPose?.visible)return false;
+ if(vanProgress<vanDepartStart||vanProgress>=vanDepartEnd)return false;
+ // A front-lot car that has NOT entered the junction waits before X=-2.
+ // A car already in the intersection has priority to CLEAR it; the van
+ // still checks its full footprint before entering the same space.
+ const approaching=current.point.x<=-2;
+ return approaching&&wanted.point.x>-2
+  &&wanted.point.z>=19.4&&wanted.point.z<=24.6;
+}
 export function inDropoffZone(point){
  return !!point&&point.x>=-12&&point.x<=12&&point.z>=16&&point.z<=25.5;
 }
@@ -95,6 +130,46 @@ export function shouldHoldDropoffRelease(current,wanted,other,
  return !(newDepth<oldDepth-0.00001&&newDistance>oldDistance+0.00001);
 }
 
+// R17B: the van and following cars can share the eastern link road and
+// its turn. Check both BODY footprints over their prospective movement,
+// not only their centers, before one vehicle follows another.
+export function inDropoffConflictArea(point){
+ return !!point&&point.x>=-12&&point.x<=15
+  &&point.z>=15.5&&point.z<=32;
+}
+function steppedPose(current,wanted,t){
+ if(!current?.visible)return wanted;
+ return {visible:true,yaw:(current.yaw??0)+(wanted.yaw-(current.yaw??0))*t,
+  point:{x:current.point.x+(wanted.point.x-current.point.x)*t,
+   z:current.point.z+(wanted.point.z-current.point.z)*t}};
+}
+export function shouldHoldVehicleCorridor(current,wanted,otherCurrent,otherWanted,
+ aLength=4,bLength=4,aWidth=1.8,bWidth=1.8,isVanDeparting=false){
+ if(!wanted?.visible||!otherWanted?.visible
+  ||!inDropoffConflictArea(wanted.point)
+  ||!inDropoffConflictArea(otherWanted.point))return false;
+ const start=steppedPose(current,wanted,0);
+ const otherStart=steppedPose(otherCurrent,otherWanted,0);
+ const alreadyCrowded=vehicleFootprintsConflict(start,otherStart,
+  aLength,bLength,aWidth,bWidth,.65);
+ for(const fraction of [.25,.5,.75,1]){
+  const a=steppedPose(current,wanted,fraction);
+  const b=steppedPose(otherCurrent,otherWanted,fraction);
+  if(!vehicleFootprintsConflict(a,b,aLength,bLength,aWidth,bWidth,.65))continue;
+  // Existing too-close pairs must be able to SEPARATE even while a van
+  // is still approaching the bay; otherwise an approaching van and the
+  // following pickup can deadlock before any vehicle starts unloading.
+  if(alreadyCrowded){
+   const oldDepth=vehicleOverlapDepth(start,otherStart,aLength,bLength,aWidth,bWidth,.65);
+   const newDepth=vehicleOverlapDepth(a,b,aLength,bLength,aWidth,bWidth,.65);
+   const oldDist=Math.hypot(start.point.x-otherStart.point.x,start.point.z-otherStart.point.z);
+   const newDist=Math.hypot(a.point.x-b.point.x,a.point.z-b.point.z);
+   if(newDepth<oldDepth-0.00001&&newDist>oldDist+0.00001)continue;
+  }
+  return true;
+ }
+ return false;
+}
 export function registrationQueuePoint(queueIndex,personIndex){
  const queue=DOME_QUEUES[Math.abs(queueIndex)%DOME_QUEUES.length];
  // Dome group rotates +90° about Y with local Z scaled to .78. The
