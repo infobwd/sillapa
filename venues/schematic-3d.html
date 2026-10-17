@@ -1016,7 +1016,7 @@ function addDistrictVehicles(activityCount){
    peopleRoot.add(person);passengers.push(person);
   }
   buses.push({model,route:'front-park',progress:i*.5,speed:.010,
-   arrive,depart,passengers,bay:bays[i]});
+   arrive,depart,passengers,bay:bays[i],length:3.2,exitStart:.76,exitMode:null});
  }
  // Drive to the cross-road in front of Building 1, stop in the signed drop-off bay
  // before the lawn, unload pupils onto the building-side curb, then leave eastwards.
@@ -1033,7 +1033,24 @@ function addDistrictVehicles(activityCount){
   peopleRoot.add(person);buildingPassengers.push(person);
  }
  buses.push({model:buildingVehicle,route:'building-dropoff',progress:.73,
-  speed:.009,arrive:toBuilding,depart:fromBuilding,passengers:buildingPassengers});
+  speed:.009,arrive:toBuilding,depart:fromBuilding,passengers:buildingPassengers,
+  destination:'dome',studentStartAt:null,length:3.8,exitStart:.76,exitMode:null});
+ // The pickup delivers another group in front of Building 1, before the marked dome stop.
+ const blueSchoolPickup=makeBlueLowPolyPickup();root.add(blueSchoolPickup);
+ const pickupArrival=pointsToCurve([
+  [-13,45.8],[-13,34],[-13,26],[-10,22],[-6,22],[-3,22]
+ ]);
+ const pickupDeparture=pointsToCurve([
+  [-3,22],[1,22],[9,22],[13,26],[13,38],[13,45.8]
+ ]);
+ const pickupChildren=[];
+ for(let i=0;i<3;i++){
+  const pupil=makeDropoffPerson(false,i+1);
+  peopleRoot.add(pupil);pickupChildren.push(pupil);
+ }
+ buses.push({model:blueSchoolPickup,route:'pickup-school',progress:.11,speed:.009,
+  arrive:pickupArrival,depart:pickupDeparture,passengers:pickupChildren,
+  destination:'meeting-room',studentStartAt:null,length:3.7,exitStart:.76,exitMode:null});
  // The third rear-carport bay is dynamic, beyond Building 2's annex.
  const rearApproach=pointsToCurve([
   [-13,45.8],[-13,18],[-13,-15],[-10,-27],[-4,-27],[1,-27],
@@ -1044,10 +1061,14 @@ function addDistrictVehicles(activityCount){
  ]);
  const rearPickup=makeBlueLowPolyPickup();root.add(rearPickup);
  buses.push({model:rearPickup,route:'rear-parking',arrive:rearApproach,
-  depart:rearDeparture,bay:[3.4,-35],progress:.37,speed:.008});
+  depart:rearDeparture,bay:[3.4,-35],progress:.37,speed:.008,
+  length:3.8,exitStart:.78,exitMode:null});
  // Exiting vehicles connect to the eastbound highway lane after the right gate.
  const exitCurve=pointsToCurve([[13,45.8],[13,47.4],[15.5,49.25],[27,49.25],[49,49.25]]);
- for(const car of buses)if(car.route!=='main-road')car.exitCurve=exitCurve;
+ for(const car of buses)if(car.route!=='main-road'){
+  car.exitCurve=exitCurve;
+  car.turnCurve=pointsToCurve([[13,45.8],[13,47.0],[14.2,48.65],[15.5,49.25]]);
+ }
  // Independent highway traffic keeps its lanes and minimum longitudinal spacing.
  addMainRoadTraffic(root);
  root.visible=trafficEnabled;root.userData.vehicles=true;
