@@ -156,7 +156,10 @@ export function shouldHoldVehicleCorridor(current,wanted,otherCurrent,otherWante
   const a=steppedPose(current,wanted,fraction);
   const b=steppedPose(otherCurrent,otherWanted,fraction);
   if(!vehicleFootprintsConflict(a,b,aLength,bLength,aWidth,bWidth,.65))continue;
-  if(isVanDeparting&&alreadyCrowded){
+  // Existing too-close pairs must be able to SEPARATE even while a van
+  // is still approaching the bay; otherwise an approaching van and the
+  // following pickup can deadlock before any vehicle starts unloading.
+  if(alreadyCrowded){
    const oldDepth=vehicleOverlapDepth(start,otherStart,aLength,bLength,aWidth,bWidth,.65);
    const newDepth=vehicleOverlapDepth(a,b,aLength,bLength,aWidth,bWidth,.65);
    const oldDist=Math.hypot(start.point.x-otherStart.point.x,start.point.z-otherStart.point.z);
