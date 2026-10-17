@@ -101,6 +101,18 @@
           scope: './',
           updateViaCache: 'none'
         });
+        // R19: new SW can be installed while a tab remains open. Surface
+        // that change even on browsers that defer controllerchange until
+        // the next navigation, but never show it on the very first install.
+        if (reg.waiting && navigator.serviceWorker.controller) update.hidden = false;
+        reg.addEventListener('updatefound', () => {
+          const installing = reg.installing;
+          if (!installing) return;
+          installing.addEventListener('statechange', () => {
+            if (installing.state === 'installed' && navigator.serviceWorker.controller)
+              update.hidden = false;
+          });
+        });
         reg.update().catch(() => {});
       } catch (error) {
         console.warn('Sillapa: offline cache could not be registered', error);

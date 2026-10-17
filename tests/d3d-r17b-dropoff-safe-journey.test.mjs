@@ -126,7 +126,7 @@ test('visible guided journey has a real interaction, moving students and stage H
  assert.match(scene,/figure\.visible=true;figure\.scale\.setScalar\(1\.45\)/);
  assert.match(scene,/controls\.target\.lerp\(target,\.065\)/);
  assert.match(scene,/studentTourGroup\.visible=true;studentTourStatus\.hidden=false/);
- assert.match(scene,/animateStudentTour\(t\);animateWayfindingFollow\(t\);controls\.update\(\)/);
+ assert.match(scene,/animateStudentTour\(t\);animateWayfindingFollow\(t\);\s*controls\.update\(\)/);
  assert.match(scene,/studentTourButton\.disabled=!district/);
  assert.match(scene,/if\(studentTourOn\)stopStudentTour\(\)/);
  assert.match(scene,/roofVisible=false;/);
@@ -137,8 +137,8 @@ test('existing road/competition records remain out of R17B scope and PWA refresh
  assert.match(scene,/canEnterMainRoad\(currentPose,wanted,highway\)/);
  assert.match(scene,/canAdvanceInboundRoad\(currentPose,wanted,highway\)/);
  assert.match(scene,/registrationPhase\(q,start\)/);
- assert.match(sw,/sillapa-public-v26-3d-r18a-20261017/);
+ assert.match(sw,/sillapa-public-v27-3d-r19-20261017/);
  assert.match(sw,/venues\/dropoff-r17\.mjs/);
- assert.match(index,/venue=kanchanaburi-pesa4&v=r18a/);
- assert.match(index,/venue=anuban-bophloi&v=r18a/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r19/);
+ assert.match(index,/venue=anuban-bophloi&v=r19/);
 });
