@@ -65,7 +65,7 @@ The **new test suite** `tests/d3d-r19-mobile-performance-pwa.test.mjs` covers de
 ### F. Real-device and owner acceptance (PENDING)
 
 - [ ] **Desktop Chrome (≥5 minutes):** high/auto quality displays correct venue, labels, route/vehicle/student animations and no new car/pedestrian overlaps; record approximate displayed FPS and Chrome console errors.
-- [ ] **iPhone Safari/PWA, widths 320 / 375 / 390 / 430px:** 3D toolbar and collapsed route accordion fit; open the building bottom sheet and close it with one thumb; performance selector and reduced-motion toggle have 44px touch targets. Check browser back and phone rotation.
+- [ ] **iPhone Safari/PWA, widths 320 / 375 / 390 / 430px:** 3D toolbar, collapsed route accordion and the separate collapsed performance disclosure fit; expand performance settings, verify the quality selector and reduced-motion toggle are ≥44px. Open the building bottom sheet and close it with one thumb. Check browser Back and phone rotation.
 - [ ] **iPad portrait/landscape:** pan, rotate, zoom with touch gestures; no clipping, controls accessible; dashboard/history content remains unchanged.
 - [ ] **Quality comparison:** force low/balanced/high/auto; verify `renderer` resolution changes, low has fewer decorative walkers without deleting traffic/student/judges/venue history, and the venue remains interactive. Compare actual observed FPS for at least 3 minutes on each device. Do **not** claim 24/30/60 FPS until measured.
 - [ ] **Reduced motion:** toggle on/off, test user preferences across page reload, test device-level reduce-motion preference; decorative waving/ambient walkers stop while traffic, route marker and manually started student journey remain usable.
