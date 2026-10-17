@@ -46,7 +46,7 @@ test('highway cars do not wait for vehicles queued before merge line',()=>{
  const approaching=[{lane:49.25,direction:1,travel:114,highwayProgress:72,speed:2.9}];
  assert.equal(canEnterMainRoad(current,wanted,approaching),false);
  assert.equal(canEnterMainRoad(current,wanted,[]),true);
- assert.equal(canEnterMainRoad({...current,point:{x:17,z:49.25}},wanted,approaching),true);
+ assert.equal(canEnterMainRoad({...current,onHighway:true,point:{x:17,z:49.25}},wanted,approaching),true);
  assert.equal(canEnterMainRoad(current,wanted,[{...approaching[0],lane:54.75,direction:-1}]),true);
 });
 
