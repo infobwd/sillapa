@@ -119,6 +119,9 @@ test('reduced motion preserves essential moving traffic but stops ambient decora
 
 test('visible performance controls have persisted preference and accessible status',()=>{
  assert.match(scene,/id="performanceBar"/);
+ assert.match(scene,/<details id="performanceMore" class="performance-more" open>/);
+ assert.match(scene,/function syncPerformanceDisclosure\(event\)\{performanceDisclosure\.open=!event\.matches\}/);
+ assert.match(scene,/mobileWayfindingQuery\.addEventListener\('change',syncPerformanceDisclosure\)/);
  assert.match(scene,/id="qualityMode"/);
  assert.match(scene,/id="motionMode" type="button" aria-pressed="false"/);
  assert.match(scene,/id="performanceStatus" role="status" aria-live="polite"/);
