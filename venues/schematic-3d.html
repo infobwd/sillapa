@@ -1046,15 +1046,32 @@ function animateDistrictVehicles(t){
    for(const other of internal){
     if(other===b)continue;
     const pose=accepted.get(other)||trafficPose(other,other.progress);
-    if(pose.visible&&wanted.point.distanceTo(pose.point)<3.25){
-     blocked=true;break;
+    if(pose.visible){
+     // R12: prevent nose-to-tail overlap and vehicles swapping positions in one frame.
+     // Check both current and proposed poses, including a crossing of their segments.
+     const current=trafficPose(b,b.progress);
+     const otherCurrent=trafficPose(other,other.progress);
+     const gap=wanted.point.distanceTo(pose.point);
+     const currentGap=current.visible&&otherCurrent.visible
+       ?current.point.distanceTo(otherCurrent.point):Infinity;
+     const crossing=current.visible&&otherCurrent.visible
+       &&wanted.point.distanceTo(otherCurrent.point)<3.6
+       &&pose.point.distanceTo(current.point)<3.6;
+     if(gap<3.6||crossing||(currentGap<3.6&&gap<currentGap)){
+      blocked=true;break;
+     }
     }
    }
   }
-  if(wanted.visible&&wanted.point.z>46.4&&wanted.point.z<50.6){
+  // R12: inspect the current and next merge pose to avoid entering the lane
+  // between two frames when the front bumper is already near highway traffic.
+  const currentPose=trafficPose(b,b.progress);
+  if(wanted.visible&&((wanted.point.z>46.4&&wanted.point.z<50.6)
+    ||(currentPose.visible&&currentPose.point.z>46.4&&currentPose.point.z<50.6))){
    // The entering vehicle waits when an eastbound road user is too close to merge.
    for(const car of highway){
-    if(car.visible&&Math.hypot(wanted.point.x-car.x,wanted.point.z-car.z)<7.0){
+    if(car.visible&&(Math.hypot(wanted.point.x-car.x,wanted.point.z-car.z)<7.0
+      ||(currentPose.visible&&Math.hypot(currentPose.point.x-car.x,currentPose.point.z-car.z)<5.5))){
      blocked=true;break;
     }
    }
