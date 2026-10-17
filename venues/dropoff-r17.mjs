@@ -130,6 +130,43 @@ export function shouldHoldDropoffRelease(current,wanted,other,
  return !(newDepth<oldDepth-0.00001&&newDistance>oldDistance+0.00001);
 }
 
+// R17B: the van and following cars can share the eastern link road and
+// its turn. Check both BODY footprints over their prospective movement,
+// not only their centers, before one vehicle follows another.
+export function inDropoffConflictArea(point){
+ return !!point&&point.x>=-12&&point.x<=15
+  &&point.z>=15.5&&point.z<=32;
+}
+function steppedPose(current,wanted,t){
+ if(!current?.visible)return wanted;
+ return {visible:true,yaw:(current.yaw??0)+(wanted.yaw-(current.yaw??0))*t,
+  point:{x:current.point.x+(wanted.point.x-current.point.x)*t,
+   z:current.point.z+(wanted.point.z-current.point.z)*t}};
+}
+export function shouldHoldVehicleCorridor(current,wanted,otherCurrent,otherWanted,
+ aLength=4,bLength=4,aWidth=1.8,bWidth=1.8,isVanDeparting=false){
+ if(!wanted?.visible||!otherWanted?.visible
+  ||!inDropoffConflictArea(wanted.point)
+  ||!inDropoffConflictArea(otherWanted.point))return false;
+ const start=steppedPose(current,wanted,0);
+ const otherStart=steppedPose(otherCurrent,otherWanted,0);
+ const alreadyCrowded=vehicleFootprintsConflict(start,otherStart,
+  aLength,bLength,aWidth,bWidth,.65);
+ for(const fraction of [.25,.5,.75,1]){
+  const a=steppedPose(current,wanted,fraction);
+  const b=steppedPose(otherCurrent,otherWanted,fraction);
+  if(!vehicleFootprintsConflict(a,b,aLength,bLength,aWidth,bWidth,.65))continue;
+  if(isVanDeparting&&alreadyCrowded){
+   const oldDepth=vehicleOverlapDepth(start,otherStart,aLength,bLength,aWidth,bWidth,.65);
+   const newDepth=vehicleOverlapDepth(a,b,aLength,bLength,aWidth,bWidth,.65);
+   const oldDist=Math.hypot(start.point.x-otherStart.point.x,start.point.z-otherStart.point.z);
+   const newDist=Math.hypot(a.point.x-b.point.x,a.point.z-b.point.z);
+   if(newDepth<oldDepth-0.00001&&newDist>oldDist+0.00001)continue;
+  }
+  return true;
+ }
+ return false;
+}
 export function registrationQueuePoint(queueIndex,personIndex){
  const queue=DOME_QUEUES[Math.abs(queueIndex)%DOME_QUEUES.length];
  // Dome group rotates +90° about Y with local Z scaled to .78. The
