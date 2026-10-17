@@ -131,9 +131,9 @@ test('Road 3342 direction labels point right to U Thong and left to Bo Phloi',()
 });
 
 test('PWA cache and venue links refreshed for R16D',()=>{
- assert.match(sw,/sillapa-public-v30-3d-r20b-20261018/);
+ assert.match(sw,/sillapa-public-v31-3d-r20b1-20261018/);
  assert.match(sw,/venues\/traffic-r16\.mjs/);
  assert.match(sw,/venues\/vehicle-models-r16b\.mjs/);
- assert.match(index,/venue=kanchanaburi-pesa4&v=r20b/);
- assert.match(index,/venue=anuban-bophloi&v=r20b/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r20b1/);
+ assert.match(index,/venue=anuban-bophloi&v=r20b1/);
 });
