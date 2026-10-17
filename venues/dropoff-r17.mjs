@@ -44,7 +44,7 @@ export function toRegistrationWaypoints(startX,queueIndex,personIndex){
  const destination=registrationQueuePoint(queueIndex,personIndex);
  return [[startX,35.2],[startX,30],[startX,25],[startX,19],
   [-11.38,18],[-11.38,14.7],[-11.38,10.8],[-11.38,5],
-  [-11.38,-7.45],[-6.8,-7.45],[-6.52,queue.z],destination];
+  [-11.38,-7.45],[-6.35,-7.45],[-6.35,queue.z],destination];
 }
 export function fromRegistrationToBuildingWaypoints(queueIndex,personIndex){
  const destination=registrationQueuePoint(queueIndex,personIndex);
