@@ -760,53 +760,138 @@ function makeBlueLowPolyPickup(){
  }
  return truck;
 }
-// D3D-R9: stylized municipal bus on main road (visual simulation, not live transport).
-function makeRoadBus(color){
- const vehicle=new THREE.Group();
- const bodyMat=new THREE.MeshStandardMaterial({color,roughness:.64});
- const glazing=new THREE.MeshStandardMaterial({color:'#4d7689',roughness:.38,metalness:.12});
- const bumperMat=new THREE.MeshStandardMaterial({color:'#dde2e3',roughness:.8});
- const body=new THREE.Mesh(new THREE.BoxGeometry(2.05,1.78,5.7),bodyMat);
- body.position.y=1.33;vehicle.add(body);
- const top=new THREE.Mesh(new THREE.BoxGeometry(1.98,.22,5.4),bumperMat);
- top.position.y=2.33;vehicle.add(top);
- for(const side of [-1,1]){
-  for(let j=0;j<5;j++){
-   const window=new THREE.Mesh(new THREE.BoxGeometry(.045,.67,.75),glazing);
-   window.position.set(side*1.035,1.65,-1.88+j*.91);vehicle.add(window);
-  }
-  for(const z of [-1.85,1.84]){
-   const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.40,.40,.14,12),
-    new THREE.MeshStandardMaterial({color:'#283037',roughness:.93}));
-   wheel.rotation.z=Math.PI/2;
-   wheel.position.set(side*1.06,.50,z);vehicle.add(wheel);
-  }
- }
- for(const z of [-2.88,2.88]){
-  const windshield=new THREE.Mesh(new THREE.BoxGeometry(1.72,.70,.05),glazing);
-  windshield.position.set(0,1.67,z);vehicle.add(windshield);
- }
- const band=new THREE.Mesh(new THREE.BoxGeometry(2.08,.22,5.75),
-  new THREE.MeshStandardMaterial({color:'#f0e6ba',roughness:.85}));
- band.position.y=1.06;vehicle.add(band);
- return vehicle;
+// D3D-R12: lightweight procedural vehicle library, inspired by the owner's low-poly references.
+// Local -Z is the front of each vehicle. All meshes are created per scene and disposed on show().
+function roadPaint(color){return new THREE.MeshStandardMaterial({color,roughness:.67,metalness:.08,flatShading:true})}
+function vehicleBox(group,w,h,l,x,y,z,mat){
+ const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,l),mat);
+ m.position.set(x,y,z);group.add(m);return m;
 }
-function makeRoadVan(color){
- const van=makeDistrictCar(color,false);
- const top=new THREE.Mesh(new THREE.BoxGeometry(1.15,.62,1.75),
-  new THREE.MeshStandardMaterial({color:'#a9bdc4',roughness:.55}));
- top.position.set(0,1.26,0);van.add(top);
+function vehicleWheels(group,{halfWidth=.80,zs=[-1,1],radius=.36,dualRear=false}={}){
+ const rubber=roadPaint('#25292f'),hub=roadPaint('#9ba5ae');
+ for(let axle=0;axle<zs.length;axle++){
+  for(const side of [-1,1]){
+   const dual=dualRear&&axle>0;
+   for(const inset of dual?[0,.23]:[0]){
+    const offset=side*(halfWidth+inset);
+    const wheel=new THREE.Mesh(new THREE.CylinderGeometry(radius,radius,.15,10),rubber);
+    wheel.rotation.z=Math.PI/2;wheel.position.set(offset,radius+.16,zs[axle]);group.add(wheel);
+    const cap=new THREE.Mesh(new THREE.CylinderGeometry(radius*.55,radius*.55,.17,10),hub);
+    cap.rotation.z=Math.PI/2;cap.position.set(offset+side*.01,radius+.16,zs[axle]);group.add(cap);
+   }
+  }
+ }
+}
+function makeBlueLowPolySedan(){
+ const car=new THREE.Group(),blue=roadPaint('#326ea7'),darkBlue=roadPaint('#234e78');
+ const glass=roadPaint('#293b49'),black=roadPaint('#25282e'),silver=roadPaint('#c8d0d4');
+ vehicleBox(car,1.62,.53,3.14,0,.80,0,blue);
+ vehicleBox(car,1.55,.38,1.53,0,1.22,.04,blue);
+ vehicleBox(car,1.49,.20,1.30,0,1.54,.04,darkBlue);
+ const front=vehicleBox(car,1.41,.49,.06,0,1.22,-.77,glass);front.rotation.x=-.21;
+ vehicleBox(car,1.42,.34,.04,0,1.26,.86,glass);
+ for(const side of [-1,1]){
+  vehicleBox(car,.04,.34,1.19,side*.79,1.28,.04,glass);
+  vehicleBox(car,.15,.14,.16,side*.92,1.22,-.61,darkBlue);
+  vehicleBox(car,.08,.10,1.63,side*.81,.81,0,darkBlue);
+ }
+ vehicleBox(car,1.42,.20,.06,0,.72,-1.61,black);
+ vehicleBox(car,1.10,.16,.065,0,.88,-1.64,black);
+ for(const x of [-.61,.61]){
+  vehicleBox(car,.24,.12,.045,x,.97,-1.64,silver);
+  vehicleBox(car,.22,.10,.04,x,.91,1.61,roadPaint('#c44e4f'));
+ }
+ vehicleWheels(car,{halfWidth:.83,zs:[-1.01,1.03],radius:.34});
+ return car;
+}
+function makeBlueCityBus(){
+ const bus=new THREE.Group(),blue=roadPaint('#2870aa'),black=roadPaint('#252a30');
+ const glass=roadPaint('#263a4a'),trim=roadPaint('#adb8c2');
+ vehicleBox(bus,2.12,1.75,5.9,0,1.40,0,blue);
+ vehicleBox(bus,2.08,.18,5.72,0,2.38,0,blue);
+ const nose=vehicleBox(bus,1.90,1.42,.07,0,1.83,-3.0,glass);nose.rotation.x=-.02;
+ vehicleBox(bus,1.77,.36,.07,0,.80,-3.03,black);
+ for(const side of [-1,1]){
+  // Continuous dark upper glazing with visible vertical pillar separators.
+  vehicleBox(bus,.055,.89,5.3,side*1.07,1.79,.05,glass);
+  for(let n=0;n<6;n++){
+   const zz=-2.42+n*.91;
+   vehicleBox(bus,.065,.91,.068,side*1.10,1.77,zz,blue);
+  }
+  for(const zz of [-1.2,2.05]){
+   const panel=vehicleBox(bus,.08,1.42,.74,side*1.085,1.26,zz,glass);
+   if(side===1){
+    vehicleBox(bus,.09,.06,.75,side*1.13,1.32,zz,trim);
+    vehicleBox(bus,.10,1.42,.06,side*1.13,1.26,zz,black);
+   }
+  }
+ }
+ vehicleBox(bus,1.85,.10,.05,0,.90,-3.08,trim);
+ for(const x of [-.82,.82]){
+  vehicleBox(bus,.25,.12,.045,x,.99,-3.07,roadPaint('#f6eee0'));
+  vehicleBox(bus,.16,.12,.04,x,.89,3.03,roadPaint('#bb4846'));
+ }
+ vehicleWheels(bus,{halfWidth:1.08,zs:[-1.92,2.0],radius:.43,dualRear:true});
+ return bus;
+}
+function makeWhiteTenWheelTruck(){
+ const truck=new THREE.Group(),white=roadPaint('#e3e8e9'),black=roadPaint('#2c3136');
+ const silver=roadPaint('#a8b0b6'),glass=roadPaint('#293946');
+ vehicleBox(truck,2.18,1.73,2.20,0,1.39,-2.53,white);
+ vehicleBox(truck,2.13,.20,2.08,0,2.35,-2.53,white);
+ vehicleBox(truck,1.89,.92,.055,0,1.78,-3.67,glass);
+ for(const side of [-1,1]){
+  vehicleBox(truck,.045,.76,.90,side*1.10,1.82,-2.40,glass);
+  vehicleBox(truck,.21,.21,.18,side*1.28,1.72,-3.20,black);
+ }
+ vehicleBox(truck,2.2,.57,.12,0,.80,-3.69,black);
+ vehicleBox(truck,1.86,.14,.07,0,.95,-3.76,silver);
+ const load=roadPaint('#bfc6c9'),edge=roadPaint('#929ca2');
+ vehicleBox(truck,2.13,1.38,4.90,0,1.45,1.09,load);
+ for(const side of [-1,1]){
+  for(let n=0;n<4;n++)vehicleBox(truck,.07,1.33,.095,side*1.09,1.46,-.8+n*1.23,edge);
+  for(let y=.98;y<=1.94;y+=.30)vehicleBox(truck,.075,.045,4.78,side*1.105,y,1.10,edge);
+ }
+ for(const x of [-.91,.91])vehicleBox(truck,.16,.12,.04,x,1.13,3.6,roadPaint('#b24f4f'));
+ // Ten tyres: front axle single wheels (2), two rear axles dual on both sides (8).
+ vehicleWheels(truck,{halfWidth:1.06,zs:[-2.95,.95,2.8],radius:.49,dualRear:true});
+ return truck;
+}
+function makeWhitePassengerVan(){
+ const van=new THREE.Group(),white=roadPaint('#e3e7ea'),glass=roadPaint('#263b4a');
+ const black=roadPaint('#252b31'),trim=roadPaint('#9ba6af');
+ vehicleBox(van,1.78,1.24,3.38,0,1.23,0,white);
+ vehicleBox(van,1.67,.28,3.08,0,1.97,.12,white);
+ const wind=vehicleBox(van,1.53,.78,.05,0,1.61,-1.72,glass);wind.rotation.x=-.13;
+ for(const side of [-1,1]){
+  vehicleBox(van,.055,.61,2.35,side*.90,1.67,.29,glass);
+  for(const z of [-.60,.68])vehicleBox(van,.06,.66,.08,side*.93,1.65,z,white);
+  vehicleBox(van,.21,.16,.17,side*1.03,1.38,-1.43,black);
+  vehicleBox(van,.06,.11,3.2,side*.88,.74,0,trim);
+ }
+ vehicleBox(van,1.68,.38,.07,0,.80,-1.77,black);
+ for(const x of [-.70,.70]){
+  vehicleBox(van,.23,.13,.055,x,1.10,-1.80,roadPaint('#f3f3eb'));
+  vehicleBox(van,.18,.14,.045,x,1.15,1.72,roadPaint('#c65052'));
+ }
+ vehicleWheels(van,{halfWidth:.91,zs:[-1.15,1.16],radius:.36});
  return van;
 }
+// Aliases preserve existing semantic call sites (cars, buses, vans).
+function makeRoadBus(color='#2870aa'){return makeBlueCityBus()}
+function makeRoadVan(color='#e3e7ea'){return makeWhitePassengerVan()}
 function addMainRoadTraffic(root){
- // Road 3342 runs east-west at z=52. Use fixed spacing and equal speed per lane.
+ // Fixed phase spacing with equal-speed cruise in each direction;
+ // reservations at merge prevent campus cars entering occupied road gaps.
  const fleet=[
-  {model:makeRoadBus('#f0d49b'),lane:49.25,direction:1,phase:0},
-  {model:makeDistrictCar('#f3f4f3'),lane:49.25,direction:1,phase:1/3},
-  {model:makeBlueLowPolyPickup(),lane:49.25,direction:1,phase:2/3},
-  {model:makeRoadVan('#d5e3ea'),lane:54.75,direction:-1,phase:0},
-  {model:makeRoadBus('#e5a863'),lane:54.75,direction:-1,phase:1/3},
-  {model:makeDistrictCar('#b7d1b9'),lane:54.75,direction:-1,phase:2/3}
+  {model:makeBlueCityBus(),lane:49.25,direction:1,phase:0,length:6.0},
+  {model:makeBlueLowPolySedan(),lane:49.25,direction:1,phase:.25,length:3.4},
+  {model:makeWhiteTenWheelTruck(),lane:49.25,direction:1,phase:.5,length:8.1},
+  {model:makeBlueLowPolyPickup(),lane:49.25,direction:1,phase:.75,length:3.4},
+  {model:makeWhitePassengerVan(),lane:54.75,direction:-1,phase:0,length:3.7},
+  {model:makeWhiteTenWheelTruck(),lane:54.75,direction:-1,phase:.25,length:8.1},
+  {model:makeBlueCityBus(),lane:54.75,direction:-1,phase:.5,length:6.0},
+  {model:makeBlueLowPolySedan(),lane:54.75,direction:-1,phase:.75,length:3.4}
  ];
  for(const item of fleet){
   root.add(item.model);
