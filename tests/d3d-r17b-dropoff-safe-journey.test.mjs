@@ -126,7 +126,7 @@ test('visible guided journey has a real interaction, moving students and stage H
  assert.match(scene,/figure\.visible=true;figure\.scale\.setScalar\(1\.45\)/);
  assert.match(scene,/controls\.target\.lerp\(target,\.065\)/);
  assert.match(scene,/studentTourGroup\.visible=true;studentTourStatus\.hidden=false/);
- assert.match(scene,/animateStudentTour\(t\);animateWayfindingFollow\(t\);controls\.update\(\)/);
+ assert.match(scene,/animateStudentTour\(t\);animateWayfindingFollow\(t\);\s*controls\.update\(\)/);
  assert.match(scene,/studentTourButton\.disabled=!district/);
  assert.match(scene,/if\(studentTourOn\)stopStudentTour\(\)/);
  assert.match(scene,/roofVisible=false;/);
