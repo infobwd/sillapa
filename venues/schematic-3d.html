@@ -1551,7 +1551,8 @@ function applyWayfindingHash(){
   renderWayfindingGeometry(wayfindingRoute);
   wayfindingStatus.textContent='จาก '+wayfindingRoute.fromLabel+' → '
    +wayfindingRoute.toLabel+' · เส้นทางจำลอง '+wayfindingRoute.nodeIds.length
-   +' จุด ไม่ใช่ระยะทางหรือเวลาเดินจริง';
+   +' จุด ไม่ใช่ระยะทางหรือเวลาเดินจริง'
+   +(wayfindingRoute.to==='meeting2'?' · กด 🏠 หลังคา เพื่อดูภายในห้องประชุม':'');
   wayfindingLayerButton.textContent='🙈 ซ่อนเส้น';
   wayfindingLayerButton.setAttribute('aria-pressed','true');
   setWayfindingControlsAvailability(true);
