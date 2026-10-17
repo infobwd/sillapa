@@ -10,7 +10,7 @@ import {readFileSync} from 'node:fs';
 import {
  DROP_OFF_BAY,BUILDING_DROPOFF_TIMING,FRONT_PARK_TIMING,
  inDropoffZone,inDropoffConflictArea,vehicleFootprintsConflict,shouldHoldDropoffRelease,
- shouldHoldFollowerAtDropoff,shouldHoldVehicleCorridor
+ shouldHoldFollowerAtDropoff,shouldVanWaitForLink,shouldHoldVehicleCorridor
 } from '../venues/dropoff-r17.mjs';
 import {
  computeHighwayProgress,canEnterMainRoad,canAdvanceInboundRoad
@@ -76,7 +76,7 @@ function replay(seconds=360){
  assert.ok(start>0&&end>start&&move>0&&moveEnd>move);
  const extras={
   DROP_OFF_BAY,BUILDING_DROPOFF_TIMING,FRONT_PARK_TIMING,inDropoffZone,
-  shouldHoldDropoffRelease,shouldHoldFollowerAtDropoff,shouldHoldVehicleCorridor,
+  shouldHoldDropoffRelease,shouldHoldFollowerAtDropoff,shouldVanWaitForLink,shouldHoldVehicleCorridor,
   computeHighwayProgress,canEnterMainRoad,canAdvanceInboundRoad
  };
  const keys=Object.keys(extras),values=Object.values(extras);
