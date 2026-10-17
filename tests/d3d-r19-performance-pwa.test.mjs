@@ -141,15 +141,15 @@ test('WebGL errors provide retry, useful explanation and safe history-only fallb
 });
 
 test('new PWA precaches correct public venue assets and fallback is the actual venue',()=>{
- assert.match(sw,/sillapa-public-v28-3d-r19b-20261017/);
+ assert.match(sw,/sillapa-public-v29-3d-r20a-20261017/);
  for(const file of ['performance-r19.mjs','schematic-3d.html','history73.json','venue-shell.css']){
   assert.ok(sw.includes('./venues/'+file),file+' in shell');
  }
  assert.match(sw,/url\.pathname\.endsWith\('\/venues\/schematic-3d\.html'\)/);
  assert.match(sw,/caches\.match\(request,\s*\{ignoreSearch: true\}\)/);
  assert.match(sw,/not guaranteed|NOT offline guaranteed/);
- assert.match(index,/venue=kanchanaburi-pesa4&v=r19b/);
- assert.match(index,/venue=anuban-bophloi&v=r19b/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r20a/);
+ assert.match(index,/venue=anuban-bophloi&v=r20a/);
 });
 
 test('standalone 3D page shows its own update banner; never reloads without click',()=>{

@@ -133,10 +133,10 @@ test('dome contains two reception desks and two staff, clear of the original sta
 });
 
 test('R17 service worker and both venue URLs refresh with drop-off helper',()=>{
- assert.match(sw,/sillapa-public-v28-3d-r19b-20261017/);
+ assert.match(sw,/sillapa-public-v29-3d-r20a-20261017/);
  assert.match(sw,/venues\/dropoff-r17\.mjs/);
  assert.match(sw,/venues\/traffic-r16\.mjs/);
  assert.match(sw,/venues\/vehicle-models-r16b\.mjs/);
- assert.match(index,/venue=kanchanaburi-pesa4&v=r19b/);
- assert.match(index,/venue=anuban-bophloi&v=r19b/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r20a/);
+ assert.match(index,/venue=anuban-bophloi&v=r20a/);
 });
