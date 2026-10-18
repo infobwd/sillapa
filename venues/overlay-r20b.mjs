@@ -28,11 +28,11 @@ export function historyOverlaySummary(rows){
  return {edition:73,activities:rows.length,buildings:keys.size,verified:false};
 }
 export const DISTRICT_SCHEMATIC_POINTS=Object.freeze([
- Object.freeze({id:'registration',label:'ลงทะเบียน (จำลอง)',icon:'📝',x:5.5,y:6.6,z:-5.75}),
- Object.freeze({id:'dropoff',label:'จุดลงรถ (จำลอง)',icon:'🚐',x:7,y:4.6,z:16.52}),
+ Object.freeze({id:'registration',label:'จุดลงทะเบียน (จำลอง)',icon:'📝',x:5.5,y:6.6,z:-5.75}),
+ Object.freeze({id:'dropoff',label:'จุดรับ–ส่งนักเรียน (จำลอง)',icon:'🚐',x:7,y:4.6,z:16.52}),
  Object.freeze({id:'restroom',label:'ห้องน้ำ (จำลอง)',icon:'🚻',x:8.8,y:4.3,z:7.2}),
- Object.freeze({id:'parking-front',label:'ที่จอดรถหน้าอาคาร (จำลอง)',icon:'🅿',x:-5.3,y:5.4,z:36}),
- Object.freeze({id:'parking-rear',label:'ที่จอดรถหลังอาคาร (จำลอง)',icon:'🅿',x:0,y:5.5,z:-35})
+ Object.freeze({id:'parking-front',label:'ที่จอดรถด้านหน้า (จำลอง)',icon:'🅿',x:-5.3,y:5.4,z:36}),
+ Object.freeze({id:'parking-rear',label:'ที่จอดรถด้านหลัง (จำลอง)',icon:'🅿',x:0,y:5.5,z:-35})
 ]);
 export function schematicPointsForVenue(venueId){
  // No unverified Anuban POI coordinates have been locked.

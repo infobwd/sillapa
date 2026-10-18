@@ -106,10 +106,10 @@ test('six-minute repeated entry scenario keeps road cars clear of committed exit
 });
 
 test('R16C PWA invalidation and versioned venue links',()=>{
- assert.match(sw,/sillapa-public-v32-3d-r20c-20261018/);
+ assert.match(sw,/sillapa-public-v33-3d-r20c1-20261018/);
  assert.match(sw,/venues\/traffic-r16\.mjs/);
  assert.match(sw,/venues\/vehicle-models-r16b\.mjs/);
  const index=readFileSync(new URL('../index.html',import.meta.url),'utf8');
- assert.match(index,/venue=kanchanaburi-pesa4&v=r20c/);
- assert.match(index,/venue=anuban-bophloi&v=r20c/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r20c1/);
+ assert.match(index,/venue=anuban-bophloi&v=r20c1/);
 });

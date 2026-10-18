@@ -39,7 +39,7 @@ test('semantic informational color palette and readable canvas labels',()=>{
 });
 test('historical/schematic/unverified key is visible outside scene and mobile responsive',()=>{
  assert.match(scene,/class="scene-visual-key"/);
- for(const label of ['ข้อมูลย้อนหลังครั้งที่ 73','รถ คน และเส้นทางเป็นภาพจำลอง','ผังอาคารยังไม่ผ่านการยืนยัน'])assert.ok(scene.includes(label),label);
+ for(const label of ['ข้อมูลจากครั้งที่ 73','รถ คน และทางเดินเป็นภาพจำลอง','ตำแหน่งอาคารยังไม่ยืนยัน'])assert.ok(scene.includes(label),label);
  assert.match(scene,/\.scene-visual-key \.unverified/);
  assert.match(scene,/@media\(max-width:680px\)/);
  assert.ok(scene.indexOf('class="scene-visual-key"')<scene.indexOf('<div id="scene">'));
@@ -52,9 +52,9 @@ test('R19B vehicles, R17B student route and R18 interaction retained',()=>{
  assert.match(scene,/function animateWayfindingFollow\(t\)/);
 });
 test('PWA v29 refreshes helper and both venue deep links',()=>{
- assert.match(sw,/sillapa-public-v32-3d-r20c-20261018/);
+ assert.match(sw,/sillapa-public-v33-3d-r20c1-20261018/);
  assert.match(sw,/venues\/visual-r20a\.mjs/);
  assert.match(sw,/venues\/junction-r19b\.mjs/);
- assert.match(index,/venue=kanchanaburi-pesa4&v=r20c/);
- assert.match(index,/venue=anuban-bophloi&v=r20c/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r20c1/);
+ assert.match(index,/venue=anuban-bophloi&v=r20c1/);
 });

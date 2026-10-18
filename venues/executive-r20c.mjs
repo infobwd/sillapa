@@ -22,7 +22,7 @@ export function executiveSnapshot(venues, selectedVenueId) {
   venueCount:historic.length,
   totalHistoricalRows:historic.reduce((sum,v)=>sum+v.rows.length,0),
   selectedId:venue?.id||null,
-  selectedName:venue?.name||'ไม่มีข้อมูลสนามนี้',
+  selectedName:venue?.name||'ไม่พบข้อมูลของสนามนี้',
   selectedRows:selectedRows.length,
   selectedBuildings:buildings.size,
   selectedMatchingPending:selectedRows.filter(r=>r?.reviewStatus==='needs_activity_id_match').length,
@@ -33,7 +33,7 @@ export function executiveSnapshot(venues, selectedVenueId) {
 }
 
 export function formatExecutiveSourceNotice(summary){
- return 'ย้อนหลังครั้งที่ 73 · '+summary.selectedRows+' แถวจากตารางต้นฉบับ · '+
-  summary.selectedMatchingPending+' แถวรอจับคู่รหัสกิจกรรม · '+
-  'ไม่มีข้อมูลความพร้อมครั้งที่ 74 ที่ผ่านการรับรอง';
+ return 'ข้อมูลจากครั้งที่ 73 · สนามนี้บันทึกไว้ '+summary.selectedRows+' รายการ · '+
+  summary.selectedMatchingPending+' รายการยังรอตรวจสอบรหัสกิจกรรม · '+
+  'ยังไม่มีข้อมูลยืนยันความพร้อมครั้งที่ 74';
 }

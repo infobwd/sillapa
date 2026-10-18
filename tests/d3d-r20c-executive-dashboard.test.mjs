@@ -44,7 +44,7 @@ test('executive summary counts table rows rather than unique activities or parti
  assert.equal(v.roomSpecifiedRows,1);
  assert.equal(v.selectedMatchingPending,1);
  assert.equal(v.hasApproved74Data,false);
- assert.ok(formatExecutiveSourceNotice(v).includes('ไม่มีข้อมูลความพร้อมครั้งที่ 74 ที่ผ่านการรับรอง'));
+ assert.ok(formatExecutiveSourceNotice(v).includes('ยังไม่มีข้อมูลยืนยันความพร้อมครั้งที่ 74'));
 });
 
 test('unknown venue or broken input fails closed without inventing executive KPIs',()=>{
@@ -105,9 +105,9 @@ test('behind-flagpole field is matte sage-grey with unchanged geometry and subdu
 });
 
 test('public cache v32 precaches R20C and both deep links update without changing historical source',()=>{
- assert.match(sw,/sillapa-public-v32-3d-r20c-20261018/);
+ assert.match(sw,/sillapa-public-v33-3d-r20c1-20261018/);
  assert.match(sw,/venues\/executive-r20c\.mjs/);
- assert.match(index,/venue=kanchanaburi-pesa4&v=r20c/);
- assert.match(index,/venue=anuban-bophloi&v=r20c/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r20c1/);
+ assert.match(index,/venue=anuban-bophloi&v=r20c1/);
  assert.equal(data.venues[0].rows.length+data.venues[1].rows.length,98);
 });
