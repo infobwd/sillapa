@@ -39,3 +39,7 @@ New suite `tests/d3d-r20c-executive-dashboard.test.mjs` validates the real 98/45
 - [ ] PWA update v31→v32, Chrome/iPhone/iPad, reduced-motion, low-quality render, dark/light theme and offline fallback; verify exact tested SHA, dated screenshots and outcomes
 
 **Merge is owner-approved separately; passing static checks never implies visual acceptance or deployment.**
+
+## R20C1 — Plain-Thai copy & follow-control accessibility (18 October 2026)
+
+Owner screenshot: the follow/tour button is washed out and difficult to read. Keep disabled semantics, use dark legible text on a contrasting neutral background, and describe the need to show a route before route-follow becomes available. Use short action-first labels and accessible button hints. Rename historical executive cards to “สนามที่มีข้อมูลครั้งที่ 73”, “รายการที่บันทึกไว้ทั้งหมด”, “รายการของสนามที่เลือก”, “อาคารที่มีข้อมูล”, and explain that counts reflect rows from edition 73, may include repeated activities, and are not registration/team/edition-74 readiness. Preserve all 3D scene geometry and motion logic. Confirm PWA v33 and regression suite, then test contrast on real phone/desktop.
