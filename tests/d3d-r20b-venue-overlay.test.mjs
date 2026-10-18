@@ -54,17 +54,17 @@ test('switches actually affect 3D objects and historic tags; cleanup is tied to 
  assert.match(html,/if\(district\)\{buildVenuePoiOverlay\(v\.id\);createWayfindingPins\(\)\}/);
 });
 test('no unverified 74 status is introduced; preserved R19B and student path',()=>{
- assert.match(html,/ยังไม่มีสถานะความพร้อมครั้งที่ 74 ที่ได้รับการรับรอง/);
+ assert.match(html,/ยังไม่มีข้อมูลยืนยันความพร้อมครั้งที่ 74/);
  assert.match(html,/const corridorBlocked=shouldHoldVehicleCorridor\(current,wanted/);
  assert.match(html,/dropoffJunctionEntry\(b,b\.progress,next,currentPose,wanted\)/);
  assert.match(html,/function animateStudentTour\(t\)/);
  assert.match(html,/function animateWayfindingFollow\(t\)/);
 });
 test('PWA v30 caches the helper and updates both venue URLs',()=>{
- assert.match(sw,/sillapa-public-v32-3d-r20c-20261018/);
+ assert.match(sw,/sillapa-public-v33-3d-r20c1-20261018/);
  assert.match(sw,/venues\/overlay-r20b\.mjs/);
- assert.match(index,/venue=kanchanaburi-pesa4&v=r20c/);
- assert.match(index,/venue=anuban-bophloi&v=r20c/);
+ assert.match(index,/venue=kanchanaburi-pesa4&v=r20c1/);
+ assert.match(index,/venue=anuban-bophloi&v=r20c1/);
 });
 
 test('R20B1: disclosure startup has no TDZ and breakpoint listeners work',()=>{
