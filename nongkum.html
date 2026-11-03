@@ -115,7 +115,8 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}main{padding-bottom
 .venue-activity-schools span{padding:6px 9px;border-radius:8px;background:#2b4c6a}
 .venue-activity-detail .criteria-slot{margin:10px 0}
 #complete-field-plan .venue-table-wrap[hidden]{display:none!important}
-</style><style>.empty-entries .empty-history-source{display:block;margin-top:7px;color:#405b78!important;line-height:1.55}</style><link rel="manifest" href="./nongkum.webmanifest"><link rel="apple-touch-icon" href="./icons/icon-192.png">
+</style><style>.empty-entries .empty-history-source{display:block;margin-top:7px;color:#405b78!important;line-height:1.55} .venue-missing-link{display:block;width:100%;min-height:48px;margin:10px 0 14px;padding:10px;border:1px solid #6d96bd;border-radius:10px;background:#294a6a;color:#e7f2ff;font:inherit;text-align:left;cursor:pointer}
+</style><link rel="manifest" href="./nongkum.webmanifest"><link rel="apple-touch-icon" href="./icons/icon-192.png">
 <style>
 /* Small mobile-first branded entry splash; never prevents access to the page. */
 .nongkum-splash[hidden]{display:none!important}
@@ -381,7 +382,7 @@ const venueNameKey=value=>String(value).normalize('NFC').toLocaleLowerCase('th')
 const venueCategoryLookup=new Map();
 venueGroups.forEach(g=>(g.i||[]).forEach(item=>{const k=venueNameKey(item.t);if(!venueCategoryLookup.has(k))venueCategoryLookup.set(k,{group:g.g,name:item.t})}));
 const venuePanel=document.getElementById('venue-category-panel');
-venuePanel.innerHTML='<label for="venue-category-select">เลือกหมวดหมู่กิจกรรม</label><select id="venue-category-select" class="audit-select"><option value="">ทุกหมวดหมู่</option></select><div id="venue-category-summary" class="venue-category-summary" aria-live="polite"></div><div id="venue-status-tabs" class="venue-status-tabs" role="group" aria-label="กรองสถานะ"></div><div id="venue-activity-cards" class="venue-activity-cards"></div>';
+venuePanel.innerHTML='<label for="venue-category-select">เลือกหมวดหมู่กิจกรรม</label><select id="venue-category-select" class="audit-select"><option value="">ทุกหมวดหมู่</option></select><div id="venue-category-summary" class="venue-category-summary" aria-live="polite"></div><div id="venue-status-tabs" class="venue-status-tabs" role="group" aria-label="กรองสถานะ"></div><button type="button" id="venue-open-missing" class="venue-missing-link">ดูรายการที่ยังไม่พบข้อมูลส่งแข่งขันในทะเบียนครั้งที่ 74</button><div id="venue-activity-cards" class="venue-activity-cards"></div>';
 const venueSelect=document.getElementById('venue-category-select'),venueSummary=document.getElementById('venue-category-summary'),venueCards=document.getElementById('venue-activity-cards'),venueTabs=document.getElementById('venue-status-tabs');
 let selectedVenueStatus='all';
 const rowSchools=row=>[...row.querySelectorAll('td:nth-child(6) .venue-school')].map(el=>el.textContent.trim());
@@ -392,6 +393,7 @@ const rowName=row=>rowMatch(row)?.name||rowActivity(row);
 const groups=new Map();rows.forEach(row=>groups.set(rowCategory(row),(groups.get(rowCategory(row))||0)+1));
 [...groups].sort((a,b)=>a[0].localeCompare(b[0],'th')).forEach(([name,count])=>{const o=document.createElement('option');o.value=name;o.textContent=name+' ('+count+')';venueSelect.append(o)});
 venueSelect.addEventListener('change',()=>{selectedVenueStatus='all';render()});
+document.getElementById('venue-open-missing').addEventListener('click',()=>{const group=venueSelect.value;openEmpty();emptyCategory.value=[...emptyCategory.options].some(o=>o.value===group)?group:'';emptyStatus.value='';emptySearch.value='';renderEmpty()});
 function renderVenue(q){
  const group=venueSelect.value,all=rows.filter(row=>!group||rowCategory(row)===group),multi=all.filter(row=>rowSchools(row).length>=2).length,single=all.filter(row=>rowSchools(row).length===1).length;
  venueSummary.textContent=(group||'ทุกหมวดหมู่')+' · ทั้งหมด '+all.length+' · หลายโรงเรียน '+multi+' · โรงเรียนเดียว '+single;
