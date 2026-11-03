@@ -192,7 +192,7 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}main{padding-bottom
 .nongkum-splash-line{display:block;background:#ffda58;width:64px;height:4px;border-radius:99px;margin:11px auto 0}
 @media(prefers-reduced-motion:reduce){.nongkum-splash{transition:none}}
 </style>
-<style id="nongkum-home-task-first">.role-home .nongkum-home-prompt{margin:12px 0 5px;font-size:clamp(21px,4.8vw,28px)}.role-home .nongkum-home-lead{margin:0 0 12px;color:#a9c7e6}.role-home>.role-choices{margin:12px 0 22px;gap:12px}.role-home>.role-choices .role-choice{min-height:120px;padding:15px 10px;gap:6px}.role-home>.role-choices .role-icon{font-size:27px}.role-home>.role-choices .role-choice strong{font-size:clamp(14px,3.7vw,18px)}.role-home>.role-choices .role-choice small{font-size:12px}.role-home .nongkum-schedule{margin-top:12px}.role-home .home-insights{margin-top:24px}@media(max-width:380px){.role-home>.role-choices{grid-template-columns:1fr}.role-home>.role-choices .role-choice{min-height:94px}}</style><style id="nongkum-purpose-style">.role-home .nongkum-purpose{margin:2px auto 20px;padding:15px 17px;border:1px solid #d5e3f2;border-radius:15px;background:#edf4fc;color:#173d64;text-align:left}.nongkum-purpose strong{font-size:16px}.nongkum-purpose p{margin:5px 0 0;font-size:14px;line-height:1.55}.nongkum-purpose .nongkum-purpose-limit{margin-top:9px;padding-top:8px;border-top:1px solid #d1deeb;color:#435b73}.role-home .nongkum-home-prompt{margin:5px 0 3px}.role-home .nongkum-home-lead{margin:0 0 8px}.role-home>.role-choices{margin:10px 0 18px}.role-home>.role-choices .role-choice{min-height:102px;padding:12px 10px}@media(prefers-color-scheme:dark){.role-home .nongkum-purpose{background:#192f47;border-color:#466482;color:#e6f1ff}.nongkum-purpose .nongkum-purpose-limit{color:#d1deec;border-color:#3e5874}}</style></head><body><div class="nongkum-splash" id="nongkumSplash" hidden aria-hidden="true">
+<style id="nongkum-home-task-first">.role-home .nongkum-home-prompt{margin:12px 0 5px;font-size:clamp(21px,4.8vw,28px)}.role-home .nongkum-home-lead{margin:0 0 12px;color:#a9c7e6}.role-home>.role-choices{margin:12px 0 22px;gap:12px}.role-home>.role-choices .role-choice{min-height:120px;padding:15px 10px;gap:6px}.role-home>.role-choices .role-icon{font-size:27px}.role-home>.role-choices .role-choice strong{font-size:clamp(14px,3.7vw,18px)}.role-home>.role-choices .role-choice small{font-size:12px}.role-home .nongkum-schedule{margin-top:12px}.role-home .home-insights{margin-top:24px}@media(max-width:380px){.role-home>.role-choices{grid-template-columns:1fr}.role-home>.role-choices .role-choice{min-height:94px}}</style><style id="nongkum-purpose-style">.role-home .nongkum-purpose{margin:2px auto 20px;padding:15px 17px;border:1px solid #d5e3f2;border-radius:15px;background:#edf4fc;color:#173d64;text-align:left}.nongkum-purpose strong{font-size:16px}.nongkum-purpose p{margin:5px 0 0;font-size:14px;line-height:1.55}.nongkum-purpose .nongkum-purpose-limit{margin-top:9px;padding-top:8px;border-top:1px solid #d1deeb;color:#435b73}.role-home .nongkum-home-prompt{margin:5px 0 3px}.role-home .nongkum-home-lead{margin:0 0 8px}.role-home>.role-choices{margin:10px 0 18px}.role-home>.role-choices .role-choice{min-height:102px;padding:12px 10px}@media(prefers-color-scheme:dark){.role-home .nongkum-purpose{background:#192f47;border-color:#466482;color:#e6f1ff}.nongkum-purpose .nongkum-purpose-limit{color:#d1deec;border-color:#3e5874}}</style><link rel="stylesheet" href="./nongkum-desktop.css"></head><body><div class="nongkum-splash" id="nongkumSplash" hidden aria-hidden="true">
   <div class="nongkum-splash-content">
     <div class="nongkum-splash-icon"><img src="./icons/icon-192.png" alt="" width="66" height="66"></div>
     <h2 class="nongkum-splash-title">ศิลปหัตถกรรมนักเรียน<br>ครั้งที่ 74</h2>
@@ -633,7 +633,16 @@ if(rivals.length){
 const list=document.createElement('div');
 list.className='audit-rival-list';
 rivals.forEach(s=>{const chip=document.createElement('span');chip.className='venue-school';chip.textContent=s;list.append(chip)});
-rivalCell.append(list);
+if(window.matchMedia('(min-width:1200px)').matches){
+  const details=document.createElement('details');
+  details.className='audit-rival-details';
+  const summary=document.createElement('summary');
+  summary.textContent='ดูรายชื่อโรงเรียน';
+  details.append(summary,list);
+  rivalCell.append(details);
+}else{
+  rivalCell.append(list);
+}
 }else{const note=document.createElement('small');note.textContent='กำลังตรวจสอบรายชื่อกับข้อมูลของโรงเรียน ก่อนสรุป';rivalCell.append(note)}
 }
 const text=(cells[1].textContent+' '+cells[3].textContent).toLocaleLowerCase('th');
@@ -650,6 +659,9 @@ result.textContent=mode==='school'?(name?name+' · พบ '+shown+' รายก
 schoolTab.addEventListener('click',()=>{mode='school';render()});
 venueTab.addEventListener('click',()=>{mode='venue';render()});
 school.addEventListener('change',render);search.addEventListener('input',render);
+const desktopBreak=window.matchMedia('(min-width:1200px)');
+if(desktopBreak.addEventListener)desktopBreak.addEventListener('change',render);
+else if(desktopBreak.addListener)desktopBreak.addListener(render);
 render();syncNav();
 })();
 </script><script>
