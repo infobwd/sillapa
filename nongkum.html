@@ -71,6 +71,35 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}main{padding-bottom
 (function(){
 const root=document.getElementById('complete-field-plan');
 if(!root)return;
+// Canonical names verified against the round-74 activity register and historical criteria titles.
+// Merge only identical competition + grade band; keep distinct categories and levels separate.
+const canonicalNameAliases={
+'การแข่่งขันการเล่านิทาน (story Telling)':'การแข่งขันการเล่านิทาน (Story Telling)',
+'เล่านิทาน Story Telling':'การแข่งขันการเล่านิทาน (Story Telling)',
+'จัดทำหนังสือเล่มเล็ก':'การจัดทำหนังสือเล่มเล็ก',
+'ต่่อสมการคณิตศาสตร์ (เอแม็ท)':'ต่อสมการคณิตศาสตร์ (เอแม็ท)',
+'การสร้้างการ์ตูนด้วยโปรแกรมคอมพิวเตอร์กราฟิก':'การสร้างการ์ตูนด้วยโปรแกรมคอมพิวเตอร์กราฟิก',
+'การสร้้้างการ์ตูนเรื่องสั้น (Comic Strip)':'การสร้างการ์ตูนเรื่องสั้น (Comic Strip)'
+};
+const tableBody=root.querySelector('.venue-table tbody');
+const canonicalRows=new Map();
+[...tableBody.querySelectorAll('tr')].forEach(row=>{
+const cells=row.querySelectorAll('td');
+const strong=cells[1].querySelector('strong');
+const original=strong?.textContent.trim()||'';
+const canonical=canonicalNameAliases[original]||original;
+const level=cells[3].textContent.trim();
+const key=canonical+'|'+level;
+strong.textContent=canonical;
+if(!canonicalRows.has(key)){canonicalRows.set(key,row);return}
+const target=canonicalRows.get(key),targetCells=target.querySelectorAll('td');
+const schools=new Set([...targetCells[5].querySelectorAll('.venue-school')].map(el=>el.textContent.trim()));
+cells[5].querySelectorAll('.venue-school').forEach(el=>{if(!schools.has(el.textContent.trim())){schools.add(el.textContent.trim());targetCells[5].append(el.cloneNode(true))}});
+targetCells[4].querySelector('strong').textContent=schools.size+' โรงเรียน';
+const originalSource=cells[1].querySelector('.source-label');
+if(originalSource&&!targetCells[1].textContent.includes(originalSource.textContent.trim()))targetCells[1].append(originalSource.cloneNode(true));
+row.remove();
+});
 const rows=[...root.querySelectorAll('.venue-table tbody tr')];
 rows.forEach(row=>{
 const cells=row.querySelectorAll('td');
@@ -155,7 +184,9 @@ const verifiedAliases={
 'การสร้างการ์ตูนด้วยโปรแกรมคอมพิวเตอร์กราฟิก':['การสร้้างการ์ตูนด้วยโปรแกรมคอมพิวเตอร์กราฟิก'],
 'การสร้างการ์ตูนเรื่องสั้น (Comic Strip)':['การสร้้้างการ์ตูนเรื่องสั้น (Comic Strip)'],
 'เรียงร้อยถ้อยความ':['การเขียนเรื่องจากภาพ','การเขียนเรียงความ'],
-'กวีเยาวชนคนรุ่นใหม่':['กลอนสี่ (4 บท)','กาพย์ยานี 11 (4 บท)']
+'กวีเยาวชนคนรุ่นใหม่':['กลอนสี่ (4 บท)','กาพย์ยานี 11 (4 บท)'],
+'การแข่งขันการเล่านิทาน (Story Telling)':['เล่านิทาน Story Telling','การแข่่งขันการเล่านิทาน (story Telling)'],
+'การจัดทำหนังสือเล่มเล็ก':['จัดทำหนังสือเล่มเล็ก']
 };
 const reviewedAliases={
 'โครงงานคุณธรรม':['เพลงคุณธรรม','เล่านิทานคุณธรรม'],
