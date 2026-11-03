@@ -144,7 +144,7 @@ showInsight('multi');
 
 
 const emptyPage=document.getElementById('empty-entries'),emptySearch=document.getElementById('empty-search'),emptyList=document.getElementById('empty-list'),emptyCount=document.getElementById('empty-count');
-const normalizeActivity=value=>String(value).normalize('NFC').toLocaleLowerCase('th').replace(/การแข่งขัน|การประกวด|การ/g,'').replace(/[\\s()（）–—-]/g,'').replace(/ป\\.|ม\\./g,'').trim();
+const normalizeActivity=value=>String(value).normalize('NFC').toLocaleLowerCase('th').replace(/^(?:การแข่งขัน|การประกวด|การ)/,'').replace(/[\s()（）–—-]/g,'').replace(/ป\.|ม\./g,'').trim();
 const confirmedGroups=window.SILLAPA74_CONFIRMED_GROUPS||[];
 const confirmedActivities=confirmedGroups.flatMap(group=>(group.i||[]).map(activity=>({group:group.g,name:activity.t})));
 const emptyCategory=document.getElementById('empty-category');
