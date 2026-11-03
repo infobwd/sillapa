@@ -230,6 +230,10 @@
   #complete-field-plan[data-mode="school"] .audit-panel .audit-label { color:#1c3958; }
   #complete-field-plan[data-mode="school"] .audit-result { color:#174c7c;border-color:#d5e3f1; }
   #complete-field-plan[data-mode="school"] .audit-help { color:#536980; }
+  #complete-field-plan[data-mode="school"] .school-export-more summary { color:#185483; }
+  #complete-field-plan[data-mode="school"] .school-export-shortcut button { color:#15598d; }
+  #complete-field-plan[data-mode="school"] .school-export>small { color:#526981; }
+  #complete-field-plan[data-mode="school"] .school-export label { color:#214663; }
   #complete-field-plan[data-mode="school"]>.venue-table-wrap::before { color:#173d64; }
   #complete-field-plan[data-mode="school"] .venue-table tbody tr { background:#fff;border-color:#d6e3f0; }
   #complete-field-plan[data-mode="school"] .venue-table td { color:#193956; }
