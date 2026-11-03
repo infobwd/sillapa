@@ -97,7 +97,7 @@
   }
   /* Keep screen corners and the bottom navigation comfortable at small widths. */
   main { padding-bottom:35px; }
-  header p { font-size:15px;line-height:1.6; }
+  body header p { font-size:15px;line-height:1.6; }
 }
 @media (max-width:380px) {
   #role-home > .role-choices .role-choice { min-height:122px;padding:14px 13px; }
