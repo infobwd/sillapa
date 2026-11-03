@@ -357,7 +357,7 @@ const school=document.getElementById('audit-school'),search=document.getElementB
 const schoolTab=document.getElementById('audit-school-tab'),venueTab=document.getElementById('audit-venue-tab');
 // Group by the confirmed round-74 activity register; never infer a category from a title.
 const venueGroups=window.SILLAPA74_CONFIRMED_GROUPS||[];
-const venueNameKey=value=>String(value).normalize('NFC').toLocaleLowerCase('th').replace(/^(?:การแข่งขัน|การประกวด|การ)/,'').replace(/[\\s()（）–—-]/g,'').replace(/ป\\.|ม\\./g,'').trim();
+const venueNameKey=value=>String(value).normalize('NFC').toLocaleLowerCase('th').replace(/^(?:การแข่งขัน|การประกวด|การ)/,'').replace(/[\s()（）–—-]/g,'').replace(/ป\.|ม\./g,'').trim();
 const venueCategoryLookup=new Map();
 venueGroups.forEach(g=>(g.i||[]).forEach(item=>{const key=venueNameKey(item.t);if(!venueCategoryLookup.has(key))venueCategoryLookup.set(key,g.g)}));
 const venuePanel=document.getElementById('venue-category-panel'),venueCategoryList=document.getElementById('venue-category-list');
