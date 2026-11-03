@@ -1,0 +1,28 @@
+{
+  "name": "สารสนเทศการแข่งขันศิลปหัตถกรรมนักเรียน ครั้งที่ 74 · กลุ่มหนองกุ่ม",
+  "short_name": "หนองกุ่ม 74",
+  "description": "รายการกิจกรรมและการเตรียมจัดการแข่งขันศิลปหัตถกรรมนักเรียน ครั้งที่ 74 ของกลุ่มเครือข่ายหนองกุ่ม",
+  "lang": "th-TH",
+  "dir": "ltr",
+  "id": "./nongkum.html",
+  "start_url": "./nongkum.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#153d72",
+  "theme_color": "#153d72",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ]
+}
