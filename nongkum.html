@@ -305,6 +305,34 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}main{padding-bottom
  .insight-detail a{color:#14558b!important}
 }
 </style>
+<style id="nongkum-info-clarity-style">
+/* Keep the information tab focused: no nested cards or unrelated document panels. */
+#nongkum-extra-view:has(#nongkum-info-view:not([hidden])){padding:16px 18px 22px;margin-top:0;border:0;box-shadow:none;background:transparent}
+#nongkum-extra-view:has(#nongkum-info-view:not([hidden]))>h2{margin:0 0 3px}
+#nongkum-extra-view:has(#nongkum-info-view:not([hidden]))>p{margin:0 0 15px}
+#nongkum-info-view{display:grid;gap:0}
+#nongkum-info-view section{margin:0;padding:17px 2px;border:0;border-bottom:1px solid #d4e0ec;background:transparent;border-radius:0}
+#nongkum-info-view section:first-child{padding-top:6px}
+#nongkum-info-view section:last-child{border-bottom:0}
+#nongkum-info-view h3{font-size:17px;line-height:1.45;margin:0 0 7px;color:#17324d}
+#nongkum-info-view p{font-size:14px;line-height:1.7;margin:0 0 8px;color:#52677e}
+#nongkum-info-view p:last-child{margin-bottom:0}
+#nongkum-info-view .info-purpose{background:#edf4fb;border-radius:12px;padding:15px;border-bottom:0;margin-bottom:4px}
+#nongkum-info-view .info-guide{padding:10px 0}
+#nongkum-info-view .info-guide+ .info-guide{border-top:1px solid #d4e0ec}
+#nongkum-info-view .info-guide strong{font-size:14px;color:#17324d}
+#nongkum-info-view .info-guide p{margin:4px 0 0}
+#nongkum-info-view .info-doc-hint{font-size:12px;margin-top:10px}
+body:has(#nongkum-extra-view:not([hidden])) #legacy-details{display:none!important}
+@media(prefers-color-scheme:dark){
+#nongkum-extra-view:has(#nongkum-info-view:not([hidden])){color:#eef4ff}
+#nongkum-info-view section,#nongkum-info-view .info-guide+.info-guide{border-color:#405a76}
+#nongkum-info-view h3,#nongkum-info-view .info-guide strong{color:#eef4ff}
+#nongkum-info-view p{color:#c4d3e5}
+#nongkum-info-view .info-purpose{background:#21364e}
+}
+@media(max-width:680px){#nongkum-extra-view:has(#nongkum-info-view:not([hidden])){padding:12px 8px 18px}}
+</style>
 <style id="nongkum-four-view-style">
 .nongkum-extra-view[hidden],#nongkum-criteria-view[hidden],#nongkum-info-view[hidden]{display:none!important}
 .nongkum-extra-view{max-width:760px;margin:12px auto 24px;padding:20px;border-radius:20px;background:#fff;color:#17324d;border:1px solid #dbe4ef}
@@ -364,11 +392,10 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  <h2 id="nongkum-view-title"></h2><p id="nongkum-view-desc"></p>
  <div id="nongkum-criteria-view" hidden><label for="nongkum-criteria-search">ค้นหาชื่อกิจกรรมหรือระดับชั้น</label><input id="nongkum-criteria-search" type="search" placeholder="ค้นหาเกณฑ์การแข่งขัน"><p id="nongkum-criteria-count" role="status"></p><div id="nongkum-criteria-results"></div></div>
  <div id="nongkum-info-view" hidden>
- <article><h3>เกี่ยวกับระบบสารสนเทศนี้</h3><p>เว็บไซต์นี้เป็นสารสนเทศเบื้องต้นสำหรับตรวจสอบรายการแข่งขันที่รวบรวมจากโรงเรียนในกลุ่มหนองกุ่ม และใช้วางแผนประชุมกรรมการ จัดสถานที่ และเตรียมสนามแข่งขัน</p><p><strong>ขอบเขต:</strong> ไม่ใช่ระบบสมัครแข่งขัน ไม่ใช้บันทึกชื่อครูผู้ควบคุมทีมและรายชื่อนักเรียน และไม่ใช่เว็บไซต์ประกาศผลการแข่งขัน ระบบดำเนินการดังกล่าวจะแยกจากเว็บสารสนเทศนี้</p><p>ข้อมูลจำนวนรายการ โรงเรียนที่ร่วมแข่งขัน และกำหนดการอาจเปลี่ยนแปลงได้ระหว่างการตรวจสอบ ไม่ใช่ประกาศรับรองอย่างเป็นทางการ</p></article>
- <article><h3>สำหรับโรงเรียน</h3><p>ใช้เมนูรายการ เลือกมุมมองโรงเรียนและค้นหากิจกรรมเพื่อตรวจสอบรายการและโรงเรียนที่เข้าร่วม</p></article>
- <article><h3>สำหรับเจ้าของสนาม</h3><p>เปิดเมนูรายการและเลือกมุมมองสนามเพื่อเตรียมสถานที่และตรวจสอบกิจกรรมที่มีหลายโรงเรียน</p></article>
- <article><h3>สถานะและแหล่งข้อมูล</h3><p>ข้อมูลในหน้านี้เป็นสารสนเทศเพื่อเตรียมการแข่งขัน ไม่ใช่ผลสมัครหรือผลการแข่งขันที่รับรองอย่างเป็นทางการ เกณฑ์ย้อนหลังครั้งที่ 70 เป็นเพียงรายการอ้างอิง ต้องตรวจสอบเกณฑ์และระดับชั้นที่ประกาศใช้จริงอีกครั้ง</p></article>
- <article><h3>เอกสารสำหรับตรวจทาน</h3><p>สามารถดูเอกสารรายการรายโรงเรียนเพิ่มเติมได้จากส่วนเอกสารตรวจทานในหน้ารายการ</p></article>
+ <section class="info-purpose"><h3>เว็บไซต์นี้ใช้ทำอะไร</h3><p>สำหรับโรงเรียนตรวจสอบรายการแข่งขันที่รวบรวมไว้ และสำหรับเจ้าหน้าที่สนามเตรียมการประชุมกรรมการ จัดสถานที่ และวางแผนสนามแข่งขัน</p></section>
+ <section class="info-limit"><h3>เว็บไซต์นี้ไม่ใช่ระบบ</h3><p>สมัครแข่งขัน บันทึกชื่อครูผู้ควบคุมทีมและรายชื่อนักเรียน หรือประกาศผลการแข่งขัน โดยระบบดำเนินการเหล่านั้นจะแยกต่างหาก</p></section>
+ <section class="info-status"><h3>สถานะข้อมูล</h3><p>จำนวนรายการ โรงเรียนที่เข้าร่วม และกำหนดการยังอยู่ระหว่างตรวจสอบ อาจเปลี่ยนแปลงได้ และไม่ใช่ประกาศรับรองอย่างเป็นทางการ</p><p>เกณฑ์ย้อนหลังครั้งที่ 70 ใช้เพื่ออ้างอิงเท่านั้น ต้องตรวจสอบเกณฑ์ที่ประกาศใช้จริงอีกครั้ง</p></section>
+ <section class="info-guides"><h3>วิธีใช้งาน</h3><div class="info-guide"><strong>🏫 สำหรับโรงเรียน</strong><p>เปิดเมนูรายการ เลือกมุมมองโรงเรียน เพื่อดูรายการที่ส่งและโรงเรียนที่ร่วมแข่งขัน</p></div><div class="info-guide"><strong>📋 สำหรับเจ้าหน้าที่สนาม</strong><p>เปิดเมนูรายการ เลือกมุมมองสนาม เพื่อดูรายการที่ต้องเตรียมสนามและกรรมการ</p></div><p class="info-doc-hint">เอกสารรายการรายโรงเรียนสำหรับตรวจทานเพิ่มเติมอยู่ในหน้ารายการ</p></section>
  </div>
 </section>
 <nav class="mobile-bottom-nav" aria-label="นำทางหน้าแอป"><button type="button" id="nav-home" aria-label="หน้าแรก"><span class="pill-i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z"/></svg></span><span class="nav-label">หน้าแรก</span></button><button type="button" id="nav-list" aria-label="รายการแข่งขัน"><span class="pill-i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></span><span class="nav-label">รายการ</span></button><button type="button" id="nav-criteria" aria-label="เกณฑ์การแข่งขัน"><span class="pill-i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8l4 4v14H4V3h4zM14 3v5h6M8 12h8M8 16h6"/></svg></span><span class="nav-label">เกณฑ์</span></button><button type="button" id="nav-info" aria-label="ข้อมูลเพิ่มเติม"><span class="pill-i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><span class="nav-label">ข้อมูล</span></button></nav></main><footer>สารสนเทศเพื่อเตรียมการแข่งขัน · ไม่ใช่ระบบรับสมัครหรือประกาศผลอย่างเป็นทางการ</footer><script>
