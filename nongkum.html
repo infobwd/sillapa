@@ -333,7 +333,15 @@ body:has(#nongkum-extra-view:not([hidden])) #legacy-details{display:none!importa
 }
 @media(max-width:680px){#nongkum-extra-view:has(#nongkum-info-view:not([hidden])){padding:12px 8px 18px}}
 </style>
-<style id="nongkum-four-view-style">
+<style id="nongkum-criteria-historical-clarity">
+#nongkum-criteria-view .nongkum-criteria-card{padding:12px 14px;margin:8px 0;border-radius:12px}
+#nongkum-criteria-view .nongkum-criteria-card h3{font-size:16px;line-height:1.45;margin:0 0 3px}
+#nongkum-criteria-view .nongkum-criteria-card p{margin:0}
+#nongkum-criteria-view .nongkum-criteria-card .criteria-level{font-size:13px;margin-bottom:5px}
+#nongkum-criteria-view .nongkum-criteria-card .criteria-source{font-size:12px;line-height:1.5}
+#nongkum-criteria-view .nongkum-criteria-card a{font-size:13px;margin-top:5px;min-height:32px}
+#nongkum-criteria-view #nongkum-criteria-count{margin:10px 0}
+</style><style id="nongkum-four-view-style">
 .nongkum-extra-view[hidden],#nongkum-criteria-view[hidden],#nongkum-info-view[hidden]{display:none!important}
 .nongkum-extra-view{max-width:760px;margin:12px auto 24px;padding:20px;border-radius:20px;background:#fff;color:#17324d;border:1px solid #dbe4ef}
 .nongkum-extra-view h2{margin:0 0 8px;color:inherit;font-size:24px}
@@ -357,7 +365,7 @@ function setup(){
  if(!extra||!nav||!list)return;
  const rows=[...document.querySelectorAll('#complete-field-plan .venue-table tbody tr')];
  const entries=rows.map(row=>{const cells=row.querySelectorAll('td');const a=row.querySelector('.criteria-slot a');const note=row.querySelector('.criteria-slot .source-label');return {name:cells[1]?.querySelector('strong')?.textContent.trim()||'',level:cells[3]?.textContent.trim()||'',href:a?.href||'',source:note?.textContent.trim()||'ยังไม่มีเกณฑ์ยืนยัน'};}).filter(x=>x.name);
- function render(){const q=input.value.trim().toLocaleLowerCase('th');const filtered=entries.filter(x=>(x.name+' '+x.level).toLocaleLowerCase('th').includes(q));results.replaceChildren();count.textContent='พบ '+filtered.length+' จาก '+entries.length+' รายการ';filtered.forEach(x=>{const article=document.createElement('article');const title=document.createElement('h3');title.textContent=x.name;const level=document.createElement('p');level.textContent=x.level;const source=document.createElement('p');source.className='criteria-source';source.textContent=x.source;article.append(title,level,source);if(x.href){const a=document.createElement('a');a.href=x.href;a.target='_blank';a.rel='noopener noreferrer';a.textContent='เปิดเอกสารอ้างอิง ↗';article.append(a)}results.append(article)});}
+ function render(){const q=input.value.trim().toLocaleLowerCase('th');const filtered=entries.filter(x=>(x.name+' '+x.level).toLocaleLowerCase('th').includes(q));results.replaceChildren();count.textContent='พบ '+filtered.length+' จาก '+entries.length+' รายการ';filtered.forEach(x=>{const article=document.createElement('article');article.className='nongkum-criteria-card';const title=document.createElement('h3');title.textContent=x.name;const level=document.createElement('p');level.className='criteria-level';level.textContent=x.level;const source=document.createElement('p');source.className='criteria-source';source.textContent=x.source;article.append(title,level,source);if(x.href){const a=document.createElement('a');a.href=x.href;a.target='_blank';a.rel='noopener noreferrer';a.textContent=x.source.includes('ระดับชั้นยังไม่ตรงกัน')?'ตรวจสอบทะเบียนย้อนหลังครั้งที่ 70 ↗':'ดูทะเบียนรายการย้อนหลังครั้งที่ 70 ↗';article.append(a)}results.append(article)});}
  function show(which,updateHash=true){const isExtra=which==='criteria'||which==='info';extra.hidden=!isExtra;criteria.hidden=which!=='criteria';info.hidden=which!=='info';if(isExtra){home.hidden=true;list.classList.remove('role-visible');document.getElementById('nongkum-view-title').textContent=which==='criteria'?'เกณฑ์การแข่งขัน':'ข้อมูลและคำแนะนำ';document.getElementById('nongkum-view-desc').textContent=which==='criteria'?'ค้นหากิจกรรมและตรวจสอบแหล่งอ้างอิงของเกณฑ์ก่อนนำไปใช้':'วิธีใช้งานและข้อจำกัดของข้อมูลการแข่งขัน';if(which==='criteria')render();}else if(which==='home'){home.hidden=false;list.classList.remove('role-visible');}else{extra.hidden=true;document.getElementById('choose-school')?.click();home.hidden=true;list.classList.add('role-visible');}
  nav.querySelectorAll('button').forEach(b=>{const selected=b.id==='nav-'+which;b.classList.toggle('current',selected);if(selected)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
  if(updateHash&&location.hash!=='#'+which)history.pushState({nongkumView:which},'', '#'+which);
@@ -438,29 +446,32 @@ const activity=cells[1].querySelector('strong')?.textContent.trim()||'';
 const level=cells[3]?.textContent.trim()||'';
 const slot=cells[1].querySelector('.criteria-slot');
 if(!slot)return;
-const normalize=s=>String(s).replace(/การแข่งขัน|การประกวด|[\s–—-]/g,'').replace(/ป\\./g,'').trim();
+const normalize=s=>String(s).normalize('NFC').toLocaleLowerCase('th').replace(/^(?:การแข่งขัน|การประกวด|การ)/,'').replace(/[\s–—-]/g,'').replace(/ป\\./g,'ป').replace(/ม\\./g,'ม').trim();
 const families=window.SILLAPA70_CATALOG?.families||{};
 const family=Object.entries(families).find(([name])=>normalize(name)===normalize(activity));
 const variants=family?.[1]||[];
 const sameLevel=variants.filter(v=>normalize(v.level)===normalize(level));
-const reference=sameLevel.length?sameLevel:variants;
 const link=document.createElement('a');
 link.className='criteria-link';
 link.target='_blank';link.rel='noopener noreferrer';
-if(reference.length){
+const note=document.createElement('small');
+note.className='source-label';
+if(sameLevel.length){
   link.href=window.SILLAPA70_CATALOG.source;
-  link.textContent='📄 รายการอ้างอิงครั้งที่ 70 ↗';
-  const note=document.createElement('small');
-  note.className='source-label';
-  note.textContent='พบในทะเบียนย้อนหลังครั้งที่ 70'+(sameLevel.length?' · ระดับชั้นตรงกัน':' · ต้องตรวจระดับชั้น')+' · ไม่ใช่เกณฑ์รับรองครั้งที่ 74';
-  slot.append(link,note);
+  link.textContent='ทะเบียนรายการย้อนหลังครั้งที่ 70 ↗';
+  note.textContent='พบชื่อกิจกรรมและระดับชั้นตรงกันในทะเบียนครั้งที่ 70 · ใช้อ้างอิงเท่านั้น ไม่ใช่เกณฑ์รับรองครั้งที่ 74';
+  slot.dataset.referenceStatus='historical-match';
+  slot.append(note,link);
+}else if(variants.length){
+  link.href=window.SILLAPA70_CATALOG.source;
+  link.textContent='ตรวจสอบทะเบียนย้อนหลังครั้งที่ 70 ↗';
+  note.textContent='พบชื่อกิจกรรมในครั้งที่ 70 แต่ระดับชั้นยังไม่ตรงกัน · ต้องตรวจสอบก่อนนำไปใช้';
+  slot.dataset.referenceStatus='level-review';
+  slot.append(note,link);
 }else{
-  link.href='./#activities';
-  link.textContent='📚 ดูเกณฑ์การแข่งขันครั้งก่อน ↗';
-  const note=document.createElement('small');
-  note.className='source-label';
-  note.textContent='ยังไม่มีเกณฑ์การแข่งขันที่ยืนยันสำหรับรายการนี้';
-  slot.append(link,note);
+  note.textContent='ยังไม่พบรายการและระดับชั้นที่ตรงกันในทะเบียนครั้งที่ 70 · ยังไม่มีเกณฑ์ที่ยืนยัน';
+  slot.dataset.referenceStatus='unresolved';
+  slot.append(note);
 }
 });
 const school=document.getElementById('audit-school'),search=document.getElementById('audit-search'),result=document.getElementById('audit-result');
