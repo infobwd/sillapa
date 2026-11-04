@@ -303,3 +303,83 @@
     color:#a4f0d4!important;
   }
 }
+
+/* NGK-MOBILE-UX-09: compact school-mode list, readable light mode and collapsible rivals. */
+#complete-field-plan[data-mode="school"] .school-export{
+  background:transparent!important;border:0!important;box-shadow:none!important;
+  padding:6px 0 10px!important;color:#183752!important;gap:8px!important;
+}
+#complete-field-plan[data-mode="school"] .school-export-title{
+  color:#183752!important;font-size:15px!important;
+}
+#complete-field-plan[data-mode="school"] .school-export small,
+#complete-field-plan[data-mode="school"] .school-export-more,
+#complete-field-plan[data-mode="school"] .school-export-more summary{
+  color:#385571!important;opacity:1!important;
+}
+#complete-field-plan[data-mode="school"] .school-export-shortcut button{
+  color:#14578e!important;text-decoration:underline!important;
+  font-size:15px!important;min-height:44px!important;
+}
+#complete-field-plan[data-mode="school"] .school-export-actions button{
+  background:#225c91!important;color:#fff!important;border-color:#7ea7c8!important;
+  font-size:15px!important;font-weight:650!important;
+}
+#complete-field-plan[data-mode="school"] .school-export-more summary{
+  min-height:44px;display:list-item;align-content:center;font-size:15px;
+}
+#complete-field-plan[data-mode="school"] .audit-rival-cell{
+  background:transparent!important;border:0!important;padding:5px 0!important;
+  margin:0!important;
+}
+#complete-field-plan[data-mode="school"] .audit-rival-status{
+  color:#365774!important;font-weight:600!important;
+}
+#complete-field-plan[data-mode="school"] .audit-rival-details{
+  margin:8px 0 0!important;border:0!important;background:transparent!important;
+}
+#complete-field-plan[data-mode="school"] .audit-rival-details summary{
+  color:#14578e!important;cursor:pointer;min-height:44px;
+  display:list-item;align-content:center;font-size:15px;font-weight:650;
+}
+#complete-field-plan[data-mode="school"] .audit-rival-details summary:focus-visible{
+  outline:3px solid #1872ba;outline-offset:2px;border-radius:5px;
+}
+#complete-field-plan[data-mode="school"] .audit-rival-list{
+  margin:5px 0 10px!important;display:flex;flex-wrap:wrap;gap:5px;
+}
+#complete-field-plan[data-mode="school"] .audit-rival-list .venue-school{
+  padding:5px 8px!important;font-size:13px!important;line-height:1.4!important;
+}
+@media(max-width:720px){
+  #complete-field-plan[data-mode="school"] .venue-table tbody{gap:0!important;}
+  #complete-field-plan[data-mode="school"] .venue-table tr{
+    border:0!important;border-bottom:1px solid #ceddeb!important;border-radius:0!important;
+    box-shadow:none!important;background:transparent!important;padding:14px 2px!important;
+  }
+  #complete-field-plan[data-mode="school"] .venue-table td{padding:3px 0!important;}
+  #complete-field-plan[data-mode="school"] .venue-table td:nth-child(2) strong{
+    color:#173a5c!important;font-size:18px!important;line-height:1.45!important;
+  }
+  #complete-field-plan[data-mode="school"] .venue-table td:nth-child(2) .criteria-slot{
+    margin:5px 0!important;
+  }
+  #complete-field-plan[data-mode="school"] .venue-table td:nth-child(2) .criteria-link{
+    min-height:44px!important;font-size:14px!important;
+  }
+}
+@media(prefers-color-scheme:dark){
+  #complete-field-plan[data-mode="school"] .school-export,
+  #complete-field-plan[data-mode="school"] .school-export-title,
+  #complete-field-plan[data-mode="school"] .school-export small,
+  #complete-field-plan[data-mode="school"] .school-export-more,
+  #complete-field-plan[data-mode="school"] .school-export-more summary{
+    color:#e2efff!important;
+  }
+  #complete-field-plan[data-mode="school"] .school-export-shortcut button,
+  #complete-field-plan[data-mode="school"] .audit-rival-details summary{
+    color:#a8d6ff!important;
+  }
+  #complete-field-plan[data-mode="school"] .audit-rival-status{color:#c4d9ed!important;}
+  #complete-field-plan[data-mode="school"] .venue-table td:nth-child(2) strong{color:#e2efff!important;}
+}
