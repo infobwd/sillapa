@@ -221,3 +221,37 @@
     border-top-color:#496b8a!important;
   }
 }
+
+/* NGK-MOBILE-UX-07 — final list polish; no font-size reduction for titles. */
+#complete-field-plan[data-mode="venue"] .venue-activity-card summary{
+  gap:3px!important;
+  min-height:52px!important;
+  padding:9px 34px 9px 0!important;
+}
+#complete-field-plan[data-mode="venue"] .venue-activity-card summary strong{
+  font-weight:650!important;
+  line-height:1.4!important;
+}
+#complete-field-plan[data-mode="venue"] .venue-activity-card summary span{
+  font-weight:500!important;
+  line-height:1.4!important;
+}
+#complete-field-plan[data-mode="venue"] .venue-activity-card[open] summary{
+  background:rgba(99,147,190,.12)!important;
+  border-bottom:1px solid #cbd9e8;
+}
+#complete-field-plan[data-mode="venue"] .venue-activity-card summary:focus-visible{
+  outline:3px solid #2474bd!important;outline-offset:-3px;
+}
+@media(max-width:767px){
+  #complete-field-plan[data-mode="venue"] .venue-status-tabs{margin:6px 0 8px!important}
+  #complete-field-plan[data-mode="venue"] .venue-activity-card summary{
+    padding:9px 34px 9px 0!important;
+    min-height:52px!important;
+  }
+}
+@media(prefers-color-scheme:dark){
+  #complete-field-plan[data-mode="venue"] .venue-activity-card[open] summary{
+    border-bottom-color:#496b8a;
+  }
+}
