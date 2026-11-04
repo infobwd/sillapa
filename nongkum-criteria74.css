@@ -1,0 +1,207 @@
+/* NGK-CRITERIA74-01 — confirmed Round 74 PDF references with cautious row-level matching. */
+.criteria74-primary-link {
+  display:inline-flex;
+  align-items:center;
+  min-height:44px;
+  padding:8px 12px;
+  border:1px solid #75a9d4;
+  border-radius:10px;
+  background:#e8f3ff;
+  color:#135287;
+  font-size:14px;
+  font-weight:750;
+  line-height:1.5;
+  text-decoration:none;
+}
+.criteria74-primary-link:hover { text-decoration:underline; }
+.criteria74-primary-link:focus-visible,
+.criteria74-review-link:focus-visible,
+.criteria74-source-panel a:focus-visible,
+.criteria74-library a:focus-visible {
+  outline:3px solid #2587ca;
+  outline-offset:2px;
+}
+.criteria74-match-note,
+.criteria74-review-note {
+  display:block;
+  line-height:1.6;
+  margin:4px 0 7px;
+  font-size:13px;
+}
+.criteria74-match-note {color:#205984;}
+.criteria74-review-note {color:#83561b;}
+.criteria74-review-link {
+  display:inline-flex;align-items:center;
+  min-height:40px;
+  font-size:13px;font-weight:650;
+  color:#165889;
+}
+.criteria74-history {
+  display:block;
+  margin-top:9px;
+  padding-top:3px;
+  border-top:1px dashed #c4d7e7;
+}
+.criteria74-history summary {
+  display:flex;align-items:center;
+  min-height:42px;
+  font-size:13px;
+  line-height:1.45;
+  color:#516d85;
+  cursor:pointer;
+}
+.criteria74-history .source-label {display:block;margin-bottom:7px;}
+.criteria74-history .criteria-link {font-size:13px;}
+#nongkum-criteria-view .criteria74-source-panel {
+  display:grid;gap:5px;
+  margin:0 0 17px;
+  padding:14px 15px;
+  background:#eaf4fe;
+  border:1px solid #c8dcef;
+  border-radius:14px;
+  color:#193c61;
+}
+#nongkum-criteria-view .criteria74-source-panel strong {
+  font-size:17px;
+  line-height:1.45;
+}
+#nongkum-criteria-view .criteria74-source-panel p {
+  color:#3e5a77;
+  margin:0;
+  font-size:14px;
+  line-height:1.65;
+}
+#nongkum-criteria-view .criteria74-source-links {
+  display:flex;flex-wrap:wrap;gap:7px 14px;
+  align-items:center;
+}
+#nongkum-criteria-view .criteria74-source-links a {
+  font-size:14px;
+  min-height:42px;
+  display:inline-flex;align-items:center;
+  color:#145489;
+  font-weight:650;
+}
+#nongkum-criteria-view .criteria74-count {
+  color:#385873;
+  font-size:14px;
+  line-height:1.6;
+}
+#nongkum-criteria-view .criteria74-card-badge {
+  display:inline-flex;
+  align-items:center;
+  border-radius:999px;
+  padding:4px 9px;
+  margin:7px 0;
+  background:#d9edff;
+  border:1px solid #a9cce9;
+  color:#11558a;
+  font-size:13px;
+  font-weight:750;
+  line-height:1.45;
+}
+#nongkum-criteria-view .criteria74-card-badge[data-status="review"] {
+  background:#fff2d9;
+  border-color:#e5cfa8;
+  color:#764b14;
+}
+#nongkum-criteria-view .criteria74-card-remarks {
+  font-size:14px;
+  line-height:1.65;
+  color:#526983;
+  margin:3px 0 7px;
+}
+#nongkum-criteria-view .criteria74-card-link {
+  display:inline-flex;
+  align-items:center;
+  min-height:44px;
+  font-size:14px;
+  font-weight:700;
+  color:#145489;
+  overflow-wrap:anywhere;
+}
+#nongkum-criteria-view .criteria74-card-history {
+  border-top:1px dashed #cad9e7;
+  margin-top:11px;
+}
+#nongkum-criteria-view .criteria74-card-history summary {
+  min-height:42px;
+  font-size:13px;
+}
+#nongkum-criteria-view .criteria74-library {
+  margin:10px 0 17px;
+  border:1px solid #d1e0ed;
+  border-radius:12px;
+  padding:0 13px;
+  background:#f7fbff;
+}
+#nongkum-criteria-view .criteria74-library summary {
+  min-height:48px;
+  display:flex;align-items:center;
+  font-size:14px;
+  font-weight:750;
+  color:#155989;
+}
+#nongkum-criteria-view .criteria74-library ul {
+  margin:0 0 14px;
+  padding:0;
+  list-style:none;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:7px 12px;
+}
+#nongkum-criteria-view .criteria74-library li {margin:0;padding:0;}
+#nongkum-criteria-view .criteria74-library a {
+  display:flex;
+  align-items:center;
+  min-height:44px;
+  padding:7px 8px;
+  border-radius:7px;
+  background:#edf5fc;
+  color:#145489;
+  line-height:1.4;
+  font-size:13px;
+  text-decoration:none;
+}
+#nongkum-criteria-view .criteria74-library a:hover {text-decoration:underline;}
+#nongkum-criteria-view .criteria74-library p {
+  font-size:13px;
+  color:#546d84;
+  line-height:1.6;
+}
+@media(max-width:680px) {
+  #nongkum-criteria-view .criteria74-library ul {grid-template-columns:minmax(0,1fr);}
+  #nongkum-criteria-view .criteria74-source-panel {padding:13px;}
+  #nongkum-criteria-view .criteria74-card-link {font-size:14px;}
+}
+@media(prefers-color-scheme:dark) {
+  .criteria74-primary-link {background:#244a70;border-color:#73a7d8;color:#e0efff;}
+  .criteria74-match-note {color:#bfdeff;}
+  .criteria74-review-note {color:#ffe2ab;}
+  .criteria74-review-link {color:#b7dcff;}
+  .criteria74-history {border-color:#486682;}
+  .criteria74-history summary {color:#c5d7ea;}
+  #nongkum-criteria-view .criteria74-source-panel {
+    background:#1f3b57;
+    border-color:#496887;
+    color:#eef6ff;
+  }
+  #nongkum-criteria-view .criteria74-source-panel p {color:#cbdcef;}
+  #nongkum-criteria-view .criteria74-source-links a {color:#b8ddff;}
+  #nongkum-criteria-view .criteria74-count {color:#c1d6eb;}
+  #nongkum-criteria-view .criteria74-card-badge {
+    background:#244b73;border-color:#5483ad;color:#e1f2ff;
+  }
+  #nongkum-criteria-view .criteria74-card-badge[data-status="review"] {
+    background:#49391f;border-color:#8f7444;color:#ffe0a4;
+  }
+  #nongkum-criteria-view .criteria74-card-remarks {color:#c5d7e9;}
+  #nongkum-criteria-view .criteria74-card-link {color:#b2dafe;}
+  #nongkum-criteria-view .criteria74-card-history {border-color:#47627e;}
+  #nongkum-criteria-view .criteria74-library {
+    background:#1d354e;border-color:#405e7d;
+  }
+  #nongkum-criteria-view .criteria74-library summary {color:#c1e4ff;}
+  #nongkum-criteria-view .criteria74-library a {background:#284867;color:#dcf0ff;}
+  #nongkum-criteria-view .criteria74-library p {color:#bdd3e8;}
+}
