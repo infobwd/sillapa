@@ -840,7 +840,7 @@ rivals.forEach(s=>{const chip=document.createElement('span');chip.className='ven
 const details=document.createElement('details');
 details.className='audit-rival-details';
 const summary=document.createElement('summary');
-summary.textContent='ดูรายชื่อโรงเรียนอื่น ('+rivals.length+')';
+summary.textContent='โรงเรียนอื่นที่ร่วมแข่งขัน ('+rivals.length+')';
 details.append(summary,list);
 rivalCell.append(details);
 }else{const note=document.createElement('small');note.textContent='กำลังตรวจสอบรายชื่อกับข้อมูลของโรงเรียน ก่อนสรุป';rivalCell.append(note)}
@@ -849,7 +849,7 @@ rivalCell.append(details);
 let compactMeta=cells[1].querySelector('.school-compact-meta');
 if(!compactMeta){compactMeta=document.createElement('div');compactMeta.className='school-compact-meta';cells[1].querySelector('strong')?.after(compactMeta);}
 const criteriaStatus=cells[1].querySelector('.criteria-slot')?.dataset.criteria74Status;
-compactMeta.textContent=[cells[3]?.textContent.trim(),cells[6]?.textContent.trim()].filter(Boolean).join(' · ');
+compactMeta.textContent=[cells[3]?.textContent.trim(),schools.length+' โรงเรียน'].filter(Boolean).join(' · ');
 compactMeta.dataset.criteriaStatus=criteriaStatus||'review';
 const text=(cells[1].textContent+' '+cells[3].textContent).toLocaleLowerCase('th');
 const ok=mode==='school'&&name&&schools.includes(name)&&(!q||(text+' '+schools.join(' ')).toLocaleLowerCase('th').includes(q));
