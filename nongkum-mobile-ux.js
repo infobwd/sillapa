@@ -18,6 +18,29 @@
     }
   }
 
+  // Never float on top of primary actions visible near the lower right corner.
+  function overlapsPrimaryAction() {
+    const candidates = document.querySelectorAll?.(
+      '.insight-actions button, .insight-view-all, .school-export-actions button, ' +
+      '.school-export-shortcut button, .school-checklist-print, .venue-export-panel button, ' +
+      '.nongkum-tool-card, #venue-open-missing'
+    ) || [];
+    const viewportWidth = window.innerWidth || window.visualViewport?.width || document.documentElement?.clientWidth || 390;
+    const viewportHeight = window.innerHeight || 800;
+    const bottomBar = nav.getBoundingClientRect().height || 78;
+    const projected = {
+      left: viewportWidth - 100, right: viewportWidth - 8,
+      top: viewportHeight - bottomBar - 76,
+      bottom: viewportHeight - bottomBar - 7
+    };
+    return Array.from(candidates).some(el => {
+      const r = el.getBoundingClientRect?.();
+      return Boolean(r && r.width > 0 && r.height > 0 &&
+        r.left < projected.right && r.right > projected.left &&
+        r.top < projected.bottom && r.bottom > projected.top);
+    });
+  }
+
   function updateVisibility() {
     queued = false;
     const scrollY = Math.max(window.scrollY || 0, document.scrollingElement?.scrollTop || 0);
@@ -25,7 +48,7 @@
     const focusedInput = document.activeElement?.matches?.('input, textarea, select, [contenteditable="true"]');
     const dialogOpen = Boolean(document.querySelector('.main-info-dialog:not([hidden]), dialog[open], [role="dialog"]:not([hidden])'));
     const keyboardOpen = Boolean(window.visualViewport && window.visualViewport.height < window.innerHeight * .72);
-    button.hidden = !mobile.matches || scrollY < threshold || focusedInput || dialogOpen || keyboardOpen;
+    button.hidden = !mobile.matches || scrollY < threshold || focusedInput || dialogOpen || keyboardOpen || overlapsPrimaryAction();
   }
 
   function scheduleUpdate() {
@@ -55,6 +78,7 @@
   window.addEventListener('pageshow', onResize);
   document.addEventListener('focusin', scheduleUpdate);
   document.addEventListener('focusout', scheduleUpdate);
+  document.addEventListener('click', scheduleUpdate, true);
   if (mobile.addEventListener) mobile.addEventListener('change', onResize);
   else if (mobile.addListener) mobile.addListener(onResize);
 
