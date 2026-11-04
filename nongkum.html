@@ -632,7 +632,7 @@ const rowActivity=row=>row.querySelector('td:nth-child(2) strong')?.textContent.
 const rowMatch=row=>venueCategoryLookup.get(venueNameKey(rowActivity(row)));
 const rowCategory=row=>rowMatch(row)?.group||'';
 const rowDistrictStatus=row=>rowMatch(row)?'matched':'unmatched';
-const rowName=row=>rowMatch(row)?.name||rowActivity(row);
+const rowName=row=>rowActivity(row); // Keep the actual subactivity visible; the district parent is shown separately.
 const groups=new Map();rows.forEach(row=>{if(rowCategory(row))groups.set(rowCategory(row),(groups.get(rowCategory(row))||0)+1)});
 venueGroups.forEach(g=>{const o=document.createElement('option');o.value=g.g;o.textContent=g.g+' ('+(groups.get(g.g)||0)+')';venueSelect.append(o)});
 const unmatchedCount=rows.filter(row=>rowDistrictStatus(row)==='unmatched').length;
