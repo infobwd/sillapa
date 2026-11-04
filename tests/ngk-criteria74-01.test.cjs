@@ -48,7 +48,7 @@ test('PDF link lookup blocks wrong grade, renamed activity and unknown row',()=>
   const poetry=rows.find(r=>r.id===13);
   assert.match(data.lookup(poetry.id,poetry.name,poetry.level).reason,/6 บท/);
   const gardening=rows.find(r=>r.id===58);
-  assert.equal(data.lookup(gardening.id,gardening.name,gardening.level).candidate,undefined);
+  assert.equal(data.lookup(gardening.id,gardening.name,gardening.level).candidate,null);
   const restored=rows.find(r=>r.id===67);
   assert.equal(data.lookup(restored.id,restored.name,restored.level).document.key,'13');
 });
