@@ -364,48 +364,88 @@ function setup(){
  const input=document.getElementById('nongkum-criteria-search'),status=document.getElementById('nongkum-criteria-status'),results=document.getElementById('nongkum-criteria-results'),count=document.getElementById('nongkum-criteria-count');
  if(!extra||!nav||!list)return;
  const rows=[...document.querySelectorAll('#complete-field-plan .venue-table tbody tr')];
+ const libraryList=document.getElementById('nongkum-criteria-library-list');
+ const sources74=window.SILLAPA74_CRITERIA_SOURCES;
+ if(libraryList&&sources74){
+   Object.entries(sources74.documents).sort((a,b)=>Number(a[0])-Number(b[0]))
+     .forEach(([key,doc])=>{
+       const li=document.createElement('li');
+       const a=document.createElement('a');
+       a.href=doc.url;a.target='_blank';a.rel='noopener noreferrer';
+       a.textContent=key+'. '+doc.title+' (PDF)';
+       li.append(a);libraryList.append(li);
+     });
+ }
  const entries=rows.map(row=>{
    const cells=row.querySelectorAll('td');
    const slot=row.querySelector('.criteria-slot');
-   const a=slot?.querySelector('a');
-   const note=slot?.querySelector('.source-label');
-   const referenceStatus=slot?.dataset.referenceStatus||'unresolved';
+   const name=cells[1]?.querySelector('strong')?.textContent.trim()||'';
+   const level=cells[3]?.textContent.trim()||'';
+   const number=Number(cells[0]?.textContent.trim());
+   const source=sources74?.lookup(number,name,level) || {status:'review',reason:'ยังโหลดข้อมูลเกณฑ์ครั้งที่ 74 ไม่สำเร็จ'};
+   const historical=slot?.querySelector('[data-criteria70-link]');
    return {
-     name:cells[1]?.querySelector('strong')?.textContent.trim()||'',
-     level:cells[3]?.textContent.trim()||'',
-     href:a?.href||'',
-     source:note?.textContent.trim()||'ยังไม่พบแหล่งอ้างอิงที่ตรงกัน',
-     referenceStatus
+     number,name,level,
+     status:source.status,
+     reason:source.reason||'',
+     document:source.document||null,
+     candidate:source.candidate||null,
+     historicalHref:historical?.href||''
    };
  }).filter(x=>x.name);
  function render(){
    const q=input.value.trim().toLocaleLowerCase('th'),filter=status.value;
-   const filtered=entries.filter(x=>(x.name+' '+x.level).toLocaleLowerCase('th').includes(q))
-     .filter(x=>filter==='all'||(filter==='reference'?(x.referenceStatus==='historical-match'):x.referenceStatus!=='historical-match'));
+   const visible=entries.filter(x=>(x.name+' '+x.level).toLocaleLowerCase('th').includes(q))
+     .filter(x=>filter==='all'||(filter==='official'&&x.status==='matched')||
+       (filter==='review'&&x.status!=='matched')||
+       (filter==='historical'&&Boolean(x.historicalHref)));
+   const matchedCount=entries.filter(x=>x.status==='matched').length;
    results.replaceChildren();
-   count.textContent='พบ '+filtered.length+' จาก '+entries.length+' รายการกิจกรรม · จำนวนนี้ไม่ใช่เกณฑ์ที่ยืนยันแล้ว';
-   if(!filtered.length){
-     const p=document.createElement('p');p.className='ngk-criteria-no-result';
-     p.textContent='ไม่พบรายการตามคำค้นและสถานะที่เลือก';
-     results.append(p);return;
+   count.textContent='พบ '+visible.length+' จาก '+entries.length+' แถวรายการกิจกรรม/ระดับชั้น · จับคู่ PDF เกณฑ์ครั้งที่ 74 ได้ '+matchedCount+' แถว · ไม่ใช่จำนวนกิจกรรมหลักหรือผลสมัคร';
+   if(!visible.length){
+     const notice=document.createElement('p');
+     notice.className='criteria74-count';notice.textContent='ไม่พบรายการตามชื่อหรือสถานะที่เลือก';
+     results.append(notice);return;
    }
-   filtered.forEach(x=>{
+   visible.forEach(x=>{
      const article=document.createElement('article');
      article.className='nongkum-criteria-card';
      const title=document.createElement('h3');title.textContent=x.name;
      const level=document.createElement('p');level.className='criteria-level';level.textContent=x.level;
      const badge=document.createElement('span');
-     badge.className='ngk-criteria-badge';
-     badge.dataset.status=x.referenceStatus==='historical-match'?'reference':'review';
-     badge.textContent=x.referenceStatus==='historical-match'?'พบทะเบียนย้อนหลังตรงระดับชั้น':
-       x.referenceStatus==='level-review'?'พบชื่อย้อนหลัง แต่ระดับชั้นไม่ตรง':'รอตรวจสอบแหล่งอ้างอิง';
-     const source=document.createElement('p');source.className='criteria-source';source.textContent=x.source;
-     article.append(title,level,badge,source);
-     if(x.href){
+     badge.className='criteria74-card-badge';
+     badge.dataset.status=x.status==='matched'?'matched':'review';
+     badge.textContent=x.status==='matched'?'มีเกณฑ์ครั้งที่ 74 ที่จับคู่ได้':'ต้องตรวจสอบการจับคู่เกณฑ์';
+     article.append(title,level,badge);
+     const note=document.createElement('p');note.className='criteria74-card-remarks';
+     if(x.status==='matched'){
+       note.textContent='เอกสารเกณฑ์ครั้งที่ 74 หมวด'+x.document.title+' · ตรงชื่อรายการและระดับชั้นในบัญชีตรวจทาน';
+       article.append(note);
        const a=document.createElement('a');
-       a.href=x.href;a.target='_blank';a.rel='noopener noreferrer';
-       a.textContent=x.referenceStatus==='level-review'?'ตรวจสอบทะเบียนย้อนหลังครั้งที่ 70 ↗':'ดูทะเบียนรายการย้อนหลังครั้งที่ 70 ↗';
+       a.className='criteria74-card-link';a.href=x.document.url;
+       a.target='_blank';a.rel='noopener noreferrer';
+       a.textContent='เปิด PDF เกณฑ์ครั้งที่ 74 ↗';
        article.append(a);
+     }else{
+       note.textContent=x.reason||'ยังไม่พบเอกสารที่ยืนยันตรงกับกิจกรรมและระดับชั้นนี้';
+       article.append(note);
+       if(x.candidate){
+         const a=document.createElement('a');
+         a.className='criteria74-card-link';a.href=x.candidate.url;
+         a.target='_blank';a.rel='noopener noreferrer';
+         a.textContent='เปิด PDF หมวด'+x.candidate.title+' เพื่อตรวจทาน (ยังไม่จับคู่) ↗';
+         article.append(a);
+       }
+     }
+     if(x.historicalHref){
+       const details=document.createElement('details');
+       details.className='criteria74-card-history';
+       const summary=document.createElement('summary');summary.textContent='ข้อมูลอ้างอิงย้อนหลังครั้งที่ 70';
+       const a=document.createElement('a');
+       a.className='criteria74-card-link';a.href=x.historicalHref;
+       a.target='_blank';a.rel='noopener noreferrer';
+       a.textContent='เปิดทะเบียนครั้งที่ 70 (ไม่ใช่เกณฑ์รับรองครั้งที่ 74) ↗';
+       details.append(summary,a);article.append(details);
      }
      results.append(article);
    });
