@@ -255,3 +255,51 @@
     border-bottom-color:#496b8a;
   }
 }
+
+/* NGK-MOBILE-UX-08 — compact venue activity details, with evidence-safe status. */
+#complete-field-plan[data-mode="venue"] .venue-category-summary{
+  padding-top:3px!important;padding-bottom:3px!important;
+}
+#complete-field-plan[data-mode="venue"] .venue-status-tabs{
+  margin-top:5px!important;margin-bottom:8px!important;
+}
+#complete-field-plan[data-mode="venue"] .venue-activity-detail{
+  padding:12px 0 17px!important;
+}
+#complete-field-plan[data-mode="venue"] .venue-school-heading{
+  margin:0 0 9px!important;font-weight:650;
+}
+#complete-field-plan[data-mode="venue"] .venue-activity-schools{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  column-gap:14px;row-gap:9px;
+  margin:0 0 14px;
+}
+#complete-field-plan[data-mode="venue"] .venue-activity-schools span{
+  display:block!important;padding:0!important;border:0!important;
+  background:transparent!important;border-radius:0!important;
+  min-width:0;overflow-wrap:anywhere;line-height:1.55;
+}
+#complete-field-plan[data-mode="venue"] .venue-criteria-verified{
+  margin:10px 0 5px!important;font-weight:650;
+  color:#155b48!important;
+}
+#complete-field-plan[data-mode="venue"] .venue-criteria-verified::before{
+  content:"✓ ";font-weight:800;
+}
+#complete-field-plan[data-mode="venue"] .venue-criteria-compact .criteria74-match-note{
+  display:none!important;
+}
+#complete-field-plan[data-mode="venue"] .venue-criteria-compact{
+  margin-top:5px!important;
+}
+@media(max-width:420px){
+  #complete-field-plan[data-mode="venue"] .venue-activity-schools{
+    grid-template-columns:1fr;row-gap:7px;
+  }
+}
+@media(prefers-color-scheme:dark){
+  #complete-field-plan[data-mode="venue"] .venue-criteria-verified{
+    color:#a4f0d4!important;
+  }
+}
