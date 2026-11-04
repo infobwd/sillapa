@@ -172,3 +172,52 @@
 }
 #complete-field-plan[data-mode="venue"] .venue-activity-cards{box-shadow:none!important}
 @media(max-width:720px){#complete-field-plan[data-mode="venue"]>.audit-panel{padding:0!important}}
+
+/* NGK-MOBILE-UX-06 — compact flat list, venue role only.
+   Keep form control borders and visible keyboard focus. */
+#complete-field-plan[data-mode="venue"] .venue-activity-cards{
+  border:0!important;border-radius:0!important;box-shadow:none!important;
+  background:transparent!important;overflow:visible!important;
+}
+#complete-field-plan[data-mode="venue"] .venue-activity-card + .venue-activity-card{
+  border-top:1px solid #cbd9e8!important;
+}
+#complete-field-plan[data-mode="venue"] .venue-activity-card summary{
+  padding:11px 36px 11px 0!important;min-height:58px;
+}
+#complete-field-plan[data-mode="venue"] .venue-activity-detail{
+  padding:10px 0 16px!important;
+}
+#complete-field-plan[data-mode="venue"] .venue-activity-card[open] summary{
+  background:rgba(99,147,190,.09)!important;
+}
+#complete-field-plan[data-mode="venue"] .venue-status-tabs{
+  gap:6px;margin:10px 0 12px;
+}
+#complete-field-plan[data-mode="venue"] .venue-status-tabs button{
+  min-height:44px;padding:8px 5px;
+}
+#complete-field-plan[data-mode="venue"] .venue-category-summary{
+  margin-top:5px;margin-bottom:5px;
+}
+#complete-field-plan[data-mode="venue"] .venue-filter-header{
+  margin-top:10px;
+}
+#complete-field-plan[data-mode="venue"] .venue-export-panel{
+  margin-top:10px;
+}
+@media(max-width:767px){
+  #complete-field-plan[data-mode="venue"] .role-back{margin-bottom:8px!important}
+  #complete-field-plan[data-mode="venue"] .audit-warning-details{margin:8px 0!important}
+  #complete-field-plan[data-mode="venue"] .audit-label{margin-top:10px!important;margin-bottom:5px!important}
+  #complete-field-plan[data-mode="venue"] .audit-select{min-height:48px!important}
+  #complete-field-plan[data-mode="venue"] .venue-activity-card summary{
+    min-height:56px;padding:10px 34px 10px 0!important;
+  }
+  #complete-field-plan[data-mode="venue"] .venue-status-tabs{margin:8px 0 10px}
+}
+@media(prefers-color-scheme:dark){
+  #complete-field-plan[data-mode="venue"] .venue-activity-card + .venue-activity-card{
+    border-top-color:#496b8a!important;
+  }
+}
