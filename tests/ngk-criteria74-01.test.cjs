@@ -113,6 +113,40 @@ test('criteria UI filters 74 matches and review cases with correct links',()=>{
   assert.match(results.children[0].textContent,/ไม่พบรายการตามชื่อ/);
 });
 
+test('all live table slots render 57 correct PDF74 links and 6 caution notes',()=>{
+  const begin=html.indexOf("rows.forEach(row=>{\nconst cells=");
+  const end=html.indexOf("const school=document.getElementById('audit-school')",begin);
+  assert.ok(begin>0&&end>begin,'source-to-slot integration code exists');
+  const loop=html.slice(begin,end);
+  function makeSlot(){
+    return {dataset:{},children:[],append(...xs){this.children.push(...xs);}};
+  }
+  const slots=[];
+  const domRows=rows.map(info=>{
+    const slot=makeSlot();slots.push({info,slot});
+    const cell1={querySelector(sel){
+      if(sel==='strong')return {textContent:info.name};
+      if(sel==='.criteria-slot')return slot;
+      return null;
+    }};
+    return {querySelectorAll(){return [{textContent:String(info.id)},cell1,{}, {textContent:info.level}]}};
+  });
+  const window={SILLAPA74_CRITERIA_SOURCES:data,SILLAPA70_CATALOG:{source:'https://example.org/70',families:{}}};
+  const document={createElement:element};
+  new Function('rows','window','document',loop)(domRows,window,document);
+  assert.equal(slots.filter(x=>x.slot.dataset.criteria74Status==='matched').length,57);
+  assert.equal(slots.filter(x=>x.slot.dataset.criteria74Status==='review').length,6);
+  const links=slots.flatMap(x=>x.slot.children.filter(n=>n.dataset?.criteria74Link==='true'));
+  assert.equal(links.length,57);
+  for(const a of links){
+    assert.ok(Object.values(data.documents).some(d=>d.url===a.href),'PDF URL must be in reviewed Drive folder');
+    assert.equal(a.target,'_blank');
+    assert.equal(a.rel,'noopener noreferrer');
+  }
+  const garden=slots.find(x=>x.info.id===58);
+  assert.ok(garden.slot.children.some(x=>x.textContent.includes('ต้องตรวจสอบ')));
+});
+
 test('criteria links are keyboard-visible and dark-mode readable',()=>{
   assert.match(css,/criteria74-primary-link:focus-visible/);
   assert.match(css,/prefers-color-scheme:dark/);
