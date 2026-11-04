@@ -1,4 +1,28 @@
 /* NGK-MOBILE-UX-04 — tighter mobile reading/navigation without shrinking type. */
+
+/* Reference status controls must also work at tablet and desktop widths. */
+#nongkum-criteria-view .ngk-criteria-filter { display:grid;gap:6px;margin-top:11px; }
+#nongkum-criteria-view .ngk-criteria-filter label { font-size:15px;line-height:1.5;margin:0; }
+#nongkum-criteria-status {
+  width:100%;min-height:48px;padding:10px 14px;border:1px solid #9cb3cb;
+  border-radius:12px;background:#fff;color:#17324d;font:inherit;font-size:16px;
+}
+#nongkum-criteria-view .ngk-criteria-badge {
+  display:inline-flex;align-items:center;font-size:13px;line-height:1.5;font-weight:700;
+  padding:4px 9px;margin:4px 0 7px;border-radius:999px;
+  border:1px solid #c9d8e9;background:#e4eefb;color:#184d7c;
+}
+#nongkum-criteria-view .ngk-criteria-badge[data-status="review"] {
+  border-color:#e3d3ac;background:#fff2d5;color:#704c17;
+}
+@media (prefers-color-scheme:dark) {
+  #nongkum-criteria-status { color:#eef4ff;background:#0e2034;border-color:#59728f; }
+  #nongkum-criteria-view .ngk-criteria-badge { color:#e0efff;background:#254462;border-color:#4b7197; }
+  #nongkum-criteria-view .ngk-criteria-badge[data-status="review"] {
+    color:#ffe5b1;background:#493b20;border-color:#856b36;
+  }
+}
+
 @media (max-width:1199px) {
   /* Back-to-top remains secondary to content calls-to-action. */
   .ngk-back-to-top {
