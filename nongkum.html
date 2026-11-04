@@ -615,7 +615,14 @@ const schoolTab=document.getElementById('audit-school-tab'),venueTab=document.ge
 const venueGroups=window.SILLAPA74_CONFIRMED_GROUPS||[];
 const venueNameKey=value=>String(value).normalize('NFC').toLocaleLowerCase('th').replace(/^(?:การแข่งขัน|การประกวด|การ)/,'').replace(/[\s()（）–—-]/g,'').replace(/ป\.|ม\./g,'').trim();
 const venueCategoryLookup=new Map();
-venueGroups.forEach(g=>(g.i||[]).forEach(item=>{const k=venueNameKey(item.t);if(!venueCategoryLookup.has(k))venueCategoryLookup.set(k,{group:g.g,name:item.t})}));
+// Match only explicit district register names, subactivities and documented aliases.
+// Do not guess a category from similar-looking activity titles.
+venueGroups.forEach(g=>(g.i||[]).forEach(item=>{
+  [item.t,...(item.s||[]),...(item.a||[])].forEach(name=>{
+    const k=venueNameKey(name);
+    if(k&&!venueCategoryLookup.has(k))venueCategoryLookup.set(k,{group:g.g,name:item.t,matchedAs:name});
+  });
+}));
 const venuePanel=document.getElementById('venue-category-panel');
 venuePanel.innerHTML='<label for="venue-category-select">เลือกหมวดหมู่กิจกรรม</label><select id="venue-category-select" class="audit-select"><option value="">ทุกหมวดหมู่</option></select><div id="venue-category-summary" class="venue-category-summary" aria-live="polite"></div><div id="venue-status-tabs" class="venue-status-tabs" role="group" aria-label="กรองสถานะ"></div><div class="venue-export-panel" id="venue-export-panel"><div class="venue-export-title">บัญชีเตรียมสนามแข่งขัน</div><p>พิมพ์รายการตามหมวดหมู่และตัวกรองปัจจุบัน พร้อมช่องตรวจสอบสนาม อุปกรณ์ และกรรมการ</p><button type="button" id="venue-export-print">🖨 พิมพ์บัญชีเตรียมสนาม / PDF</button></div><div id="venue-activity-cards" class="venue-activity-cards"></div><button type="button" id="venue-open-missing" class="venue-missing-link">ตรวจสอบรายการที่ยังไม่พบข้อมูล <span aria-hidden="true">↗</span></button>';
 const venueSelect=document.getElementById('venue-category-select'),venueSummary=document.getElementById('venue-category-summary'),venueCards=document.getElementById('venue-activity-cards'),venueTabs=document.getElementById('venue-status-tabs');
@@ -623,22 +630,25 @@ let selectedVenueStatus='all';
 const rowSchools=row=>[...row.querySelectorAll('td:nth-child(6) .venue-school')].map(el=>el.textContent.trim());
 const rowActivity=row=>row.querySelector('td:nth-child(2) strong')?.textContent.trim()||'';
 const rowMatch=row=>venueCategoryLookup.get(venueNameKey(rowActivity(row)));
-const rowCategory=row=>rowMatch(row)?.group||'รอตรวจสอบหมวดหมู่';
+const rowCategory=row=>rowMatch(row)?.group||'';
+const rowDistrictStatus=row=>rowMatch(row)?'matched':'unmatched';
 const rowName=row=>rowMatch(row)?.name||rowActivity(row);
-const groups=new Map();rows.forEach(row=>groups.set(rowCategory(row),(groups.get(rowCategory(row))||0)+1));
-[...groups].sort((a,b)=>a[0].localeCompare(b[0],'th')).forEach(([name,count])=>{const o=document.createElement('option');o.value=name;o.textContent=name+' ('+count+')';venueSelect.append(o)});
+const groups=new Map();rows.forEach(row=>{if(rowCategory(row))groups.set(rowCategory(row),(groups.get(rowCategory(row))||0)+1)});
+venueGroups.forEach(g=>{const o=document.createElement('option');o.value=g.g;o.textContent=g.g+' ('+(groups.get(g.g)||0)+')';venueSelect.append(o)});
+const unmatchedCount=rows.filter(row=>rowDistrictStatus(row)==='unmatched').length;
+const unmatchedOption=document.createElement('option');unmatchedOption.value='__unmatched__';unmatchedOption.textContent='ไม่พบในเอกสารเขต ('+unmatchedCount+')';venueSelect.append(unmatchedOption);
 venueSelect.addEventListener('change',()=>{selectedVenueStatus='all';render()});
 document.getElementById('venue-open-missing').addEventListener('click',()=>{venueReturnFromMissing=true;const group=venueSelect.value;openEmpty();emptyCategory.value=[...emptyCategory.options].some(o=>o.value===group)?group:'';emptyStatus.value='';emptySearch.value='';renderEmpty()});
 function renderVenue(q){
- const group=venueSelect.value,all=rows.filter(row=>!group||rowCategory(row)===group),multi=all.filter(row=>rowSchools(row).length>=2).length,single=all.filter(row=>rowSchools(row).length===1).length;
- venueSummary.textContent=group?group+' · '+all.length+' รายการ':'กิจกรรมทั้งหมด '+all.length+' รายการ';
+ const group=venueSelect.value,all=rows.filter(row=>!group||(group==='__unmatched__'?rowDistrictStatus(row)==='unmatched':rowCategory(row)===group)),multi=all.filter(row=>rowSchools(row).length>=2).length,single=all.filter(row=>rowSchools(row).length===1).length;
+ venueSummary.textContent=group?(group==='__unmatched__'?'ไม่พบในเอกสารเขต · '+all.length+' รายการ (รอเจ้าหน้าที่ตรวจ)':'หมวด '+group+' · '+all.length+' รายการ'):'รายการทั้งหมด '+all.length+' แถว · ตรงกับทะเบียนเขต '+(rows.length-unmatchedCount)+' · รอตรวจ '+unmatchedCount;
  venueTabs.replaceChildren();
  [['all','ทั้งหมด',all.length],['multi','หลายโรงเรียน',multi],['single','โรงเรียนเดียว',single]].forEach(([id,label,count])=>{const b=document.createElement('button');b.type='button';b.textContent=(id==='multi'?'หลาย รร.':id==='single'?'รร.เดียว':label)+' '+count;b.setAttribute('aria-pressed',String(selectedVenueStatus===id));b.addEventListener('click',()=>{selectedVenueStatus=id;render()});venueTabs.append(b)});
  const filtered=all.filter(row=>{const n=rowSchools(row).length;if(selectedVenueStatus==='multi'&&n<2||selectedVenueStatus==='single'&&n!==1)return false;const c=row.querySelectorAll('td');return !q||[rowName(row),c[3].textContent,...rowSchools(row)].join(' ').toLocaleLowerCase('th').includes(q)});
  const opened=new Set([...venueCards.querySelectorAll('details[open]')].map(card=>card.dataset.activityKey));
  venueCards.replaceChildren();
  if(!filtered.length){const p=document.createElement('p');p.textContent='ไม่พบรายการตามเงื่อนไข ลองล้างคำค้นหรือเปลี่ยนสถานะ';venueCards.append(p)}
- filtered.forEach(row=>{const c=row.querySelectorAll('td'),schools=rowSchools(row),card=document.createElement('details'),summary=document.createElement('summary'),title=document.createElement('strong'),meta=document.createElement('span'),detail=document.createElement('div');card.className='venue-activity-card';card.dataset.activityKey=String(rows.indexOf(row));card.open=opened.has(card.dataset.activityKey);detail.className='venue-activity-detail';title.textContent=rowName(row);meta.textContent=c[3].textContent.trim()+' · '+schools.length+' โรงเรียน';const chevron=document.createElement('span');chevron.className='venue-card-chevron';chevron.setAttribute('aria-hidden','true');chevron.textContent='⌄';summary.append(title,meta,chevron);card.append(summary);const schoolTitle=document.createElement('p');schoolTitle.textContent='โรงเรียนที่ส่งรายการ';detail.append(schoolTitle);const chips=document.createElement('div');chips.className='venue-activity-schools';schools.forEach(n=>{const chip=document.createElement('span');chip.textContent=n;chips.append(chip)});detail.append(chips);const criteria=c[1].querySelector('.criteria-slot');if(criteria)detail.append(criteria.cloneNode(true));if(!rowMatch(row)){const note=document.createElement('p');note.textContent='รอตรวจสอบหมวดหมู่กับทะเบียนอ้างอิง';detail.append(note)}card.append(detail);venueCards.append(card)});
+ filtered.forEach(row=>{const c=row.querySelectorAll('td'),schools=rowSchools(row),card=document.createElement('details'),summary=document.createElement('summary'),title=document.createElement('strong'),meta=document.createElement('span'),detail=document.createElement('div');card.className='venue-activity-card';card.dataset.activityKey=String(rows.indexOf(row));card.open=opened.has(card.dataset.activityKey);detail.className='venue-activity-detail';title.textContent=rowName(row);meta.textContent=c[3].textContent.trim()+' · '+schools.length+' โรงเรียน';const chevron=document.createElement('span');chevron.className='venue-card-chevron';chevron.setAttribute('aria-hidden','true');chevron.textContent='⌄';summary.append(title,meta,chevron);card.append(summary);const schoolTitle=document.createElement('p');schoolTitle.textContent='โรงเรียนที่ส่งรายการ';detail.append(schoolTitle);const chips=document.createElement('div');chips.className='venue-activity-schools';schools.forEach(n=>{const chip=document.createElement('span');chip.textContent=n;chips.append(chip)});detail.append(chips);const criteria=c[1].querySelector('.criteria-slot');if(criteria)detail.append(criteria.cloneNode(true));const districtNote=document.createElement('p');districtNote.className='district-register-status';districtNote.textContent=rowMatch(row)?'ตรงกับทะเบียนรายการแข่งขันเขต ครั้งที่ 74 · หมวด '+rowCategory(row):'ไม่พบชื่อที่จับคู่ได้ในทะเบียนรายการแข่งขันเขต ครั้งที่ 74 — รอเจ้าหน้าที่ตรวจสอบ ไม่ใช่ข้อสรุปว่ารายการนี้ไม่มีการแข่งขัน';detail.append(districtNote);card.append(detail);venueCards.append(card)});
  return filtered.length;
 }
 const home=document.getElementById('role-home');
