@@ -576,8 +576,8 @@ if(source74.status==='matched'){
 }
 // Historical Round-70 data stays available but is not the primary criteria.
 const normalize=s=>String(s).normalize('NFC').toLocaleLowerCase('th')
-  .replace(/^(?:การแข่งขัน|การประกวด|การ)/,'').replace(/[\\s–—-]/g,'')
-  .replace(/ป\\./g,'ป').replace(/ม\\./g,'ม').trim();
+  .replace(/^(?:การแข่งขัน|การประกวด|การ)/,'').replace(/[\s–—-]/g,'')
+  .replace(/ป\./g,'ป').replace(/ม\./g,'ม').trim();
 const families=window.SILLAPA70_CATALOG?.families||{};
 const family=Object.entries(families).find(([name])=>normalize(name)===normalize(activity));
 const variants=family?.[1]||[];
