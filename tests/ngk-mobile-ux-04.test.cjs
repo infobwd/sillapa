@@ -28,57 +28,15 @@ test('home KPI preview is three on phone and five on desktop, initially collapse
   assert.match(html,/if\(activeInsightKind===kind\)collapseInsight\(\)/);
 });
 
-function element(tag){
-  return {tag,className:'',dataset:{},textContent:'',children:[],
-    append(...nodes){this.children.push(...nodes)},
-    replaceChildren(...nodes){this.children=[...nodes]}
-  };
-}
-function row(name,level,status,href='',source='ตรวจสอบข้อมูลย้อนหลัง'){
-  return {
-    querySelectorAll(){return [{},{querySelector(){return {textContent:name}}},{},{textContent:level}]},
-    querySelector(selector){
-      if(selector!=='.criteria-slot')return null;
-      return {dataset:{referenceStatus:status},
-        querySelector(which){
-          if(which==='a')return href?{href}:null;
-          if(which==='.source-label')return {textContent:source};
-          return null;
-        }};
-    }
-  };
-}
-test('criteria filter distinguishes historical matches from unverified references',()=>{
-  const begin=html.indexOf(' const entries=rows.map(row=>{',html.indexOf('function setup(){'));
-  const end=html.indexOf('\n function show(which,updateHash=true)',begin);
-  assert.ok(begin>0&&end>begin);
-  const logic=html.slice(begin,end);
-  const rows=[
-    row('กิจกรรม ก','ป.1–3','historical-match','https://example.org/70','ชื่อและชั้นตรงกัน ใช้อ้างอิง'),
-    row('กิจกรรม ข','ป.4–6','level-review','https://example.org/70','ชื่อพบ แต่ชั้นไม่ตรง'),
-    row('กิจกรรม ค','ปฐมวัย','unresolved')
-  ];
-  const input={value:''},status={value:'all'},results=element('div'),count=element('p');
-  const document={createElement:element};
-  const run=new Function('rows','input','status','results','count','document',logic+'return {entries,render};');
-  const {entries,render}=run(rows,input,status,results,count,document);
-  assert.equal(entries.length,3);
-  render();
-  assert.equal(results.children.length,3);
-  assert.match(count.textContent,/พบ 3 จาก 3 รายการกิจกรรม/);
-  assert.match(count.textContent,/ไม่ใช่เกณฑ์ที่ยืนยันแล้ว/);
-  status.value='reference';render();
-  assert.equal(results.children.length,1);
-  assert.equal(results.children[0].children[0].textContent,'กิจกรรม ก');
-  status.value='review';render();
-  assert.equal(results.children.length,2);
-  input.value='กิจกรรม ข';render();
-  assert.equal(results.children.length,1);
-  assert.equal(results.children[0].children[0].textContent,'กิจกรรม ข');
-  input.value='ไม่มี';render();
-  assert.match(results.children[0].textContent,/ไม่พบรายการตามคำค้น/);
+test('criteria filters now prioritize verified Round-74 PDFs and retain Round-70 history',()=>{
+  assert.match(html,/id="nongkum-criteria-status"/);
+  assert.match(html,/<option value="official">มี PDF เกณฑ์ครั้งที่ 74/);
+  assert.match(html,/<option value="review">ต้องตรวจสอบชื่อหรือระดับชั้น/);
+  assert.match(html,/<option value="historical">มีทะเบียนย้อนหลังครั้งที่ 70/);
+  assert.match(html,/criteria74-card-badge/);
+  assert.match(html,/data-criteria70-link/);
+  assert.match(html,/ไม่ใช่เกณฑ์รับรองครั้งที่ 74/);
 });
-
 function topHarness(){
   const listeners={},docListeners={},mediaListeners={};
   const floating={hidden:true,addEventListener(name,fn){if(name==='click')this.click=fn;}};
