@@ -50,7 +50,7 @@ Base: `main` @ `30c5ab24c5a16211561951ff1b13e6077f0ae6cd`
 5. ตรวจการ์ดรายการแข่งขัน PDF/CSV, แท็บ, link 70, Responsive 320–1920px, Light/Dark และ Screen Reader
 6. โปรเจกต์นี้เป็นสารสนเทศ ไม่ใช่ระบบสมัครหรือประกาศผล
 
-ผลทดสอบในแชท: รันชุด test ที่ดึงข้อมูลจาก GitHub branch **29/29 ผ่านใน V8 test harness ที่จำลอง Node API**, รวมการตรวจไวยากรณ์ 14 inline scripts. ไม่ใช่การรัน `node --test` บน checkout ภายใน container และไม่ใช่ Browser Acceptance ที่ใช้ Safari/Chrome จริง
+ผลทดสอบในแชท: รันชุด test ที่ดึงข้อมูลจาก GitHub branch **30/30 ผ่านใน V8 test harness ที่จำลอง Node API**, รวมการตรวจไวยากรณ์ 14 inline scripts. ไม่ใช่การรัน `node --test` บน checkout ภายใน container และไม่ใช่ Browser Acceptance ที่ใช้ Safari/Chrome จริง
 
 คำสั่ง Local-First:
 ```sh
