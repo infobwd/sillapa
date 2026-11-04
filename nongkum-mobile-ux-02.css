@@ -1,0 +1,26 @@
+/* NGK-MOBILE-UX-02 — compact mobile venue workflow, both color schemes. */
+#complete-field-plan[data-mode="venue"] .venue-filter-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px}
+#complete-field-plan[data-mode="venue"] .venue-filter-header label{margin:0!important}
+#complete-field-plan[data-mode="venue"] .venue-clear-filters{font:inherit;font-size:13px;font-weight:700;min-height:44px;padding:6px 10px;border:1px solid currentColor;border-radius:10px;background:transparent;color:inherit;cursor:pointer}
+#complete-field-plan[data-mode="venue"] .venue-export-panel{margin:12px 0 0;padding:0;border:1px solid #6686a6;border-radius:12px;background:transparent;color:inherit;overflow:hidden}
+#complete-field-plan[data-mode="venue"] .venue-export-panel>summary{display:flex;align-items:center;cursor:pointer;padding:13px 14px;min-height:48px;font-size:14px;font-weight:700;list-style:none}
+#complete-field-plan[data-mode="venue"] .venue-export-panel>summary::-webkit-details-marker{display:none}
+#complete-field-plan[data-mode="venue"] .venue-export-panel>summary:after{content:"⌄";margin-left:auto}
+#complete-field-plan[data-mode="venue"] .venue-export-panel[open]>summary:after{content:"⌃"}
+#complete-field-plan[data-mode="venue"] .venue-export-panel>p{padding:0 14px;margin:2px 0 12px;font-size:13px}
+#complete-field-plan[data-mode="venue"] .venue-export-panel>button{margin:0 14px 14px;width:calc(100% - 28px)}
+#complete-field-plan[data-mode="venue"] .venue-export-panel:focus-within,#complete-field-plan[data-mode="venue"] .venue-clear-filters:focus-visible{outline:3px solid #76b7ee;outline-offset:2px}
+@media(max-width:720px){
+  #complete-field-plan[data-mode="venue"] .audit-panel{padding:10px!important}
+  #complete-field-plan[data-mode="venue"] .role-back{margin-bottom:4px}
+  #complete-field-plan[data-mode="venue"] .audit-warning-details{margin:4px 0 9px!important}
+  #complete-field-plan[data-mode="venue"] .audit-warning-details summary{min-height:42px}
+  #complete-field-plan[data-mode="venue"] .audit-label{margin-top:9px;margin-bottom:5px}
+  #complete-field-plan[data-mode="venue"] .venue-category-summary{padding:5px 0!important}
+  #complete-field-plan[data-mode="venue"] .venue-status-tabs{margin:3px 0 9px!important}
+}
+@media(prefers-color-scheme:light){
+ #complete-field-plan[data-mode="venue"] .venue-export-panel{background:#fff;color:#24517b;border-color:#cbd9e8}
+ #complete-field-plan[data-mode="venue"] .venue-clear-filters{color:#195d9a;border-color:#aabfd4;background:#fff}
+ #complete-field-plan[data-mode="venue"] .venue-export-panel>p{color:#405b75}
+}
