@@ -96,16 +96,24 @@ test('desktop initially collapsed; drill-down shows five then routes to matching
   ui.cards[0].click();
   assert.equal(ui.detail.hidden,true);
 });
-test('mobile retains expanded original records and breakpoint switch is predictable',()=>{
+test('mobile starts compact, offers three-record previews and see-all filter',()=>{
   const mobile=setup(false);
-  assert.equal(mobile.detail.hidden,false);
-  assert.equal(mobile.count(),33);
+  assert.equal(mobile.detail.hidden,true);
+  assert.equal(mobile.count(),0);
+  mobile.cards[1].click();
+  assert.equal(mobile.count(),3);
+  assert.equal(mobile.more().textContent,'ดูทั้งหมด 33 รายการ');
   mobile.cards[2].click();
-  assert.equal(mobile.count(),28);
-  assert.equal(mobile.more(),undefined);
+  assert.equal(mobile.count(),3);
+  assert.equal(mobile.more().textContent,'ดูทั้งหมด 28 รายการ');
+  mobile.more().click();
+  assert.equal(mobile.visited,'venue');
+  assert.equal(mobile.context.status,'single');
   const desktop=setup(true);
   desktop.breakpoint.matches=false;
   desktop.breakpoint.listeners.forEach(fn=>fn());
-  assert.equal(desktop.detail.hidden,false);
-  assert.equal(desktop.count(),33);
+  assert.equal(desktop.detail.hidden,true);
+  assert.equal(desktop.count(),0);
+  desktop.cards[1].click();
+  assert.equal(desktop.count(),3);
 });
