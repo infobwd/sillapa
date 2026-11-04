@@ -385,7 +385,7 @@
 }
 
 /* NGK-MOBILE-UX-10: compact, accessible school activity rows. Venue mode unchanged. */
-#complete-field-plan[data-mode="school"] .school-compact-meta{color:#46617c;font-size:14px;line-height:1.45;margin-top:3px;font-weight:550}
+ .school-compact-meta{display:none}\n#complete-field-plan[data-mode="school"] .school-compact-meta{display:block;color:#46617c;font-size:14px;line-height:1.45;margin-top:3px;font-weight:550}
 #complete-field-plan[data-mode="school"] .audit-rival-status{font-size:14px!important;font-weight:550!important}
 #complete-field-plan[data-mode="school"] .audit-rival-details summary{font-size:14px!important;text-decoration:none!important}
 @media(max-width:720px){
@@ -410,3 +410,6 @@
  #complete-field-plan[data-mode="school"] .school-compact-meta{color:#c2d7eb}
  #complete-field-plan[data-mode="school"] .venue-table td:first-child{background:#294461;color:#e2efff!important}
 }
+
+/* Show rival count once, in the disclosure control. */
+#complete-field-plan[data-mode="school"] .audit-rival-cell:has(.audit-rival-details)>.audit-rival-status{display:none!important}
