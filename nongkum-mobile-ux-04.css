@@ -1,0 +1,138 @@
+/* NGK-MOBILE-UX-04 — tighter mobile reading/navigation without shrinking type. */
+@media (max-width:1199px) {
+  /* Back-to-top remains secondary to content calls-to-action. */
+  .ngk-back-to-top {
+    min-width:52px;
+    width:52px;
+    height:52px;
+    min-height:52px;
+    padding:0;
+    border-radius:50%;
+  }
+  .ngk-back-to-top svg { width:23px;height:23px; }
+  .ngk-back-to-top span {
+    position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+    overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
+  }
+  #complete-field-plan .ngk-school-instructions {
+    margin-top:12px;
+    border-top:1px solid #d4e2f0;
+    padding-top:7px;
+  }
+  #complete-field-plan .ngk-school-instructions summary {
+    min-height:44px;
+    display:flex;align-items:center;
+    font-size:15px;font-weight:700;color:#14568a;
+  }
+  #complete-field-plan .ngk-school-instructions p {
+    margin:5px 0 8px;
+    color:#50677f;font-size:14px;line-height:1.65;
+  }
+  #complete-field-plan .ngk-table-guide {
+    margin:12px 3px;
+    padding:0;
+    color:#50677f;
+    font-size:14px;
+  }
+  #complete-field-plan .ngk-table-guide summary {
+    min-height:44px;font-size:14px;
+  }
+  #complete-field-plan .ngk-table-guide p { margin:0 0 12px;line-height:1.65; }
+}
+@media (max-width:767px) {
+  #role-home .insight-detail { overflow:visible; }
+  #role-home .insight-records {
+    max-height:none;
+    overflow:visible;
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:8px;
+  }
+  #role-home .insight-record { min-width:0;padding:12px 13px; }
+  #role-home .insight-record b { font-size:15px;line-height:1.5; }
+  #role-home .insight-record small { font-size:14px;line-height:1.6; }
+  #role-home .insight-detail .insight-view-all {
+    display:flex;align-items:center;justify-content:center;
+    width:100%;min-height:48px;margin-top:13px;
+    padding:10px 14px;
+    border:1px solid #8cb3d9;border-radius:12px;
+    background:#dceeff;color:#174e83;
+    font:700 15px/1.5 inherit;cursor:pointer;
+  }
+  #role-home .insight-detail .insight-view-all:focus-visible {
+    outline:3px solid #2e84d1;outline-offset:2px;
+  }
+  /* First select a school; explanatory text is available on demand. */
+  #complete-field-plan[data-mode="school"] .audit-panel { padding:13px!important; }
+  #complete-field-plan[data-mode="school"] .audit-label { margin-top:12px;font-size:16px; }
+  #complete-field-plan[data-mode="school"] .audit-select { min-height:50px;font-size:16px; }
+  #complete-field-plan[data-mode="school"] .audit-result {
+    margin-top:10px;
+    font-size:15px;line-height:1.5;
+  }
+  /* Criteria filters describe reference-document status, not confirmed 74 rules. */
+  #nongkum-criteria-view .ngk-criteria-filter {
+    display:grid;gap:6px;margin-top:11px;
+  }
+  #nongkum-criteria-view .ngk-criteria-filter label {
+    font-size:15px;line-height:1.5;margin:0;
+  }
+  #nongkum-criteria-status {
+    width:100%;min-height:48px;
+    padding:10px 14px;
+    border:1px solid #9cb3cb;border-radius:12px;
+    background:#fff;color:#17324d;font:inherit;font-size:16px;
+  }
+  #nongkum-criteria-view .nongkum-criteria-card { padding:14px 15px;margin:9px 0; }
+  #nongkum-criteria-view .nongkum-criteria-card h3 {
+    font-size:18px;line-height:1.5;overflow-wrap:break-word;
+  }
+  #nongkum-criteria-view .nongkum-criteria-card .criteria-level {
+    font-size:14px;line-height:1.5;
+  }
+  #nongkum-criteria-view .nongkum-criteria-card .criteria-source {
+    font-size:14px;line-height:1.6;
+  }
+  #nongkum-criteria-view .nongkum-criteria-card a {
+    display:inline-flex;align-items:center;
+    min-height:44px;font-size:14px;line-height:1.5;
+  }
+  #nongkum-criteria-view .ngk-criteria-badge {
+    display:inline-flex;align-items:center;
+    font-size:13px;line-height:1.5;font-weight:700;
+    padding:4px 9px;margin:4px 0 7px;border-radius:999px;
+    border:1px solid #c9d8e9;background:#e4eefb;color:#184d7c;
+  }
+  #nongkum-criteria-view .ngk-criteria-badge[data-status="review"] {
+    border-color:#e3d3ac;background:#fff2d5;color:#704c17;
+  }
+  #nongkum-criteria-count { font-size:14px;line-height:1.6; }
+  #nongkum-info-view section { padding-top:13px;padding-bottom:13px; }
+  #nongkum-info-view h3 { font-size:19px;line-height:1.5; }
+  #nongkum-info-view p { font-size:15px;line-height:1.65; }
+  #nongkum-info-view .info-guide strong { font-size:15px; }
+  #nongkum-info-view .info-doc-hint { font-size:13px;line-height:1.6; }
+}
+@media (max-width:767px) and (prefers-color-scheme:dark) {
+  #role-home .insight-detail .insight-view-all {
+    background:#284e73;color:#f5fbff;border-color:#6489ae;
+  }
+  #nongkum-criteria-status {
+    color:#eef4ff;background:#0e2034;border-color:#59728f;
+  }
+  #nongkum-criteria-view .ngk-criteria-badge {
+    color:#e0efff;background:#254462;border-color:#4b7197;
+  }
+  #nongkum-criteria-view .ngk-criteria-badge[data-status="review"] {
+    color:#ffe5b1;background:#493b20;border-color:#856b36;
+  }
+  #complete-field-plan .ngk-school-instructions,
+  #complete-field-plan .ngk-table-guide { border-color:#405a76; }
+  #complete-field-plan .ngk-school-instructions summary,
+  #complete-field-plan .ngk-table-guide summary { color:#bbdfff; }
+  #complete-field-plan .ngk-school-instructions p,
+  #complete-field-plan .ngk-table-guide p { color:#c6d7e8; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .ngk-back-to-top { transition:none!important; }
+}
