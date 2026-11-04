@@ -57,7 +57,7 @@
     padding:10px 14px;
     border:1px solid #8cb3d9;border-radius:12px;
     background:#dceeff;color:#174e83;
-    font:700 15px/1.5 inherit;cursor:pointer;
+    font-family:inherit;font-size:15px;font-weight:700;line-height:1.5;cursor:pointer;
   }
   #role-home .insight-detail .insight-view-all:focus-visible {
     outline:3px solid #2e84d1;outline-offset:2px;
