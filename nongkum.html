@@ -831,7 +831,7 @@ const rivals=schools.filter(s=>s!==name);
 rivalCell.replaceChildren();
 const label=document.createElement('strong');
 label.className='audit-rival-status';
-label.textContent=rivals.length?'พบโรงเรียนอื่นที่ร่วมแข่งขัน '+rivals.length+' โรงเรียน':'ยังไม่พบโรงเรียนอื่นที่ร่วมแข่งขันรายการนี้';
+label.textContent=rivals.length?'โรงเรียนอื่น '+rivals.length+' แห่ง':'ยังไม่พบโรงเรียนอื่นในรายการนี้';
 rivalCell.append(label);
 if(rivals.length){
 const list=document.createElement('div');
@@ -845,6 +845,12 @@ details.append(summary,list);
 rivalCell.append(details);
 }else{const note=document.createElement('small');note.textContent='กำลังตรวจสอบรายชื่อกับข้อมูลของโรงเรียน ก่อนสรุป';rivalCell.append(note)}
 }
+// NGK-MOBILE-UX-10: presentation-only metadata; original source cells stay unchanged.
+let compactMeta=cells[1].querySelector('.school-compact-meta');
+if(!compactMeta){compactMeta=document.createElement('div');compactMeta.className='school-compact-meta';cells[1].querySelector('strong')?.after(compactMeta);}
+const criteriaStatus=cells[1].querySelector('.criteria-slot')?.dataset.criteria74Status;
+compactMeta.textContent=[cells[3]?.textContent.trim(),cells[6]?.textContent.trim()].filter(Boolean).join(' · ');
+compactMeta.dataset.criteriaStatus=criteriaStatus||'review';
 const text=(cells[1].textContent+' '+cells[3].textContent).toLocaleLowerCase('th');
 const ok=mode==='school'&&name&&schools.includes(name)&&(!q||(text+' '+schools.join(' ')).toLocaleLowerCase('th').includes(q));
 row.hidden=!ok;
