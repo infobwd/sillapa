@@ -1,0 +1,60 @@
+/* NGK-LIGHT-UX-01: venue preparation light palette only.
+   Dark mode keeps its existing navy design; no activity data is changed. */
+@media (prefers-color-scheme: light) {
+  #complete-field-plan[data-mode="venue"] .audit-panel,
+  #complete-field-plan[data-mode="venue"] #venue-category-panel {
+    background:#f7faff;color:#17324d;
+  }
+  #complete-field-plan[data-mode="venue"] .audit-panel label,
+  #complete-field-plan[data-mode="venue"] #venue-category-panel label,
+  #complete-field-plan[data-mode="venue"] .venue-category-heading {
+    color:#17324d;
+  }
+  #complete-field-plan[data-mode="venue"] .venue-category-summary,
+  #complete-field-plan[data-mode="venue"] #venue-category-panel .venue-category-summary {
+    color:#405b75;
+  }
+  #complete-field-plan[data-mode="venue"] .venue-activity-card {
+    background:#fff;color:#17324d;border-color:#cbd9e8;
+    box-shadow:0 2px 8px rgba(20,56,91,.055);
+  }
+  #complete-field-plan[data-mode="venue"] .venue-activity-card summary {
+    min-height:54px;padding:10px 36px 10px 13px;gap:3px;color:#17324d;
+  }
+  #complete-field-plan[data-mode="venue"] .venue-activity-card summary strong {
+    color:#17324d;font-size:15px;font-weight:750;line-height:1.45;
+  }
+  #complete-field-plan[data-mode="venue"] .venue-activity-card summary span {
+    color:#4c637a;font-size:12px;
+  }
+  #complete-field-plan[data-mode="venue"] .venue-card-chevron {color:#285e8c;}
+  #complete-field-plan[data-mode="venue"] .venue-activity-card[open] summary {border-bottom-color:#d4e0ed;}
+  #complete-field-plan[data-mode="venue"] .venue-activity-detail {background:#fff;color:#17324d;}
+  #complete-field-plan[data-mode="venue"] .venue-activity-detail p {color:#405b75;}
+  #complete-field-plan[data-mode="venue"] .venue-activity-schools span {background:#e9f2fc;color:#214c73;}
+  #complete-field-plan[data-mode="venue"] .venue-status-tabs button {
+    background:#fff;color:#244965;border-color:#aabfd4;
+  }
+  #complete-field-plan[data-mode="venue"] .venue-status-tabs button[aria-pressed="true"] {
+    background:#195d9a;color:#fff;border-color:#195d9a;
+  }
+  #complete-field-plan[data-mode="venue"] .audit-warning-details {
+    background:#fff1d6;color:#704713;border-color:#d6b77a;
+  }
+  #complete-field-plan[data-mode="venue"] .audit-warning-details summary,
+  #complete-field-plan[data-mode="venue"] .audit-warning-details p {color:#704713;}
+  #complete-field-plan[data-mode="venue"] .venue-missing-link {color:#195d9a;}
+  #complete-field-plan[data-mode="venue"] .venue-activity-card:focus-within,
+  #complete-field-plan[data-mode="venue"] .venue-status-tabs button:focus-visible {
+    outline:3px solid #195d9a;outline-offset:2px;
+  }
+  #nongkum-criteria-view #nongkum-criteria-status {
+    background:#fff;color:#17324d;border-color:#aabfd4;
+  }
+  #nongkum-criteria-view .criteria74-source-panel,
+  #nongkum-criteria-view .criteria74-card {color:#17324d;}
+}
+@media (max-width:420px) and (prefers-color-scheme:light) {
+  #complete-field-plan[data-mode="venue"] .venue-activity-cards {gap:8px;}
+  #complete-field-plan[data-mode="venue"] .venue-activity-card summary {padding-top:9px;padding-bottom:9px;}
+}
