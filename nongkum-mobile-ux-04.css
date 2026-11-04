@@ -160,3 +160,15 @@
 @media (prefers-reduced-motion:reduce) {
   .ngk-back-to-top { transition:none!important; }
 }
+
+/* NGK-MOBILE-UX-04 flat venue outer containers — preserve interactive controls. */
+#complete-field-plan[data-mode="venue"]{
+ background:transparent!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;padding:0!important;margin:0!important;max-width:none;
+}
+#complete-field-plan[data-mode="venue"]>.audit-panel{
+ background:transparent!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;padding:0!important;margin:0!important;
+}
+#complete-field-plan[data-mode="venue"] .venue-activity-cards{box-shadow:none!important}
+@media(max-width:720px){#complete-field-plan[data-mode="venue"]>.audit-panel{padding:0!important}}
