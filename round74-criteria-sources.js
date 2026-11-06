@@ -329,6 +329,10 @@ const reviewedRows={
   "67": [
     "จัดทำหนังสือเล่มเล็ก",
     "ป.4–ป.6"
+  ],
+  "68": [
+    "การขับร้องเพลงไทยลูกกรุง ชายเดี่ยว",
+    "ป.1–ป.6"
   ]
 };
 const matchedGroups={
@@ -404,7 +408,8 @@ const matchedGroups={
     52,
     53,
     54,
-    55
+    55,
+    68
   ],
   "13": [
     67
@@ -453,5 +458,5 @@ function lookup(id,name,level){
   const doc=documents[assignments[id]];
   return doc?{status:'matched',document:doc}:{status:'review',reason:'ยังไม่พบหมวดเอกสารที่ตรงกับกิจกรรมนี้'};
 }
-window.SILLAPA74_CRITERIA_SOURCES=Object.freeze({edition:'ครั้งที่ 74 ปีการศึกษา 2569',asOf:'2026-11-04',folderUrl,catalogUrl,documents,reviewedRows,exceptions,assignments,lookup});
+window.SILLAPA74_CRITERIA_SOURCES=Object.freeze({edition:'ครั้งที่ 74 ปีการศึกษา 2569',asOf:'2026-11-06',folderUrl,catalogUrl,documents,reviewedRows,exceptions,assignments,lookup});
 })();
