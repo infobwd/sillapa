@@ -24,6 +24,12 @@
 - [ ] ตรวจ Browser Acceptance iPhone/Android/Desktop: ตัวกรองโรงเรียนและหมวด, สถานะ, PDF, CSV, พิมพ์
 - [ ] ตรวจ GitHub Pages หลัง merge และ cache refresh
 
+## Verified checks in this chat (6 Nov 2026)
+- V8 source-driven static/lookup verification **PASS**: 64 unique row IDs; male folk (ID 52) contains three distinct schools; male luk krung (ID 68) one school; grade guards map both to music PDF #12 and reject wrong grade; new item maps to music category.
+- Source mapping shows **50 matched / 14 review** after this change. Before this change, main was **49 matched / 14 review** (stale names in saved criteria mapping). This change introduces **no additional review cases**; the 14 existing mismatches require a separate reconciliation and are not declared accepted by this PR.
+- JavaScript syntax parsing in V8 passed for 9 inline HTML scripts plus edited test source; personal student names are absent from modified public files.
+- **Not tested**: Node CLI test runner on a local checkout, browser interactions, GitHub Pages publication and private PDF access from an unauthenticated device.
+
 ## Test commands (Local-First)
 ```sh
 node --test tests/ngk-criteria74-01.test.cjs tests/ngk-mobile-ux-04.test.cjs tests/ngk-mobile-ux-03.test.cjs tests/ngk-desktop-home-02.test.cjs tests/ngk-desktop-ux.test.cjs
