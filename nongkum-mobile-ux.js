@@ -92,3 +92,15 @@
 
   onResize();
 })();
+
+/* NGK-SHARE-74-01: load optional school-only share controls after the existing school view. */
+(function () {
+  if (!document.getElementById('school-export') || !document.head) return;
+  const css = document.createElement('link');
+  css.rel = 'stylesheet';
+  css.href = './nongkum-school-share.css';
+  document.head.appendChild(css);
+  const script = document.createElement('script');
+  script.src = './nongkum-school-share.js';
+  document.head.appendChild(script);
+})();

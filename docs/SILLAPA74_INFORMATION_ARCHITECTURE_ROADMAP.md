@@ -1,5 +1,8 @@
 # Sillapa 74 — Information Architecture Delivery Roadmap
 
+> **NGK-SHARE-74-01 (6 พฤศจิกายน 2569):** เพิ่มงานแชร์ลิงก์รายการแข่งขันแยกตามโรงเรียนผ่าน LINE เพื่อให้ครูและผู้บริหารตรวจรายการขาด/เกิน/ระดับชั้น โดยใช้ข้อมูลที่รวบรวมไว้ในหน้า `nongkum.html` เท่านั้น ไม่เก็บผลยืนยัน ไม่เชื่อมระบบสมัคร และไม่เผยแพร่ข้อมูลบุคคล ดู [แผน/ผลตรวจและข้อจำกัด](NGK_SHARE_74_01_LINE_SCHOOL_REVIEW.md) สำหรับสถานะล่าสุดของงานนี้
+
+
 > **Status updated 15 October 2026:** IA-0 documents PR #5, IA-1 through IA-6 UI PR #6–#11, Thai copy #12 and quiet developer attribution #13 **MERGED**. The original proposed sequence below is retained for traceability. Data publication and real-device acceptance are **NOT COMPLETED**.  
 > **Paired Design Lock:** [Information Architecture & Data Contract Design Lock](SILLAPA74_INFORMATION_ARCHITECTURE_DATA_CONTRACT_DESIGN_LOCK.md)  
 > **Repo:** infobwd/sillapa · **External canonical platform:** infobwd/AcademicCompetitionManager  
