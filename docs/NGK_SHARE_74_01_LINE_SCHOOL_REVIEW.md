@@ -41,3 +41,12 @@
 
 ## ความเสี่ยง/การย้อนกลับ
 ลิงก์เป็นสาธารณะและมีเฉพาะรหัสโรงเรียน (ไม่ใช่ token); ข้อมูลเป็น snapshot ของ GitHub Pages และอาจติด cache PWA แสดงความไม่ยืนยันไว้ชัด; rollback ได้โดย revert commit ใหม่ ไม่มี migration หรือข้อมูลจริงเปลี่ยน
+
+## ผลตรวจภายใน Branch (6 พฤศจิกายน 2569)
+- Syntax ของ `nongkum-mobile-ux.js` และ `nongkum-school-share.js`: **PASS** จากการคอมไพล์ด้วย V8 `new Function`
+- Synthetic unit/integration: **6/6 PASS ใน V8 mock harness** โดยเรียกทดสอบจากไฟล์ `tests/ngk-share-74-01.test.cjs` ผ่านตัวจำลอง Node modules (ไม่ใช่ Node CLI run หรือ Browser QA)
+- Source reconciliation: **62 แถวข้อมูล** (HTML `tr` 63 แถวรวม header), ตัวเลือกโรงเรียน 8/8 แมป registry ได้ครบ; นับรายการตามแถวปัจจุบัน: เสาหงส์ 24, วังด้ง 12, พุพรหม 17, วังเขาแก้ว 8, หนองกระทุ่ม 27, หนองกุ่ม 18, วัดทุ่งมะสัง 30, รางขาม 9; ไม่ใช่ยอดรับรองการสมัคร
+- Mock covered: valid ID ทั้ง 8, invalid/malformed ID, deep-link auto-select, ล้างคำค้น, นับรายการจาก DOM, เปลี่ยนโรงเรียนแล้ว URL เปลี่ยน, Clipboard API และ fallback
+- `nongkum.html` **ไม่ถูกแก้** เพื่อหลีกเลี่ยง PR #127; หน้าอื่นและข้อมูลต้นทางไม่เปลี่ยน; เพิ่ม stylesheet/script แบบ optional จาก `nongkum-mobile-ux.js`
+- ยังไม่ทดสอบจริง: Node CLI, iPhone Safari, Android Chrome, Desktop Browser Acceptance, LINE app chooser, GitHub Pages หลัง Merge และ PWA offline/cache; ห้ามถือว่า PASS โดยอัตโนมัติ
+- การย้อนกลับ: revert commit/PR ได้โดยไม่กระทบข้อมูลหรือฐานข้อมูล
