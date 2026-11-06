@@ -163,8 +163,11 @@ test('Nongkum male music items share the approved Round-74 PDF without publishin
   assert.equal(data.lookup(maleFolk.id,maleFolk.name,maleFolk.level).document.key,'12');
   assert.equal(data.lookup(maleClassic.id,maleClassic.name,maleClassic.level).document.key,'12');
   assert.equal(maleClassic.level,'ป.1–ป.6');
-  const folkRow=html.match(/<tr><td data-label="ลำดับ">52<\\/td>[\\s\\S]*?<\\/tr>/)[0];
-  const classicRow=html.match(/<tr><td data-label="ลำดับ">68<\\/td>[\\s\\S]*?<\\/tr>/)[0];
+  const folkStart=html.indexOf('<tr><td data-label="ลำดับ">52</td>');
+  const classicStart=html.indexOf('<tr><td data-label="ลำดับ">68</td>');
+  assert.ok(folkStart>=0 && classicStart>=0);
+  const folkRow=html.slice(folkStart,html.indexOf('</tr>',folkStart)+5);
+  const classicRow=html.slice(classicStart,html.indexOf('</tr>',classicStart)+5);
   assert.equal((folkRow.match(/class="venue-school"/g)||[]).length,3);
   assert.equal((classicRow.match(/class="venue-school"/g)||[]).length,1);
   assert.ok(folkRow.includes('บ้านหนองกุ่ม') && classicRow.includes('บ้านหนองกุ่ม'));
