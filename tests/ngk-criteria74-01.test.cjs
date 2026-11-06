@@ -174,7 +174,7 @@ test('Nongkum male music items share the approved Round-74 PDF without publishin
 test('Inclusive-art PDF and category are correct; withdrawn Sao Hong garden rows are absent',()=>{
   const ids=new Set(rows.map(r=>r.id));
   assert.equal(rows.length,63);
-  assert.equal(ids.size,62);
+  assert.equal(ids.size,63);
   assert.equal(ids.has(58),false);
   assert.equal(ids.has(59),false);
   assert.equal(html.includes('การแข่งขันจัดสวนถาดแบบแห้ง'),false);
