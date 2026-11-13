@@ -62,7 +62,7 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}main{padding-bottom
 .venue-table td:first-child{background:#2c4b70;color:#e2f1ff!important}
 .venue-table td[data-label="สถานะ"]{border-color:#344b65}
 }
-</style><style>.source-label{display:block;font-size:11px;color:#657b91;margin-top:7px}.source-note{display:block;font-size:11px;margin-top:5px;color:#6a7a8c}</style><script src="./nongkum-schools.js"></script><script src="./round70-catalog.js"></script><script src="./round74-confirmed-groups.js"></script><script src="./round74-criteria-sources.js"></script><style>
+</style><style>.source-label{display:block;font-size:11px;color:#657b91;margin-top:7px}.source-note{display:block;font-size:11px;margin-top:5px;color:#6a7a8c}</style><script src="./nongkum-schools.js"></script><script src="./round70-catalog.js"></script><script src="./round74-confirmed-groups.js"></script><script src="./round74-criteria-sources.js?v=20261113-math-verified"></script><style>
 /* Home information cards: calculated from the same rows used by the venue view. */
 .home-insights{margin:18px auto 22px;text-align:left;max-width:760px}.home-insights h3{margin:0 0 10px;color:#173b69;font-size:19px}.insight-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.insight-card{border:1px solid #dce7f4;border-radius:16px;padding:15px;background:#fff;text-align:left;color:#17324d;font:inherit;cursor:pointer}.insight-card b{display:block;font-size:30px;line-height:1.2;margin:6px 0}.insight-card span{font-size:13px;color:#53677f}.insight-card:focus-visible{outline:3px solid #2873b6}.insight-detail{margin-top:12px;padding:14px;border-radius:14px;background:#eef4fc;color:#23425f}.insight-detail strong{display:block;margin-bottom:8px}.insight-detail ul{margin:0;padding-left:22px}.insight-detail li{margin:5px 0}.insight-note{font-size:12px;color:#63748a;margin:9px 0 0;line-height:1.55}.insight-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.insight-actions button{font:inherit;border:1px solid #b9d2ef;background:#fff;border-radius:11px;color:#1d568d;padding:10px 13px;font-weight:600;cursor:pointer}@media(min-width:720px){.insight-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 </style><style>.insight-card.insight-active{border-color:#2b6cb0;box-shadow:0 0 0 2px rgba(43,108,176,.12)}.insight-detail>p{font-size:13px;margin:5px 0 12px;color:#52667c}.insight-records{max-height:380px;overflow-y:auto;display:grid;gap:7px}.insight-record{background:#fff;border:1px solid #dbe5f1;border-radius:11px;padding:10px 12px}.insight-record b{display:block;font-size:13px;font-weight:650}.insight-record small{display:block;color:#566a80;margin-top:4px;line-height:1.5}.insight-school-link{width:100%;text-align:left;border:1px solid #dbe5f1;background:#fff;color:#174d80;border-radius:11px;padding:11px 12px;font:inherit;font-size:13px;cursor:pointer}.insight-school-link:focus-visible{outline:3px solid #2b6cb0}</style><style>.pull-refresh-indicator{position:fixed;z-index:9999;top:max(8px,env(safe-area-inset-top));left:50%;transform:translate(-50%,-140%);opacity:0;pointer-events:none;border:1px solid #cbdced;border-radius:999px;background:#fff;color:#17446f;box-shadow:0 5px 18px rgba(18,50,80,.16);padding:9px 15px;font-size:13px;font-weight:650;transition:transform .18s,opacity .18s;white-space:nowrap}.pull-refresh-indicator.visible{opacity:1;transform:translate(-50%,0)}.pull-refresh-indicator .pull-arrow{display:inline-block;margin-right:6px}.pull-refresh-indicator.refreshing .pull-arrow{animation:pullspin .8s linear infinite}@keyframes pullspin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.pull-refresh-indicator{transition:none}.pull-refresh-indicator.refreshing .pull-arrow{animation:none}}</style><style>.empty-entries{max-width:900px;margin:20px auto;padding:18px;border:1px solid #cbdced;border-radius:18px;background:#fff}.empty-entries[hidden]{display:none!important}.empty-entries h2{margin:0 0 9px;color:#173b69}.empty-entries p{font-size:13px;color:#52667c;line-height:1.6}.empty-entry{padding:12px;border-bottom:1px solid #e3eaf2}.empty-entry strong{display:block;font-size:14px}.empty-entry small{display:block;color:#64758a;margin-top:5px}.empty-entry-search{box-sizing:border-box;width:100%;border:1px solid #c9d9ea;border-radius:11px;padding:12px;font:inherit;margin:8px 0}.empty-entry-count{font-weight:650}.empty-entry-back{font:inherit;background:#eaf1fa;color:#174d80;border:0;border-radius:10px;padding:10px 14px;cursor:pointer}</style>
@@ -197,12 +197,14 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}main{padding-bottom
 .criteria74-review-details{margin:9px 0;color:#83571b}
 .criteria74-review-details>summary{display:list-item;min-height:42px;padding:8px 2px;font-size:14px;font-weight:650;cursor:pointer}
 .criteria74-review-details .criteria74-review-note{display:block;margin:3px 0 9px;line-height:1.55;color:inherit}
-.criteria74-history{margin:9px 0 0;border-top:1px dashed #d6e0eb;padding-top:5px}
-.criteria74-history>summary{min-height:42px;padding:9px 2px;color:#536a80;font-size:13px;font-weight:550;cursor:pointer}
+.criteria74-match-note.criteria74-verified-specific{display:block;margin:7px 0 6px;color:#155c8c;font-size:13px;font-weight:700}
+.criteria74-history{margin:9px 0 0;border-top:1px dotted #d6e0eb;padding-top:4px}
+.criteria74-history>summary{min-height:44px;padding:9px 2px;color:#708197;font-size:13px;font-weight:450;cursor:pointer}
 .criteria74-history .source-label{display:block;margin:4px 0 7px}
 .criteria74-history a{margin:4px 0 8px}
 .criteria74-review-details>summary:focus-visible,.criteria74-history>summary:focus-visible{outline:3px solid #2677b9;outline-offset:2px;border-radius:5px}
-@media(prefers-color-scheme:dark){.criteria74-review-details{color:#f2c27c}.criteria74-history{border-color:#405672}.criteria74-history>summary{color:#c4d3e4}}
+@media(prefers-color-scheme:dark){.criteria74-review-details{color:#f2c27c}.criteria74-history{border-color:#405672}.criteria74-history>summary{color:#afc0d3}.criteria74-match-note.criteria74-verified-specific{color:#a6d5ff}}
+@media(max-width:720px){.criteria74-history{margin-top:7px;padding-top:0}.criteria74-history>summary{font-size:12px;line-height:1.45;font-weight:400}.criteria74-match-note.criteria74-verified-specific{font-size:13px;line-height:1.5}}
 </style></head><body><div class="nongkum-splash" id="nongkumSplash" hidden aria-hidden="true">
   <div class="nongkum-splash-content">
     <div class="nongkum-splash-icon"><img src="./icons/icon-192.png" alt="" width="66" height="66"></div>
@@ -561,7 +563,12 @@ slot.dataset.criteria74Status=source74.status;
 if(source74.status==='matched'){
   const description=document.createElement('small');
   description.className='criteria74-match-note';
-  description.textContent='พบเกณฑ์ครั้งที่ 74 ตรงกิจกรรมและระดับชั้น · PDF หมวด'+source74.document.title;
+  if(rowNumber===21){
+    description.classList.add('criteria74-verified-specific');
+    description.textContent='ตรวจสอบแล้ว: ซูโดกุ ป.1–ป.6 ตรงตามเกณฑ์ครั้งที่ 74';
+  }else{
+    description.textContent='พบเกณฑ์ครั้งที่ 74 ตรงกิจกรรมและระดับชั้น · PDF หมวด'+source74.document.title;
+  }
   const link=document.createElement('a');
   link.className='criteria74-primary-link';
   link.href=source74.document.url;
@@ -602,7 +609,7 @@ if(sameLevel.length||variants.length){
   const history=document.createElement('details');
   history.className='criteria74-history';
   const summary=document.createElement('summary');
-  summary.textContent='ข้อมูลย้อนหลังครั้งที่ 70';
+  summary.textContent='ข้อมูลอ้างอิงย้อนหลังครั้งที่ 70 (ไม่ใช่เกณฑ์ปัจจุบัน)';
   const link=document.createElement('a');
   link.className='criteria-link';
   link.href=window.SILLAPA70_CATALOG.source;
