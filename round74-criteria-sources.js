@@ -1,7 +1,7 @@
 /* NGK-CRITERIA74-01 · Explicit source mapping, reviewed against the 2026 Round-74 PDF tables.
  * Source folder confirmed by the organizer as the education-area office's document set.
  * Every lookup verifies row ID + exact saved name + saved grade. No fuzzy or silent inference.
- * See docs/NGK_CRITERIA74_01_ACCEPTANCE.md for six flagged mismatches. */
+ * Primary-level A-Math and Sudoku confirmed as P1-P6 by the 74th Math criteria PDF (2026-11-13). */
 (function(){
 'use strict';
 const folderUrl="https://drive.google.com/drive/folders/1x3oxZyV817SbGyFmX8L7tZQEwJ75gzMH";
@@ -155,7 +155,7 @@ const reviewedRows={
     "ม.1–ม.3"
   ],
   "20": [
-    "ต่่อสมการคณิตศาสตร์ (เอแม็ท)",
+    "ต่อสมการคณิตศาสตร์ (เอแม็ท)",
     "ป.1–ป.6"
   ],
   "21": [
@@ -352,6 +352,8 @@ const matchedGroups={
     17,
     18,
     19,
+    20,
+    21,
     22
   ],
   "3": [
@@ -430,14 +432,6 @@ const exceptions={
     "reason": "เว็บระบุ กาพย์ยานี 11 จำนวน 4 บท แต่ PDF ภาษาไทยครั้งที่ 74 ระบุ 6 บท สำหรับ ม.1–ม.3",
     "candidate": "1"
   },
-  "20": {
-    "reason": "เว็บระบุเอแม็ทระดับ ป.1–ป.6 แต่ PDF คณิตศาสตร์ครั้งที่ 74 แยกระดับ ป.4–ป.6 และ ม.1–ม.3",
-    "candidate": "2"
-  },
-  "21": {
-    "reason": "เว็บระบุซูโดกุระดับ ป.1–ป.6 แต่ PDF คณิตศาสตร์ครั้งที่ 74 แยกระดับ ป.4–ป.6 และ ม.1–ม.3",
-    "candidate": "2"
-  },
 };
 const assignments=Object.freeze(Object.fromEntries(Object.entries(matchedGroups).flatMap(([key,ids])=>ids.map(id=>[id,key]))));
 function lookup(id,name,level){
@@ -448,5 +442,5 @@ function lookup(id,name,level){
   const doc=documents[assignments[id]];
   return doc?{status:'matched',document:doc}:{status:'review',reason:'ยังไม่พบหมวดเอกสารที่ตรงกับกิจกรรมนี้'};
 }
-window.SILLAPA74_CRITERIA_SOURCES=Object.freeze({edition:'ครั้งที่ 74 ปีการศึกษา 2569',asOf:'2026-11-06',folderUrl,catalogUrl,documents,reviewedRows,exceptions,assignments,lookup});
+window.SILLAPA74_CRITERIA_SOURCES=Object.freeze({edition:'ครั้งที่ 74 ปีการศึกษา 2569',asOf:'2026-11-13',folderUrl,catalogUrl,documents,reviewedRows,exceptions,assignments,lookup});
 })();
