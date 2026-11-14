@@ -27,13 +27,13 @@ test('source module preserves 17 direct Round-74 PDFs and confirmed folder/catal
   assert.equal(data.documents['16'].fileId,'12ZunpZ9xRJTHAOfbuPUYPYKt-tY0HeMM');
 });
 
-test('audited 66 current activity rows: 60 criteria links matched and 6 new rows pending verification',()=>{
+test('audited 66 current activity rows: 61 criteria links matched and 5 new rows pending verification',()=>{
   assert.equal(rows.length,66);
   const status=rows.map(r=>({...r,...data.lookup(r.id,r.name,r.level)}));
-  assert.equal(status.filter(x=>x.status==='matched').length,60);
-  assert.equal(status.filter(x=>x.status==='review').length,6);
+  assert.equal(status.filter(x=>x.status==='matched').length,61);
+  assert.equal(status.filter(x=>x.status==='review').length,5);
   assert.deepEqual(status.filter(x=>x.status==='review').map(x=>x.id).sort((a,b)=>a-b),
-    [70,71,72,73,74,75]);
+    [70,71,72,73,74]);
   assert.equal(new Set(rows.map(r=>r.id)).size,rows.length);
 });
 
@@ -111,7 +111,7 @@ test('criteria UI filters 74 matches and review cases with correct links',()=>{
   assert.match(results.children[0].textContent,/ไม่พบรายการตามชื่อ/);
 });
 
-test('all live table slots render 60 verified PDF74 links and 6 review notices for new school activities',()=>{
+test('all live table slots render 61 verified PDF74 links and 5 review notices for new school activities',()=>{
   const begin=html.indexOf("rows.forEach(row=>{\nconst cells=");
   const end=html.indexOf("const school=document.getElementById('audit-school')",begin);
   assert.ok(begin>0&&end>begin,'source-to-slot integration code exists');
@@ -132,10 +132,10 @@ test('all live table slots render 60 verified PDF74 links and 6 review notices f
   const window={SILLAPA74_CRITERIA_SOURCES:data,SILLAPA70_CATALOG:{source:'https://example.org/70',families:{}}};
   const document={createElement:element};
   new Function('rows','window','document',loop)(domRows,window,document);
-  assert.equal(slots.filter(x=>x.slot.dataset.criteria74Status==='matched').length,60);
-  assert.equal(slots.filter(x=>x.slot.dataset.criteria74Status==='review').length,6);
+  assert.equal(slots.filter(x=>x.slot.dataset.criteria74Status==='matched').length,61);
+  assert.equal(slots.filter(x=>x.slot.dataset.criteria74Status==='review').length,5);
   const links=slots.flatMap(x=>x.slot.children.filter(n=>n.dataset?.criteria74Link==='true'));
-  assert.equal(links.length,60);
+  assert.equal(links.length,61);
   for(const a of links){
     assert.ok(Object.values(data.documents).some(d=>d.url===a.href),'PDF URL must be in reviewed Drive folder');
     assert.equal(a.target,'_blank');
@@ -211,4 +211,17 @@ test('NGK74 inclusive singing category preserves confirmed music and fixes the o
   assert.equal(data.lookup(item.id,item.name,'ป.4–ป.6').status,'review');
   assert.equal(data.lookup(51,rows.find(x=>x.id===51).name,'ป.1–ป.6').document.key,'12');
   assert.ok(html.includes("group:'โรงเรียนเรียนรวม',name:'กลุ่มดนตรี'"));
+});
+
+test('Cover Dance Contest P1-P3 is confirmed by the Round-74 learner-development PDF',()=>{
+  const cover=rows.find(r=>r.id===75);
+  assert.ok(cover);
+  assert.equal(cover.name,'การเต้นประกอบเพลง Cover Dance Contest (ลูกเสือต้านภัยยาเสพติด)');
+  assert.equal(cover.level,'ป.1–ป.3');
+  const found=data.lookup(cover.id,cover.name,cover.level);
+  assert.equal(found.status,'matched');
+  assert.equal(found.document.key,'16');
+  assert.equal(found.document.fileId,'12ZunpZ9xRJTHAOfbuPUYPYKt-tY0HeMM');
+  assert.equal(data.lookup(75,cover.name,'ม.1–ม.3').status,'review');
+  assert.match(html,/<td data-label="ลำดับ">75<\/td>[\s\S]*?ตรวจเทียบเกณฑ์ครั้งที่ 74 แล้ว/);
 });
