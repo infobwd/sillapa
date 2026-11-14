@@ -329,6 +329,10 @@ const reviewedRows={
   "69": [
     "การประกวดการขับร้องเพลงไทยลูกทุ่ง (โรงเรียนเรียนรวม) — บกพร่องทางการเรียนรู้",
     "ป.1–ป.6"
+  ],
+  "75": [
+    "การเต้นประกอบเพลง Cover Dance Contest (ลูกเสือต้านภัยยาเสพติด)",
+    "ป.1–ป.3"
   ]
 };
 const matchedGroups={
@@ -421,7 +425,8 @@ const matchedGroups={
     56
   ],
   "16": [
-    57
+    57,
+    75
   ],
   "17": [
     60,
@@ -438,5 +443,5 @@ function lookup(id,name,level){
   const doc=documents[assignments[id]];
   return doc?{status:'matched',document:doc}:{status:'review',reason:'ยังไม่พบหมวดเอกสารที่ตรงกับกิจกรรมนี้'};
 }
-window.SILLAPA74_CRITERIA_SOURCES=Object.freeze({edition:'ครั้งที่ 74 ปีการศึกษา 2569',asOf:'2026-11-14',folderUrl,catalogUrl,documents,reviewedRows,exceptions,assignments,lookup});
+window.SILLAPA74_CRITERIA_SOURCES=Object.freeze({edition:'ครั้งที่ 74 ปีการศึกษา 2569',asOf:'2026-11-15',folderUrl,catalogUrl,documents,reviewedRows,exceptions,assignments,lookup});
 })();
