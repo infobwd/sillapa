@@ -91,7 +91,7 @@ test('criteria UI filters 74 matches and review cases with correct links',()=>{
   const document={createElement:element,getElementById:()=>list};
   const run=new Function('rows','input','status','results','count','document','window',
     snippet+'return {entries,render};');
-  const view=run([fakeRow(1,true),fakeRow(13,false),fakeRow(20,false)],
+  const view=run([fakeRow(1,true),fakeRow(70,false),fakeRow(71,false)],
     input,status,results,count,document,ctx);
   assert.equal(list.children.length,17);
   assert.equal(view.entries.length,3);
