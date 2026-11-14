@@ -36,6 +36,13 @@ test('grade discrepancy uses Word P4-P6 vs official P1-P6 and links official sou
 test('field-plan table stays distinct from a historical confirmation panel',()=>{
   const table=html.match(/<table class="venue-table">([\s\S]*?)<\/tbody><\/table>/)?.[1];
   assert.ok(table);
-  assert.equal((table.match(/<td data-label="ลำดับ">\d+<\/td>/g)||[]).length,66);
+  assert.equal((table.match(/<td data-label="ลำดับ">\d+<\/td>/g)||[]).length,67);
   assert.match(html,/\.ngk-confirmation-panel\[hidden\]\{display:none!important\}/);
+});
+
+test('pending inclusive-school disability type is explicitly reported without adding to 9 historical confirmations',()=>{
+  assert.match(panel,/เพิ่มเติม: โรงเรียนเรียนรวม \(รายการ #76\)/);
+  assert.match(panel,/ยังไม่ระบุประเภทความบกพร่อง/);
+  assert.match(panel,/ยังไม่ถือว่าแข่งขันรายการย่อยเดียวกัน/);
+  assert.match(html,/data-label="ลำดับ">76<\/td>/);
 });

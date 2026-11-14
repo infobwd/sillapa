@@ -27,13 +27,13 @@ test('source module preserves 17 direct Round-74 PDFs and confirmed folder/catal
   assert.equal(data.documents['16'].fileId,'12ZunpZ9xRJTHAOfbuPUYPYKt-tY0HeMM');
 });
 
-test('audited 66 current activity rows: 61 criteria links matched and 5 new rows pending verification',()=>{
-  assert.equal(rows.length,66);
+test('audited 67 preparation rows: 66 criteria links matched and one inclusive-school subtype pending',()=>{
+  assert.equal(rows.length,67);
   const status=rows.map(r=>({...r,...data.lookup(r.id,r.name,r.level)}));
-  assert.equal(status.filter(x=>x.status==='matched').length,61);
-  assert.equal(status.filter(x=>x.status==='review').length,5);
+  assert.equal(status.filter(x=>x.status==='matched').length,66);
+  assert.equal(status.filter(x=>x.status==='review').length,1);
   assert.deepEqual(status.filter(x=>x.status==='review').map(x=>x.id).sort((a,b)=>a-b),
-    [70,71,72,73,74]);
+    [76]);
   assert.equal(new Set(rows.map(r=>r.id)).size,rows.length);
 });
 
@@ -67,14 +67,14 @@ test('HTML loads source before rendering and keeps round-70 reference as seconda
 });
 
 function element(tag){
-  return {tag,className:'',dataset:{},textContent:'',children:[],append(...xs){this.children.push(...xs)},
+  return {tag,className:'',classList:{add(){}},dataset:{},textContent:'',children:[],append(...xs){this.children.push(...xs)},
     replaceChildren(...xs){this.children=[...xs]}};
 }
-function fakeRow(id,history){
+function fakeRow(id,history,overrideLevel){
   const r=rows.find(r=>r.id===id);
   return {
     querySelectorAll(){return [{textContent:String(id)},
-      {querySelector(){return {textContent:r.name}}}, {},{textContent:r.level}]},
+      {querySelector(){return {textContent:r.name}}}, {},{textContent:overrideLevel||r.level}]},
     querySelector(selector){
       if(selector!=='.criteria-slot')return null;
       return {querySelector(q){return q==='[data-criteria70-link]'&&history?{href:'https://example.org/70'}:null}};
@@ -91,7 +91,7 @@ test('criteria UI filters 74 matches and review cases with correct links',()=>{
   const document={createElement:element,getElementById:()=>list};
   const run=new Function('rows','input','status','results','count','document','window',
     snippet+'return {entries,render};');
-  const view=run([fakeRow(1,true),fakeRow(70,false),fakeRow(71,false)],
+  const view=run([fakeRow(1,true),fakeRow(76,false),fakeRow(70,false,'ป.1–ป.3')],
     input,status,results,count,document,ctx);
   assert.equal(list.children.length,17);
   assert.equal(view.entries.length,3);
@@ -111,7 +111,7 @@ test('criteria UI filters 74 matches and review cases with correct links',()=>{
   assert.match(results.children[0].textContent,/ไม่พบรายการตามชื่อ/);
 });
 
-test('all live table slots render 61 verified PDF74 links and 5 review notices for new school activities',()=>{
+test('all live table slots render 66 verified PDF74 links and one subtype-confirmation notice',()=>{
   const begin=html.indexOf("rows.forEach(row=>{\nconst cells=");
   const end=html.indexOf("const school=document.getElementById('audit-school')",begin);
   assert.ok(begin>0&&end>begin,'source-to-slot integration code exists');
@@ -132,10 +132,10 @@ test('all live table slots render 61 verified PDF74 links and 5 review notices f
   const window={SILLAPA74_CRITERIA_SOURCES:data,SILLAPA70_CATALOG:{source:'https://example.org/70',families:{}}};
   const document={createElement:element};
   new Function('rows','window','document',loop)(domRows,window,document);
-  assert.equal(slots.filter(x=>x.slot.dataset.criteria74Status==='matched').length,61);
-  assert.equal(slots.filter(x=>x.slot.dataset.criteria74Status==='review').length,5);
+  assert.equal(slots.filter(x=>x.slot.dataset.criteria74Status==='matched').length,66);
+  assert.equal(slots.filter(x=>x.slot.dataset.criteria74Status==='review').length,1);
   const links=slots.flatMap(x=>x.slot.children.filter(n=>n.dataset?.criteria74Link==='true'));
-  assert.equal(links.length,61);
+  assert.equal(links.length,66);
   for(const a of links){
     assert.ok(Object.values(data.documents).some(d=>d.url===a.href),'PDF URL must be in reviewed Drive folder');
     assert.equal(a.target,'_blank');
@@ -173,24 +173,33 @@ test('Nongkum male music items share the approved Round-74 PDF without publishin
 
 test('Inclusive-art PDF and category are correct; withdrawn Sao Hong garden rows are absent',()=>{
   const ids=new Set(rows.map(r=>r.id));
-  assert.equal(rows.length,66);
-  assert.equal(ids.size,66);
+  assert.equal(rows.length,67);
+  assert.equal(ids.size,67);
   assert.equal(ids.has(58),false);
   assert.equal(ids.has(59),false);
   assert.equal(html.includes('การแข่งขันจัดสวนถาดแบบแห้ง'),false);
   assert.equal(html.includes('การแข่งขันจัดสวนถาดแบบชื้น'),false);
   const inclusive=rows.find(r=>r.id===60);
-  assert.equal(inclusive.name,'การแข่งขันการวาดภาพระบายสี (โรงเรียนเรียนรวม)');
+  assert.equal(inclusive.name,'การแข่งขันการวาดภาพระบายสี (โรงเรียนเรียนรวม) — บกพร่องทางการเรียนรู้');
   assert.equal(inclusive.level,'ป.1–ป.6');
   assert.equal(data.lookup(60,inclusive.name,inclusive.level).document.key,'17');
   assert.equal(data.lookup(60,'วาดภาพระบายสี',inclusive.level).status,'review');
   assert.equal(data.lookup(58,'การแข่งขันจัดสวนถาดแบบแห้ง','ป.1–ป.6').status,'review');
-  assert.ok(html.includes("venueCategoryLookup.set(venueNameKey('การแข่งขันการวาดภาพระบายสี (โรงเรียนเรียนรวม)')"));
+  assert.ok(html.includes("venueCategoryLookup.set(venueNameKey('การแข่งขันการวาดภาพระบายสี (โรงเรียนเรียนรวม) — บกพร่องทางการเรียนรู้')"));
   assert.ok(html.includes("group:'โรงเรียนเรียนรวม',name:'กลุ่มศิลปะ'"));
   const start=html.indexOf('<tr><td data-label="ลำดับ">60</td>');
   const row=html.slice(start,html.indexOf('</tr>',start)+5);
-  assert.equal((row.match(/class="venue-school"/g)||[]).length,2);
-  assert.ok(row.includes('บ้านหนองกุ่ม') && row.includes('บ้านหนองกระทุ่ม'));
+  assert.equal((row.match(/class="venue-school"/g)||[]).length,1);
+  assert.ok(row.includes('บ้านหนองกุ่ม') && !row.includes('บ้านหนองกระทุ่ม'));
+  const held=rows.find(r=>r.id===76);
+  assert.equal(held.name,'การแข่งขันการวาดภาพระบายสี (โรงเรียนเรียนรวม) — ยังไม่ระบุประเภทความบกพร่อง');
+  assert.equal(held.level,'ป.1–ป.6');
+  assert.equal(data.lookup(held.id,held.name,held.level).status,'review');
+  assert.equal(data.lookup(held.id,held.name,held.level).candidate.key,'17');
+  const heldStart=html.indexOf('<tr><td data-label="ลำดับ">76</td>');
+  const heldRow=html.slice(heldStart,html.indexOf('</tr>',heldStart)+5);
+  assert.ok(heldRow.includes('บ้านหนองกระทุ่ม')&&!heldRow.includes('บ้านหนองกุ่ม'));
+  assert.equal((heldRow.match(/class="venue-school"/g)||[]).length,1);
   const music=rows.find(r=>r.id===68);
   assert.equal(data.lookup(68,music.name,music.level).document.key,'12');
 });
@@ -224,4 +233,28 @@ test('Cover Dance Contest P1-P3 is confirmed by the Round-74 learner-development
   assert.equal(found.document.fileId,'12ZunpZ9xRJTHAOfbuPUYPYKt-tY0HeMM');
   assert.equal(data.lookup(75,cover.name,'ม.1–ม.3').status,'review');
   assert.match(html,/<td data-label="ลำดับ">75<\/td>[\s\S]*?ตรวจเทียบเกณฑ์ครั้งที่ 74 แล้ว/);
+});
+
+test('Thai writing rows use the district PDF table title but keep original essay wording searchable',()=>{
+  for(const id of [7,8]){
+    const row=rows.find(r=>r.id===id);
+    assert.equal(row.name,'การเขียนเรื่องความ');
+    assert.equal(data.lookup(id,row.name,row.level).document.key,'1');
+    const start=html.indexOf('<tr><td data-label="ลำดับ">'+id+'</td>');
+    const markup=html.slice(start,html.indexOf('</tr>',start)+5);
+    assert.match(markup,/ชื่อเดิมที่โรงเรียนใช้: การเขียนเรียงความ/);
+  }
+});
+test('five formerly held Nongkrathum activities now resolve to approved Round-74 PDFs',()=>{
+  const pdfKeys={70:'2',71:'8',72:'10',73:'12',74:'12'};
+  for(const [id,key] of Object.entries(pdfKeys)){
+    const row=rows.find(r=>r.id===Number(id));
+    const found=data.lookup(row.id,row.name,row.level);
+    assert.equal(found.status,'matched');
+    assert.equal(found.document.key,key);
+    const start=html.indexOf('<tr><td data-label="ลำดับ">'+id+'</td>');
+    const markup=html.slice(start,html.indexOf('</tr>',start)+5);
+    assert.match(markup,/เทียบเกณฑ์แล้ว/);
+  }
+  assert.match(html,/เอกสารบ้านหนองกระทุ่มระบุ ป.4–6 · เกณฑ์ดนตรีแบ่งกลุ่ม ป.1–6/);
 });
