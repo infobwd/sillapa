@@ -43,6 +43,12 @@
 - อัปเดต `tests/ngk-criteria74-01.test.cjs`, `tests/ngk74-nongkrathum-word-20261114.test.cjs`, `tests/ngk74-nongkrathum-confirmation-20261115.test.cjs`
 - **ต้องทดสอบแยก:** Node unit tests, Browser Acceptance iPhone/Android/desktop, GitHub Pages propagation. ไม่ใช้ GitHub Actions และไม่อ้างว่า Deploy Production เสร็จจนกว่าจะตรวจจริง
 
-## สถานะ
-- GitHub PR/commit และผล merge ต้องเติมตามหลักฐานจริงหลังดำเนินการ
-- ยังรอบ้านหนองกระทุ่มระบุประเภทความบกพร่องรายการวาดภาพเรียนรวม และยืนยันระดับชั้นเดี่ยวฆ้องวงเล็ก
+## สถานะ GitHub ที่ยืนยันแล้ว
+- งาน: `NGK74-CRITERIA-NAME-INCLUSIVE-20261115`
+- Branch พัฒนา: `ngk74-criteria-names-inclusive-review-20261115`
+- PR #176: https://github.com/infobwd/sillapa/pull/176 — **Merged** ด้วยวิธี squash
+- Commit บน `main`: `c13f0ea35b3f1479c795a859f2bc9680b423b80b`
+- อ่าน `nongkum.html` และ `round74-criteria-sources.js` จาก `main` หลัง Merge แล้ว พบตาราง 67 แถว, จับคู่ PDF ได้ 66 แถว, และมี #76 รอประเภทความบกพร่อง 1 แถว
+- QA: ชุดทดสอบ Node-style จำลองภายใน JavaScript จากไฟล์ที่อ่านกลับ GitHub **21/21 ผ่าน**, ไม่ใช่ผลการรัน Node CLI จริง / Integration / Browser Acceptance
+- Deploy GitHub Pages: ยังไม่ยืนยันการเผยแพร่และแสดงผลบนอุปกรณ์จริง
+- ยังรอบ้านหนองกระทุ่มระบุประเภทความบกพร่องรายการวาดภาพเรียนรวม (#76) และยืนยันชั้นเดี่ยวฆ้องวงเล็ก (#73)
