@@ -127,7 +127,7 @@ const reviewedRows={
     "ป.4–ป.6"
   ],
   "13": [
-    "กาพย์ยานี 11 (4 บท)",
+    "กาพย์ยานี 11 (6 บท)",
     "ม.1–ม.3"
   ],
   "14": [
@@ -199,7 +199,7 @@ const reviewedRows={
     "ป.4–ป.6"
   ],
   "31": [
-    "การแข่่งขันการเล่านิทาน (story Telling)",
+    "การแข่งขันการเล่านิทาน (Story Telling)",
     "ป.4–ป.6"
   ],
   "32": [
@@ -207,11 +207,11 @@ const reviewedRows={
     "ป.1–ป.6"
   ],
   "33": [
-    "การสร้้างการ์ตูนด้วยโปรแกรมคอมพิวเตอร์กราฟิก",
+    "การสร้างการ์ตูนด้วยโปรแกรมคอมพิวเตอร์กราฟิก",
     "ป.1–ป.3"
   ],
   "34": [
-    "การสร้้้างการ์ตูนเรื่องสั้น (Comic Strip)",
+    "การสร้างการ์ตูนเรื่องสั้น (Comic Strip)",
     "ม.1–ม.3"
   ],
   "35": [
@@ -263,11 +263,11 @@ const reviewedRows={
     "ป.1–ป.6"
   ],
   "47": [
-    "เดี่ยวระนาดทุม",
+    "เดี่ยวระนาดทุ้ม",
     "ป.1–ป.6"
   ],
   "48": [
-    "เดี่ยวระนาดทุม",
+    "เดี่ยวระนาดทุ้ม",
     "ม.1–ม.3"
   ],
   "49": [
@@ -275,7 +275,7 @@ const reviewedRows={
     "ม.1–ม.3"
   ],
   "50": [
-    "เดี่ยวขลุยเพียงออ",
+    "เดี่ยวขลุ่ยเพียงออ",
     "ป.1–ป.6"
   ],
   "51": [
@@ -303,7 +303,7 @@ const reviewedRows={
     "ป.4–ป.6"
   ],
   "57": [
-    "การผูกเงื่อน เดินทรงตัวและโยน บอล",
+    "การผูกเงื่อน เดินทรงตัวและโยนบอล",
     "ป.1–ป.3"
   ],
   "60": [
@@ -427,12 +427,7 @@ const matchedGroups={
     69
   ]
 };
-const exceptions={
-  "13": {
-    "reason": "เว็บระบุ กาพย์ยานี 11 จำนวน 4 บท แต่ PDF ภาษาไทยครั้งที่ 74 ระบุ 6 บท สำหรับ ม.1–ม.3",
-    "candidate": "1"
-  },
-};
+const exceptions={};
 const assignments=Object.freeze(Object.fromEntries(Object.entries(matchedGroups).flatMap(([key,ids])=>ids.map(id=>[id,key]))));
 function lookup(id,name,level){
   const expected=reviewedRows[id];
@@ -442,5 +437,5 @@ function lookup(id,name,level){
   const doc=documents[assignments[id]];
   return doc?{status:'matched',document:doc}:{status:'review',reason:'ยังไม่พบหมวดเอกสารที่ตรงกับกิจกรรมนี้'};
 }
-window.SILLAPA74_CRITERIA_SOURCES=Object.freeze({edition:'ครั้งที่ 74 ปีการศึกษา 2569',asOf:'2026-11-13',folderUrl,catalogUrl,documents,reviewedRows,exceptions,assignments,lookup});
+window.SILLAPA74_CRITERIA_SOURCES=Object.freeze({edition:'ครั้งที่ 74 ปีการศึกษา 2569',asOf:'2026-11-14',folderUrl,catalogUrl,documents,reviewedRows,exceptions,assignments,lookup});
 })();
