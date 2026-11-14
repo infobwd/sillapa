@@ -67,7 +67,7 @@ test('HTML loads source before rendering and keeps round-70 reference as seconda
 });
 
 function element(tag){
-  return {tag,className:'',dataset:{},textContent:'',children:[],append(...xs){this.children.push(...xs)},
+  return {tag,className:'',classList:{add(){}},dataset:{},textContent:'',children:[],append(...xs){this.children.push(...xs)},
     replaceChildren(...xs){this.children=[...xs]}};
 }
 function fakeRow(id,history,overrideLevel){
