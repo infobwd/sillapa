@@ -27,13 +27,13 @@ test('source module preserves 17 direct Round-74 PDFs and confirmed folder/catal
   assert.equal(data.documents['16'].fileId,'12ZunpZ9xRJTHAOfbuPUYPYKt-tY0HeMM');
 });
 
-test('audited 63 current activity rows: 52 matched and 11 held for review after school correction',()=>{
-  assert.equal(rows.length,63);
+test('audited 66 current activity rows: 60 criteria links matched and 6 new rows pending verification',()=>{
+  assert.equal(rows.length,66);
   const status=rows.map(r=>({...r,...data.lookup(r.id,r.name,r.level)}));
-  assert.equal(status.filter(x=>x.status==='matched').length,52);
-  assert.equal(status.filter(x=>x.status==='review').length,11);
+  assert.equal(status.filter(x=>x.status==='matched').length,60);
+  assert.equal(status.filter(x=>x.status==='review').length,6);
   assert.deepEqual(status.filter(x=>x.status==='review').map(x=>x.id).sort((a,b)=>a-b),
-    [13,20,21,31,33,34,47,48,49,50,57]);
+    [70,71,72,73,74,75]);
   assert.equal(new Set(rows.map(r=>r.id)).size,rows.length);
 });
 
@@ -44,15 +44,15 @@ test('PDF link lookup blocks wrong grade, renamed activity and unknown row',()=>
   assert.equal(data.lookup(r.id,r.name+' (เปลี่ยนชื่อ)',r.level).status,'review');
   assert.equal(data.lookup(999,'กิจกรรมใหม่','ป.1–ป.3').status,'review');
   const math=rows.find(r=>r.id===20);
-  assert.equal(data.lookup(math.id,math.name,math.level).status,'review');
+  assert.equal(data.lookup(math.id,math.name,math.level).status,'matched');
   const poetry=rows.find(r=>r.id===13);
-  assert.equal(data.lookup(poetry.id,poetry.name,poetry.level).status,'review'); // Existing name snapshot lag in main.
+  assert.equal(data.lookup(poetry.id,poetry.name,poetry.level).status,'matched'); // Six stanzas verified against Round-74 Thai criteria.
   const restored=rows.find(r=>r.id===67);
   assert.equal(data.lookup(restored.id,restored.name,restored.level).document.key,'13');
 });
 
 test('HTML loads source before rendering and keeps round-70 reference as secondary',()=>{
-  const scriptTag='<script src="./round74-criteria-sources.js"></script>';
+  const scriptTag=html.match(/<script src="\.\/round74-criteria-sources\.js(?:\?[^\"]+)?"><\/script>/)?.[0];
   assert.ok(html.indexOf(scriptTag)>0);
   assert.ok(html.indexOf(scriptTag)<html.indexOf("rows.forEach(row=>{"));
   assert.match(html,/href="\.\/nongkum-criteria74\.css"/);
@@ -111,7 +111,7 @@ test('criteria UI filters 74 matches and review cases with correct links',()=>{
   assert.match(results.children[0].textContent,/ไม่พบรายการตามชื่อ/);
 });
 
-test('all live table slots render 52 correct PDF74 links and 11 caution notes (pre-existing drift remains separate)',()=>{
+test('all live table slots render 60 verified PDF74 links and 6 review notices for new school activities',()=>{
   const begin=html.indexOf("rows.forEach(row=>{\nconst cells=");
   const end=html.indexOf("const school=document.getElementById('audit-school')",begin);
   assert.ok(begin>0&&end>begin,'source-to-slot integration code exists');
@@ -132,10 +132,10 @@ test('all live table slots render 52 correct PDF74 links and 11 caution notes (p
   const window={SILLAPA74_CRITERIA_SOURCES:data,SILLAPA70_CATALOG:{source:'https://example.org/70',families:{}}};
   const document={createElement:element};
   new Function('rows','window','document',loop)(domRows,window,document);
-  assert.equal(slots.filter(x=>x.slot.dataset.criteria74Status==='matched').length,52);
-  assert.equal(slots.filter(x=>x.slot.dataset.criteria74Status==='review').length,11);
+  assert.equal(slots.filter(x=>x.slot.dataset.criteria74Status==='matched').length,60);
+  assert.equal(slots.filter(x=>x.slot.dataset.criteria74Status==='review').length,6);
   const links=slots.flatMap(x=>x.slot.children.filter(n=>n.dataset?.criteria74Link==='true'));
-  assert.equal(links.length,52);
+  assert.equal(links.length,60);
   for(const a of links){
     assert.ok(Object.values(data.documents).some(d=>d.url===a.href),'PDF URL must be in reviewed Drive folder');
     assert.equal(a.target,'_blank');
@@ -173,8 +173,8 @@ test('Nongkum male music items share the approved Round-74 PDF without publishin
 
 test('Inclusive-art PDF and category are correct; withdrawn Sao Hong garden rows are absent',()=>{
   const ids=new Set(rows.map(r=>r.id));
-  assert.equal(rows.length,63);
-  assert.equal(ids.size,63);
+  assert.equal(rows.length,66);
+  assert.equal(ids.size,66);
   assert.equal(ids.has(58),false);
   assert.equal(ids.has(59),false);
   assert.equal(html.includes('การแข่งขันจัดสวนถาดแบบแห้ง'),false);
@@ -199,7 +199,7 @@ test('NGK74 inclusive singing category preserves confirmed music and fixes the o
   const getRow=id=>html.match(new RegExp('<tr><td data-label="ลำดับ">'+id+'<\\/td>[\\s\\S]*?<\\/tr>'))?.[0];
   const female=getRow(51),male=getRow(52),special=getRow(69),classic=getRow(68);
   assert.ok(female&&male&&special&&classic);
-  assert.equal((female.match(/class="venue-school"/g)||[]).length,5);
+  assert.equal((female.match(/class="venue-school"/g)||[]).length,4);
   assert.ok(!female.includes('บ้านหนองกุ่ม'));
   assert.ok(male.includes('บ้านหนองกุ่ม')&&classic.includes('บ้านหนองกุ่ม'));
   assert.equal((special.match(/class="venue-school"/g)||[]).length,1);
