@@ -26,8 +26,8 @@ test('all eight historical entries are preserved for confirmation, not counted a
   assert.match(panel,/การขับร้องเพลงไทยลูกทุ่ง หญิงเดี่ยว/);
   assert.match(panel,/ไม่เพิ่มในยอดรายการที่ยืนยันแล้ว/);
 });
-test('grade discrepancy uses Word P4-P6 vs official P1-P6 and links official source',()=>{
-  assert.match(panel,/Word ของโรงเรียนลำดับ 22 เลือก <strong>ป\.4–ป\.6<\/strong>/);
+test('grade discrepancy uses school Word/PDF P4-P6 vs official P1-P6 and links official source',()=>{
+  assert.match(panel,/Word(?: และ PDF)? ของโรงเรียนลำดับ 22 เลือก <strong>ป\.4–ป\.6<\/strong>/);
   assert.match(panel,/เกณฑ์ดนตรีครั้งที่ 74 กำหนดกลุ่มแข่งขัน <strong>ป\.1–ป\.6<\/strong>/);
   assert.match(panel,/1l7PBOtmvSMPxbo8316dOFgssei92jhXh/);
   assert.match(panel,/1ESqis5f5BZlS96RutXdkIUhMgyrC9aL4/);
