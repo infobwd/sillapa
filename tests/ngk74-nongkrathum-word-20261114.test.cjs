@@ -59,7 +59,16 @@ test('Word source details expose activity and grade only, not student/teacher id
  assert.equal((detail.match(/<li>/g)||[]).length,29);
  for(const num of ['4','8','22','27','31'])assert.ok(detail.includes('ลำดับเอกสาร '+num+':'));
  assert.match(detail,/35 จุด/);
- assert.match(detail,/ลำดับ 27 ไม่มีเครื่องหมายระดับชั้น/);
+ assert.match(detail,/ลำดับ 27 ไม่มีเครื่องหมายระดับชั้นในต้นฉบับ/);
+ assert.match(detail,/ผู้ประสานงานยืนยัน 19 พ.ย. 2569 ให้ใช้หญิงเดี่ยว ม.1–3 แทนชายเดี่ยว/);
  assert.doesNotMatch(detail,/ด\.ญ\.|ด\.ช\.|นางสาว\s*[ก-ฮ]|นาย\s*[ก-ฮ]/);
  assert.match(html,/ไม่ใช่ระบบสมัครแข่งขัน บันทึกชื่อครูผู้ควบคุมทีมและนักเรียน หรือประกาศผลการแข่งขัน/);
+});
+test('2026-11-19 live school list uses female solo in music row #74 while old document stays attributed',()=>{
+ const music=rows.find(r=>r.id===74);
+ assert.equal(music.activity,'การขับร้องเพลงไทยลูกกรุง หญิงเดี่ยว');
+ assert.equal(music.level,'ม.1–ม.3');
+ assert.deepEqual(music.schools,[schoolName]);
+ assert.equal(official.lookup(74,music.activity,music.level).status,'matched');
+ assert.equal(official.lookup(74,'การขับร้องเพลงไทยลูกกรุง ชายเดี่ยว','ม.1–ม.3').status,'review');
 });
