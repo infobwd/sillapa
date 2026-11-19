@@ -26,3 +26,16 @@ test('public school view shows current provenance instead of stale hold warning'
   assert.match(html, /ยังต้องให้โรงเรียนตรวจทานประเภทย่อย/);
   assert.match(html, /rangkham\.hidden=select\.value!==/);
 });
+
+test('summary totals reflect current eight-school and 67-activity register', () => {
+  const activityRows = rows.filter(row => row.includes('data-label="ลำดับ">') && row.includes('class="venue-school"'));
+  const members = row => [...row.matchAll(/<span class="venue-school">([^<]+)<\\/span>/g)].map(m => m[1]);
+  const uniqueSchools = new Set(activityRows.flatMap(members));
+  const shared = activityRows.filter(row => members(row).length >= 2);
+  assert.equal(activityRows.length, 67);
+  assert.equal(uniqueSchools.size, 8);
+  assert.equal(shared.length, 32);
+  assert.match(html, /<b>8<\\/b><span>โรงเรียนที่แจ้ง<\\/span>/);
+  assert.match(html, /<b>32<\\/b><span>รายการพบ 2 โรงเรียนขึ้นไป<\\/span>/);
+  assert.match(html, /<b>67<\\/b><span>รายการแยกกิจกรรมและระดับ<\\/span>/);
+});
