@@ -351,7 +351,7 @@ const reviewedRows={
     "ป.1–ป.6"
   ],
   "74": [
-    "การขับร้องเพลงไทยลูกกรุง ชายเดี่ยว",
+    "การขับร้องเพลงไทยลูกกรุง หญิงเดี่ยว",
     "ม.1–ม.3"
   ],
   "76": [
@@ -474,5 +474,5 @@ function lookup(id,name,level){
   const doc=documents[assignments[id]];
   return doc?{status:'matched',document:doc}:{status:'review',reason:'ยังไม่พบหมวดเอกสารที่ตรงกับกิจกรรมนี้'};
 }
-window.SILLAPA74_CRITERIA_SOURCES=Object.freeze({edition:'ครั้งที่ 74 ปีการศึกษา 2569',asOf:'2026-11-15',folderUrl,catalogUrl,documents,reviewedRows,exceptions,assignments,lookup});
+window.SILLAPA74_CRITERIA_SOURCES=Object.freeze({edition:'ครั้งที่ 74 ปีการศึกษา 2569',asOf:'2026-11-19',folderUrl,catalogUrl,documents,reviewedRows,exceptions,assignments,lookup});
 })();
