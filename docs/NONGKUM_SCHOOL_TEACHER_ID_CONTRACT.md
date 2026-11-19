@@ -29,4 +29,12 @@
 1. Have each school confirm current personnel status and exact name (including possible duplicates) in its restricted sheet.
 2. Only after review, allow verified status and later judge-readiness assessments.
 3. Before publishing, check public repository diffs contain only already-public judge names (nine historical profiles), public school codes/names, and ID references; never the entire private roster.
-4. Regression checks: IDs unique in central register; 74 total IDs and 74 matching rows across the 8 school files; every school ID belongs to the allowed 8; old historical source associations are preserved.
+4. Regression checks must distinguish the **74-person historical 73rd-competition baseline** from the **116-person current operational Google Sheets register** (74 historical + 42 additional October 2569 entries); verify current IDs are unique across eight schools, all school codes are valid, and original historical associations remain unchanged.
+
+## Operational addendum — 4 November 2026
+
+The new 2-tab school review workbooks (**สรุป**, **รายชื่อครู**) are documented in [NG74_TEACHER_VERIFICATION_SIMPLE_2_SHEET_CONTRACT.md](NG74_TEACHER_VERIFICATION_SIMPLE_2_SHEET_CONTRACT.md). School-side fields are limited to name verification/correction, current school status, major, subjects taught, and optional note; permanent IDs and provenance are hidden helper fields. Newly added names have **no permanent ID until central identity reconciliation**.
+
+The 42 October 2569 entries receive an **assumed-current / pending-school-confirmation** default based on owner-provided welfare context. The historical 74 remain unconfirmed for current placement. No spreadsheet state is equivalent to a 74th-competition judging appointment, and no private roster may be published to the GitHub Pages site.
+
+The new files were checked owner-only. The original school files and central workbook require a separate access-permissions remediation because their previous anyone-with-link writer access was not changed by this document update.
