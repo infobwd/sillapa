@@ -46,4 +46,7 @@
 
 ## สถานะการทดสอบ
 
-ยังไม่รับรองผลทดสอบจนกว่าจะตรวจสอบ source หลังบันทึกและเช็ก PR/commit จริง; Node CLI และ Browser Acceptance ต้องรันแยก ไม่มี GitHub Actions
+- **Source read-back / regression (ผ่าน)**: อ่านไฟล์กลับจาก GitHub Branch แล้วตรวจโครงสร้าง 13 เงื่อนไข ได้แก่ 67 แถว / ID ไม่ซ้ำ / 35 แถวบ้านหนองกระทุ่ม / ยอดรายแถวตรง / รายการตัด 8 ข้อไม่มีชื่อโรงเรียน / #74 หญิงเดี่ยว / #68 ชายเดี่ยวคงเดิม / mapping / panel / เอกสารอ้างอิง / cache-busting
+- **Runtime V8 lookup (ผ่าน)**: เรียกใช้ `round74-criteria-sources.js` ใน JavaScript isolate โดยใช้ `lookup` กับทุกแถว พบ matched **66/67**, pending **#76 เพียงแถวเดียว**; #74 หญิงเดี่ยว matched หมวด 12 และ #74 ชายเดี่ยวถูกปฏิเสธ; #68 ชายเดี่ยวยังคง matched
+- **JavaScript syntax check (ผ่าน)**: ตรวจว่าไฟล์ทดสอบ `.cjs` ทั้งสองไฟล์คอมไพล์เป็น JavaScript ได้ใน V8 แต่ **ไม่ใช่การรัน Node test suite**
+- **ยังไม่ได้ทดสอบ**: Node CLI unit runner, Integration Test แบบ Browser, iPhone/Android/Desktop และ Pages หลัง merge — ต้องรายงานแยก ไม่ใช้ GitHub Actions
