@@ -4,45 +4,49 @@ const path=require('node:path');
 const test=require('node:test');
 const assert=require('node:assert/strict');
 const html=fs.readFileSync(path.join(__dirname,'..','nongkum.html'),'utf8');
-const originalIds=[7,8,9,11,14,41,49,51];
 const panel=html.match(/<section class="ngk-confirmation-panel" id="ngk74-nongkrathum-confirmation" hidden[\s\S]*?<\/section>/)?.[0];
-test('Nongkrathum confirmation audit is hidden until its school is selected',()=>{
-  assert.ok(panel,'pending review panel must exist');
-  assert.match(html,/select\.value!=='บ้านหนองกระทุ่ม'/);
-  assert.match(html,/select\.addEventListener\('change',showReviewForSchool\)/);
-  assert.match(panel,/รายการรอโรงเรียนยืนยัน/);
-  assert.match(panel,/9 ประเด็นรอยืนยัน/);
-  assert.match(panel,/ยังไม่ถือว่าโรงเรียนถอนแข่งขัน/);
+const removedIds=[7,8,9,11,14,41,49,51];
+const table=html.match(/<table class="venue-table">([\s\S]*?)<\/tbody><\/table>/)?.[1];
+const rows=[...table.matchAll(/<tr><td data-label="ลำดับ">(\d+)<\/td>[\s\S]*?<\/tr>/g)].map(m=>({
+ id:Number(m[1]),markup:m[0],schools:[...m[0].matchAll(/<span class="venue-school">([^<]+)<\/span>/g)].map(x=>x[1])
+}));
+test('Nongkrathum remaining issues panel stays hidden until its school is selected',()=>{
+ assert.ok(panel);
+ assert.match(html,/select\.value!=='บ้านหนองกระทุ่ม'/);
+ assert.match(html,/select\.addEventListener\('change',showReviewForSchool\)/);
+ assert.match(panel,/2 ประเด็นรอตรวจ/);
+ assert.match(panel,/ตัดออกจากบัญชีรายการของโรงเรียนแล้ว/);
+ assert.doesNotMatch(panel,/data-original-activity-id=/);
 });
-test('all eight historical entries are preserved for confirmation, not counted as entered teams',()=>{
-  const ids=[...panel.matchAll(/data-original-activity-id="(\d+)"/g)].map(m=>Number(m[1]));
-  assert.deepEqual(ids,originalIds);
-  assert.equal((panel.match(/รอโรงเรียนยืนยัน<\/strong>/g)||[]).length,8);
-  assert.match(panel,/เดี่ยวฆ้องวงเล็ก[\s\S]*?ม\.1–ม\.3/);
-  assert.match(panel,/การเขียนเรียงความ/);
-  assert.match(panel,/ท่องอาขยานทำนองเสนาะ/);
-  assert.match(panel,/ต่อคำศัพท์ภาษาไทย/);
-  assert.match(panel,/วาดภาพระบายสี/);
-  assert.match(panel,/การขับร้องเพลงไทยลูกทุ่ง หญิงเดี่ยว/);
-  assert.match(panel,/ไม่เพิ่มในยอดรายการที่ยืนยันแล้ว/);
+test('eight historically unlisted activities are not in current Nongkrathum entries',()=>{
+ assert.equal(rows.length,67);
+ for(const id of removedIds){
+   const row=rows.find(x=>x.id===id);
+   if(row)assert.ok(!row.schools.includes('บ้านหนองกระทุ่ม'),'school still entered in excluded '+id);
+ }
+ assert.equal(rows.filter(x=>x.schools.includes('บ้านหนองกระทุ่ม')).length,35);
+ assert.match(panel,/ไม่กระทบโรงเรียนอื่น/);
 });
-test('grade discrepancy uses school Word/PDF P4-P6 vs official P1-P6 and links official source',()=>{
-  assert.match(panel,/Word(?: และ PDF)? ของโรงเรียนลำดับ 22 เลือก <strong>ป\.4–ป\.6<\/strong>/);
-  assert.match(panel,/เกณฑ์ดนตรีครั้งที่ 74 กำหนดกลุ่มแข่งขัน <strong>ป\.1–ป\.6<\/strong>/);
-  assert.match(panel,/1l7PBOtmvSMPxbo8316dOFgssei92jhXh/);
-  assert.match(panel,/1ESqis5f5BZlS96RutXdkIUhMgyrC9aL4/);
-  assert.doesNotMatch(panel,/ด\.ช\.|ด\.ญ\.|นาย\s*[ก-ฮ]|นางสาว\s*[ก-ฮ]/);
+test('grade discrepancy and inclusive activity subtype remain separately pending',()=>{
+ assert.match(panel,/Word และ PDF ของโรงเรียนลำดับ 22 เลือก <strong>ป\.4–ป\.6<\/strong>/);
+ assert.match(panel,/เกณฑ์ดนตรีครั้งที่ 74 กำหนดกลุ่มแข่งขัน <strong>ป\.1–ป\.6<\/strong>/);
+ assert.match(panel,/1l7PBOtmvSMPxbo8316dOFgssei92jhXh/);
+ assert.match(panel,/รายการ #76/);
+ assert.match(panel,/ยังไม่ระบุประเภทความบกพร่อง/);
+ assert.match(panel,/1ESqis5f5BZlS96RutXdkIUhMgyrC9aL4/);
+ assert.match(html,/data-label="ลำดับ">76<\/td>/);
 });
-test('field-plan table stays distinct from a historical confirmation panel',()=>{
-  const table=html.match(/<table class="venue-table">([\s\S]*?)<\/tbody><\/table>/)?.[1];
-  assert.ok(table);
-  assert.equal((table.match(/<td data-label="ลำดับ">\d+<\/td>/g)||[]).length,67);
-  assert.match(html,/\.ngk-confirmation-panel\[hidden\]\{display:none!important\}/);
+test('Thai luk krung correction is female solo in M1-M3 only for Nongkrathum',()=>{
+ const row=rows.find(x=>x.id===74);
+ assert.ok(row);
+ assert.match(row.markup,/ขับร้องเพลงไทยลูกกรุง หญิงเดี่ยว/);
+ assert.match(row.markup,/ระดับชั้น">ม\.1–ม\.3/);
+ assert.deepEqual(row.schools,['บ้านหนองกระทุ่ม']);
+ assert.match(panel,/หญิงเดี่ยว ม\.1–ม\.3/);
+ const maleElsewhere=rows.find(x=>x.id===68);
+ assert.ok(maleElsewhere.markup.includes('การขับร้องเพลงไทยลูกกรุง ชายเดี่ยว'));
 });
-
-test('pending inclusive-school disability type is explicitly reported without adding to 9 historical confirmations',()=>{
-  assert.match(panel,/เพิ่มเติม: โรงเรียนเรียนรวม \(รายการ #76\)/);
-  assert.match(panel,/ยังไม่ระบุประเภทความบกพร่อง/);
-  assert.match(panel,/ยังไม่ถือว่าแข่งขันรายการย่อยเดียวกัน/);
-  assert.match(html,/data-label="ลำดับ">76<\/td>/);
+test('no personal names in public status panel',()=>{
+ assert.doesNotMatch(panel,/ด\.ช\.|ด\.ญ\.|นาย\s*[ก-ฮ]|นางสาว\s*[ก-ฮ]/);
+ assert.match(html,/\.ngk-confirmation-panel\[hidden\]\{display:none!important\}/);
 });
