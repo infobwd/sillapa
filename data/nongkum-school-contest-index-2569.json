@@ -1,0 +1,1519 @@
+{
+  "schema_version": "1.0",
+  "dataset": "sillapa74_nongkum_competition_by_school_public_index",
+  "school_year": 2569,
+  "edition": 74,
+  "as_of": "2026-11-20",
+  "status": "PREPARATION_ONLY_NOT_REGISTRATION",
+  "source": {
+    "repository": "infobwd/sillapa",
+    "branch": "main",
+    "commit": "9e20277e9928c762b8e343d7dd5398e3e4f9c6e6",
+    "file": "nongkum.html"
+  },
+  "privacy": {
+    "student_names_in_public_repo": false,
+    "teacher_coach_names_in_public_repo": false,
+    "reason": "รายชื่อนักเรียนเป็นข้อมูลส่วนบุคคลของผู้เยาว์; รายชื่อผู้ฝึกซ้อมต้องยืนยันตามเอกสารโรงเรียน",
+    "private_record_note": "ไฟล์ JSON ที่มีชื่อบุคคลเก็บแยกใน Google Drive แบบจำกัดสิทธิ์ ไม่คัดลอกเข้าประวัติ Git สาธารณะ"
+  },
+  "summary": {
+    "school_count": 8,
+    "canonical_competition_count": 64,
+    "raw_source_row_count": 67,
+    "multi_school_competition_count": 34,
+    "single_school_competition_count": 30,
+    "school_competition_records": 156,
+    "merged_source_pairs": [
+      [
+        3,
+        61
+      ],
+      [
+        31,
+        65
+      ],
+      [
+        55,
+        74
+      ]
+    ]
+  },
+  "schools": [
+    {
+      "school_id": "NGK01",
+      "school": "วัดทุ่งมะสัง (มิตรภาพที่ 9)",
+      "competition_count": 30,
+      "competitions": [
+        {
+          "contest_id": 1,
+          "activity": "การปั้นดินน้ำมัน",
+          "level": "ปฐมวัย",
+          "source_row_ids": [
+            1
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 2,
+          "activity": "การสร้างภาพด้วยการฉีก ตัด ปะ กระดาษ",
+          "level": "ปฐมวัย",
+          "source_row_ids": [
+            2
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 3,
+          "activity": "คัดลายมือสื่อภาษาไทย",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            3,
+            61
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 4,
+          "activity": "คัดลายมือสื่อภาษาไทย",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            4
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 5,
+          "activity": "คัดลายมือสื่อภาษาไทย",
+          "level": "ม.1–ม.3",
+          "source_row_ids": [
+            5
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 6,
+          "activity": "การเขียนเรื่องจากภาพ",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            6
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 8,
+          "activity": "การเขียนเรื่องความ",
+          "level": "ม.1–ม.3",
+          "source_row_ids": [
+            8
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 17,
+          "activity": "คิดเลขเร็ว",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            17
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 18,
+          "activity": "คิดเลขเร็ว",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            18
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 19,
+          "activity": "คิดเลขเร็ว",
+          "level": "ม.1–ม.3",
+          "source_row_ids": [
+            19
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 21,
+          "activity": "ซูโดกุ",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            21
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 22,
+          "activity": "ซูโดกุ",
+          "level": "ม.1–ม.3",
+          "source_row_ids": [
+            22
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 23,
+          "activity": "การแข่งขันอัจฉริยภาพทางวิทยาศาสตร์",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            23
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 24,
+          "activity": "การแข่งขันอัจฉริยภาพทางวิทยาศาสตร์",
+          "level": "ม.1–ม.3",
+          "source_row_ids": [
+            24
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 30,
+          "activity": "การแข่งขันพูดภาษาอังกฤษ (Impromptu Speech)",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            30
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 31,
+          "activity": "การแข่งขันการเล่านิทาน (Story Telling)",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            31,
+            65
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 33,
+          "activity": "การสร้างการ์ตูนด้วยโปรแกรมคอมพิวเตอร์กราฟิก",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            33
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 36,
+          "activity": "แอโรบิก",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            36
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 39,
+          "activity": "วาดภาพระบายสี",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            39
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 40,
+          "activity": "วาดภาพระบายสี",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            40
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 41,
+          "activity": "วาดภาพระบายสี",
+          "level": "ม.1–ม.3",
+          "source_row_ids": [
+            41
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 42,
+          "activity": "เขียนภาพไทยประเพณี",
+          "level": "ม.1–ม.3",
+          "source_row_ids": [
+            42
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 43,
+          "activity": "วาดเส้น (DRAWING)",
+          "level": "ม.1–ม.3",
+          "source_row_ids": [
+            43
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 46,
+          "activity": "เดี่ยวระนาดเอก",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            46
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 47,
+          "activity": "เดี่ยวระนาดทุ้ม",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            47
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 48,
+          "activity": "เดี่ยวระนาดทุ้ม",
+          "level": "ม.1–ม.3",
+          "source_row_ids": [
+            48
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 51,
+          "activity": "การขับร้องเพลงไทยลูกทุ่ง หญิงเดี่ยว",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            51
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 54,
+          "activity": "การขับร้องเพลงไทยลูกกรุง หญิงเดี่ยว",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            54
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 55,
+          "activity": "การขับร้องเพลงไทยลูกกรุง หญิงเดี่ยว",
+          "level": "ม.1–ม.3",
+          "source_row_ids": [
+            55,
+            74
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 57,
+          "activity": "การผูกเงื่อน เดินทรงตัวและโยนบอล",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            57
+          ],
+          "multi_school": true
+        }
+      ]
+    },
+    {
+      "school_id": "NGK02",
+      "school": "บ้านหนองกุ่ม",
+      "competition_count": 17,
+      "competitions": [
+        {
+          "contest_id": 2,
+          "activity": "การสร้างภาพด้วยการฉีก ตัด ปะ กระดาษ",
+          "level": "ปฐมวัย",
+          "source_row_ids": [
+            2
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 3,
+          "activity": "คัดลายมือสื่อภาษาไทย",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            3,
+            61
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 4,
+          "activity": "คัดลายมือสื่อภาษาไทย",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            4
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 6,
+          "activity": "การเขียนเรื่องจากภาพ",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            6
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 10,
+          "activity": "ท่องอาขยานทำนองเสนาะ",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            10
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 17,
+          "activity": "คิดเลขเร็ว",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            17
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 18,
+          "activity": "คิดเลขเร็ว",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            18
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 25,
+          "activity": "เพลงคุณธรรม",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            25
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 28,
+          "activity": "มารยาทไทย",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            28
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 29,
+          "activity": "มารยาทไทย",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            29
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 31,
+          "activity": "การแข่งขันการเล่านิทาน (Story Telling)",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            31,
+            65
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 32,
+          "activity": "การประกวดภาพยนตร์สั้น",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            32
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 52,
+          "activity": "การขับร้องเพลงไทยลูกทุ่ง ชายเดี่ยว",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            52
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 68,
+          "activity": "การขับร้องเพลงไทยลูกกรุง ชายเดี่ยว",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            68
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 69,
+          "activity": "การประกวดการขับร้องเพลงไทยลูกทุ่ง (โรงเรียนเรียนรวม) — บกพร่องทางการเรียนรู้",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            69
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 56,
+          "activity": "เครื่องร่อน ประเภทร่อนนาน ปล่อยด้วยมือ",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            56
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 60,
+          "activity": "การแข่งขันการวาดภาพระบายสี (โรงเรียนเรียนรวม) — บกพร่องทางการเรียนรู้",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            60
+          ],
+          "multi_school": false
+        }
+      ]
+    },
+    {
+      "school_id": "NGK03",
+      "school": "บ้านหนองกระทุ่ม",
+      "competition_count": 35,
+      "competitions": [
+        {
+          "contest_id": 1,
+          "activity": "การปั้นดินน้ำมัน",
+          "level": "ปฐมวัย",
+          "source_row_ids": [
+            1
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 2,
+          "activity": "การสร้างภาพด้วยการฉีก ตัด ปะ กระดาษ",
+          "level": "ปฐมวัย",
+          "source_row_ids": [
+            2
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 3,
+          "activity": "คัดลายมือสื่อภาษาไทย",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            3,
+            61
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 4,
+          "activity": "คัดลายมือสื่อภาษาไทย",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            4
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 5,
+          "activity": "คัดลายมือสื่อภาษาไทย",
+          "level": "ม.1–ม.3",
+          "source_row_ids": [
+            5
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 6,
+          "activity": "การเขียนเรื่องจากภาพ",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            6
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 13,
+          "activity": "กาพย์ยานี 11 (6 บท)",
+          "level": "ม.1–ม.3",
+          "source_row_ids": [
+            13
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 15,
+          "activity": "การแข่งขันอัจฉริยภาพทางคณิตศาสตร์",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            15
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 16,
+          "activity": "การแข่งขันอัจฉริยภาพทางคณิตศาสตร์",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            16
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 70,
+          "activity": "การแข่งขันอัจฉริยภาพทางคณิตศาสตร์",
+          "level": "ม.1–ม.3",
+          "source_row_ids": [
+            70
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 17,
+          "activity": "คิดเลขเร็ว",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            17
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 18,
+          "activity": "คิดเลขเร็ว",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            18
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 21,
+          "activity": "ซูโดกุ",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            21
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 23,
+          "activity": "การแข่งขันอัจฉริยภาพทางวิทยาศาสตร์",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            23
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 26,
+          "activity": "เล่านิทานคุณธรรม",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            26
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 28,
+          "activity": "มารยาทไทย",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            28
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 29,
+          "activity": "มารยาทไทย",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            29
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 30,
+          "activity": "การแข่งขันพูดภาษาอังกฤษ (Impromptu Speech)",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            30
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 31,
+          "activity": "การแข่งขันการเล่านิทาน (Story Telling)",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            31,
+            65
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 33,
+          "activity": "การสร้างการ์ตูนด้วยโปรแกรมคอมพิวเตอร์กราฟิก",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            33
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 34,
+          "activity": "การสร้างการ์ตูนเรื่องสั้น (Comic Strip)",
+          "level": "ม.1–ม.3",
+          "source_row_ids": [
+            34
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 71,
+          "activity": "การประกวดแปรรูปอาหาร",
+          "level": "ม.1–ม.3",
+          "source_row_ids": [
+            71
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 37,
+          "activity": "ตอบปัญหาสุขศึกษาและพลศึกษา",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            37
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 38,
+          "activity": "ตอบปัญหาสุขศึกษาและพลศึกษา",
+          "level": "ม.1–ม.3",
+          "source_row_ids": [
+            38
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 43,
+          "activity": "วาดเส้น (DRAWING)",
+          "level": "ม.1–ม.3",
+          "source_row_ids": [
+            43
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 72,
+          "activity": "การออกแบบร่าง (Sketch Design)",
+          "level": "ม.1–ม.3",
+          "source_row_ids": [
+            72
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 47,
+          "activity": "เดี่ยวระนาดทุ้ม",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            47
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 50,
+          "activity": "เดี่ยวขลุ่ยเพียงออ",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            50
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 73,
+          "activity": "เดี่ยวฆ้องวงเล็ก",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            73
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 52,
+          "activity": "การขับร้องเพลงไทยลูกทุ่ง ชายเดี่ยว",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            52
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 53,
+          "activity": "การขับร้องเพลงไทยลูกทุ่ง หญิงเดี่ยว",
+          "level": "ม.1–ม.3",
+          "source_row_ids": [
+            53
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 55,
+          "activity": "การขับร้องเพลงไทยลูกกรุง หญิงเดี่ยว",
+          "level": "ม.1–ม.3",
+          "source_row_ids": [
+            55,
+            74
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 57,
+          "activity": "การผูกเงื่อน เดินทรงตัวและโยนบอล",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            57
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 75,
+          "activity": "การเต้นประกอบเพลง Cover Dance Contest (ลูกเสือต้านภัยยาเสพติด)",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            75
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 76,
+          "activity": "การแข่งขันการวาดภาพระบายสี (โรงเรียนเรียนรวม) — ยังไม่ระบุประเภทความบกพร่อง",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            76
+          ],
+          "multi_school": false
+        }
+      ]
+    },
+    {
+      "school_id": "NGK04",
+      "school": "บ้านพุพรหม",
+      "competition_count": 17,
+      "competitions": [
+        {
+          "contest_id": 1,
+          "activity": "การปั้นดินน้ำมัน",
+          "level": "ปฐมวัย",
+          "source_row_ids": [
+            1
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 2,
+          "activity": "การสร้างภาพด้วยการฉีก ตัด ปะ กระดาษ",
+          "level": "ปฐมวัย",
+          "source_row_ids": [
+            2
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 3,
+          "activity": "คัดลายมือสื่อภาษาไทย",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            3,
+            61
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 6,
+          "activity": "การเขียนเรื่องจากภาพ",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            6
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 10,
+          "activity": "ท่องอาขยานทำนองเสนาะ",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            10
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 12,
+          "activity": "กลอนสี่ (4 บท)",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            12
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 14,
+          "activity": "ต่อคำศัพท์ภาษาไทย (คำคมเดิม)",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            14
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 17,
+          "activity": "คิดเลขเร็ว",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            17
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 20,
+          "activity": "ต่อสมการคณิตศาสตร์ (เอแม็ท)",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            20
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 23,
+          "activity": "การแข่งขันอัจฉริยภาพทางวิทยาศาสตร์",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            23
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 29,
+          "activity": "มารยาทไทย",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            29
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 31,
+          "activity": "การแข่งขันการเล่านิทาน (Story Telling)",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            31,
+            65
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 32,
+          "activity": "การประกวดภาพยนตร์สั้น",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            32
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 35,
+          "activity": "การประกวดโครงงานอาชีพ",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            35
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 39,
+          "activity": "วาดภาพระบายสี",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            39
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 40,
+          "activity": "วาดภาพระบายสี",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            40
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 51,
+          "activity": "การขับร้องเพลงไทยลูกทุ่ง หญิงเดี่ยว",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            51
+          ],
+          "multi_school": true
+        }
+      ]
+    },
+    {
+      "school_id": "NGK05",
+      "school": "บ้านเสาหงส์",
+      "competition_count": 24,
+      "competitions": [
+        {
+          "contest_id": 1,
+          "activity": "การปั้นดินน้ำมัน",
+          "level": "ปฐมวัย",
+          "source_row_ids": [
+            1
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 2,
+          "activity": "การสร้างภาพด้วยการฉีก ตัด ปะ กระดาษ",
+          "level": "ปฐมวัย",
+          "source_row_ids": [
+            2
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 3,
+          "activity": "คัดลายมือสื่อภาษาไทย",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            3,
+            61
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 4,
+          "activity": "คัดลายมือสื่อภาษาไทย",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            4
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 6,
+          "activity": "การเขียนเรื่องจากภาพ",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            6
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 10,
+          "activity": "ท่องอาขยานทำนองเสนาะ",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            10
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 12,
+          "activity": "กลอนสี่ (4 บท)",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            12
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 15,
+          "activity": "การแข่งขันอัจฉริยภาพทางคณิตศาสตร์",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            15
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 16,
+          "activity": "การแข่งขันอัจฉริยภาพทางคณิตศาสตร์",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            16
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 17,
+          "activity": "คิดเลขเร็ว",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            17
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 18,
+          "activity": "คิดเลขเร็ว",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            18
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 20,
+          "activity": "ต่อสมการคณิตศาสตร์ (เอแม็ท)",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            20
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 21,
+          "activity": "ซูโดกุ",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            21
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 23,
+          "activity": "การแข่งขันอัจฉริยภาพทางวิทยาศาสตร์",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            23
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 26,
+          "activity": "เล่านิทานคุณธรรม",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            26
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 27,
+          "activity": "เล่านิทานคุณธรรม",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            27
+          ],
+          "multi_school": false
+        },
+        {
+          "contest_id": 28,
+          "activity": "มารยาทไทย",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            28
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 29,
+          "activity": "มารยาทไทย",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            29
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 37,
+          "activity": "ตอบปัญหาสุขศึกษาและพลศึกษา",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            37
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 39,
+          "activity": "วาดภาพระบายสี",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            39
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 40,
+          "activity": "วาดภาพระบายสี",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            40
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 44,
+          "activity": "ประติมากรรม",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            44
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 51,
+          "activity": "การขับร้องเพลงไทยลูกทุ่ง หญิงเดี่ยว",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            51
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 52,
+          "activity": "การขับร้องเพลงไทยลูกทุ่ง ชายเดี่ยว",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            52
+          ],
+          "multi_school": true
+        }
+      ]
+    },
+    {
+      "school_id": "NGK06",
+      "school": "บ้านรางขาม",
+      "competition_count": 9,
+      "competitions": [
+        {
+          "contest_id": 1,
+          "activity": "การปั้นดินน้ำมัน",
+          "level": "ปฐมวัย",
+          "source_row_ids": [
+            1
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 2,
+          "activity": "การสร้างภาพด้วยการฉีก ตัด ปะ กระดาษ",
+          "level": "ปฐมวัย",
+          "source_row_ids": [
+            2
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 3,
+          "activity": "คัดลายมือสื่อภาษาไทย",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            3,
+            61
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 18,
+          "activity": "คิดเลขเร็ว",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            18
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 21,
+          "activity": "ซูโดกุ",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            21
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 23,
+          "activity": "การแข่งขันอัจฉริยภาพทางวิทยาศาสตร์",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            23
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 39,
+          "activity": "วาดภาพระบายสี",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            39
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 51,
+          "activity": "การขับร้องเพลงไทยลูกทุ่ง หญิงเดี่ยว",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            51
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 56,
+          "activity": "เครื่องร่อน ประเภทร่อนนาน ปล่อยด้วยมือ",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            56
+          ],
+          "multi_school": true
+        }
+      ]
+    },
+    {
+      "school_id": "NGK07",
+      "school": "วังเขาแก้ว (หงำอุปถัมภ์)",
+      "competition_count": 11,
+      "competitions": [
+        {
+          "contest_id": 1,
+          "activity": "การปั้นดินน้ำมัน",
+          "level": "ปฐมวัย",
+          "source_row_ids": [
+            1
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 2,
+          "activity": "การสร้างภาพด้วยการฉีก ตัด ปะ กระดาษ",
+          "level": "ปฐมวัย",
+          "source_row_ids": [
+            2
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 3,
+          "activity": "คัดลายมือสื่อภาษาไทย",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            3,
+            61
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 4,
+          "activity": "คัดลายมือสื่อภาษาไทย",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            4
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 6,
+          "activity": "การเขียนเรื่องจากภาพ",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            6
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 7,
+          "activity": "การเขียนเรื่องความ",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            7
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 37,
+          "activity": "ตอบปัญหาสุขศึกษาและพลศึกษา",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            37
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 39,
+          "activity": "วาดภาพระบายสี",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            39
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 40,
+          "activity": "วาดภาพระบายสี",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            40
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 44,
+          "activity": "ประติมากรรม",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            44
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 45,
+          "activity": "ประติมากรรม",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            45
+          ],
+          "multi_school": false
+        }
+      ]
+    },
+    {
+      "school_id": "NGK08",
+      "school": "บ้านวังด้ง",
+      "competition_count": 13,
+      "competitions": [
+        {
+          "contest_id": 1,
+          "activity": "การปั้นดินน้ำมัน",
+          "level": "ปฐมวัย",
+          "source_row_ids": [
+            1
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 2,
+          "activity": "การสร้างภาพด้วยการฉีก ตัด ปะ กระดาษ",
+          "level": "ปฐมวัย",
+          "source_row_ids": [
+            2
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 3,
+          "activity": "คัดลายมือสื่อภาษาไทย",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            3,
+            61
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 4,
+          "activity": "คัดลายมือสื่อภาษาไทย",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            4
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 6,
+          "activity": "การเขียนเรื่องจากภาพ",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            6
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 7,
+          "activity": "การเขียนเรื่องความ",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            7
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 18,
+          "activity": "คิดเลขเร็ว",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            18
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 29,
+          "activity": "มารยาทไทย",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            29
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 31,
+          "activity": "การแข่งขันการเล่านิทาน (Story Telling)",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            31,
+            65
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 37,
+          "activity": "ตอบปัญหาสุขศึกษาและพลศึกษา",
+          "level": "ป.1–ป.6",
+          "source_row_ids": [
+            37
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 40,
+          "activity": "วาดภาพระบายสี",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            40
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 57,
+          "activity": "การผูกเงื่อน เดินทรงตัวและโยนบอล",
+          "level": "ป.1–ป.3",
+          "source_row_ids": [
+            57
+          ],
+          "multi_school": true
+        },
+        {
+          "contest_id": 67,
+          "activity": "การจัดทำหนังสือเล่มเล็ก",
+          "level": "ป.4–ป.6",
+          "source_row_ids": [
+            67
+          ],
+          "multi_school": false
+        }
+      ]
+    }
+  ]
+}
