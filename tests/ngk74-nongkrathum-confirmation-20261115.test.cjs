@@ -19,12 +19,12 @@ test('Nongkrathum remaining issues panel stays hidden until its school is select
  assert.doesNotMatch(panel,/data-original-activity-id=/);
 });
 test('eight historically unlisted activities are not in current Nongkrathum entries',()=>{
- assert.equal(rows.length,67);
+ assert.equal(rows.length,68);
  for(const id of removedIds){
    const row=rows.find(x=>x.id===id);
    if(row)assert.ok(!row.schools.includes('บ้านหนองกระทุ่ม'),'school still entered in excluded '+id);
  }
- assert.equal(rows.filter(x=>x.schools.includes('บ้านหนองกระทุ่ม')).length,35);
+ assert.equal(rows.filter(x=>x.schools.includes('บ้านหนองกระทุ่ม')).length,36);
  assert.match(panel,/ไม่กระทบโรงเรียนอื่น/);
 });
 test('grade discrepancy and inclusive activity subtype remain separately pending',()=>{
@@ -36,13 +36,17 @@ test('grade discrepancy and inclusive activity subtype remain separately pending
  assert.match(panel,/1ESqis5f5BZlS96RutXdkIUhMgyrC9aL4/);
  assert.match(html,/data-label="ลำดับ">76<\/td>/);
 });
-test('Thai luk krung correction is female solo in M1-M3 only for Nongkrathum',()=>{
+test('Thai luk krung female remains and male M1-M3 is added for Nongkrathum',()=>{
  const row=rows.find(x=>x.id===74);
  assert.ok(row);
  assert.match(row.markup,/ขับร้องเพลงไทยลูกกรุง หญิงเดี่ยว/);
  assert.match(row.markup,/ระดับชั้น">ม\.1–ม\.3/);
  assert.deepEqual(row.schools,['บ้านหนองกระทุ่ม']);
  assert.match(panel,/หญิงเดี่ยว ม\.1–ม\.3/);
+ const addedMale=rows.find(x=>x.id===77);
+ assert.match(addedMale.markup,/การขับร้องเพลงไทยลูกกรุง ชายเดี่ยว/);
+ assert.match(addedMale.markup,/ระดับชั้น">ม\.1–ม\.3/);
+ assert.deepEqual(addedMale.schools,['บ้านหนองกระทุ่ม']);
  const maleElsewhere=rows.find(x=>x.id===68);
  assert.ok(maleElsewhere.markup.includes('การขับร้องเพลงไทยลูกกรุง ชายเดี่ยว'));
 });
