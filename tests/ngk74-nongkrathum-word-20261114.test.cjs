@@ -18,12 +18,12 @@ const rows=[...table.matchAll(/<tr><td data-label="ลำดับ">(\d+)<\/td>[
  return {id,schools,markup,activity:markup.match(/<td data-label="รายการแข่งขัน"><strong>([^<]+)<\/strong>/)?.[1],level:markup.match(/<td data-label="ระดับชั้น">([^<]+)<\/td>/)?.[1],count:Number(markup.match(/<strong>(\d+) โรงเรียน<\/strong>/)?.[1])};
 });
 const schoolName='บ้านหนองกระทุ่ม';
-const documented=new Set([1,2,3,4,5,6,13,15,16,17,18,21,23,26,28,29,30,31,33,34,37,38,43,47,50,52,53,57,76,70,71,72,73,74,75]);
+const documented=new Set([1,2,3,4,5,6,13,15,16,17,18,21,23,26,28,29,30,31,33,34,37,38,43,47,50,52,53,57,76,70,71,72,73,74,75,77]);
 const newIds=[70,71,72,73,74,75];
 const pendingIds=[76];
-test('Word 29-line source is reconciled to 35 documented school-and-grade rows',()=>{
- assert.equal(rows.length,67);
- assert.equal(new Set(rows.map(r=>r.id)).size,67);
+test('Word 29-line source retains 35 documented marks plus new male entry #77',()=>{
+ assert.equal(rows.length,68);
+ assert.equal(new Set(rows.map(r=>r.id)).size,68);
  assert.deepEqual(rows.filter(r=>r.schools.includes(schoolName)).map(r=>r.id).sort((a,b)=>a-b),[...documented].sort((a,b)=>a-b));
  for(const row of rows)assert.equal(row.count,row.schools.length,'school count mismatch in '+row.id);
  for(const id of [9,11,49])assert.ok(!rows.some(r=>r.id===id),'obsolete single-school row '+id);
@@ -33,7 +33,7 @@ test('six new school activities match PDFs; inclusive painting subtype remains p
  const sources=rows.map(r=>({id:r.id,status:official.lookup(r.id,r.activity,r.level).status}));
  const held=sources.filter(x=>x.status==='review').map(x=>x.id).sort((a,b)=>a-b);
  assert.deepEqual(held,pendingIds);
- assert.equal(sources.filter(x=>x.status==='matched').length,66);
+ assert.equal(sources.filter(x=>x.status==='matched').length,67);
  for(const id of pendingIds){
    const row=rows.find(r=>r.id===id);
    assert.ok(row.markup.includes('รอยืนยันประเภทความบกพร่อง'));
@@ -65,6 +65,11 @@ test('Word source details expose activity and grade only, not student/teacher id
  assert.match(html,/ไม่ใช่ระบบสมัครแข่งขัน บันทึกชื่อครูผู้ควบคุมทีมและนักเรียน หรือประกาศผลการแข่งขัน/);
 });
 test('2026-11-19 live school list uses female solo in music row #74 while old document stays attributed',()=>{
+ const maleAddition=rows.find(r=>r.id===77);
+ assert.equal(maleAddition.activity,'การขับร้องเพลงไทยลูกกรุง ชายเดี่ยว');
+ assert.equal(maleAddition.level,'ม.1–ม.3');
+ assert.deepEqual(maleAddition.schools,[schoolName]);
+ assert.equal(official.lookup(77,maleAddition.activity,maleAddition.level).status,'matched');
  const music=rows.find(r=>r.id===74);
  assert.equal(music.activity,'การขับร้องเพลงไทยลูกกรุง หญิงเดี่ยว');
  assert.equal(music.level,'ม.1–ม.3');
