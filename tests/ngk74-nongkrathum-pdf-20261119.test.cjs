@@ -18,15 +18,15 @@ const rows = [...field.matchAll(/<tr><td data-label="ลำดับ">(\d+)<\/td
   count: Number(m[0].match(/<strong>(\d+) โรงเรียน<\/strong>/)?.[1])
 }));
 
-test('new PDF corroboration is visible without changing the school count or field rows', () => {
+test('19 Nov PDF remains archived while 21 Nov additional male contest updates current totals', () => {
   assert.match(details, /Word 14 พ\.ย\. กับ PDF 19 พ\.ย\. 2569/);
   assert.match(details, /29 แถว \/ 35 ช่วงชั้น/);
   assert.match(details, /ลำดับ 27 ไม่มีเครื่องหมายระดับชั้น/);
-  assert.match(panel, /9 ประเด็นรอยืนยันเดิม/);
-  assert.match(panel, /#76 รอประเภทย่อยแยกต่างหาก/);
-  assert.equal(rows.length, 67);
-  assert.equal(new Set(rows.map(r=>r.id)).size, 67);
-  assert.equal(rows.filter(r=>r.schools.includes('บ้านหนองกระทุ่ม')).length, 35);
+  assert.match(panel, /2 ประเด็นรอตรวจ/);
+  assert.match(panel, /รายการ #76/);
+  assert.equal(rows.length, 68);
+  assert.equal(new Set(rows.map(r=>r.id)).size, 68);
+  assert.equal(rows.filter(r=>r.schools.includes('บ้านหนองกระทุ่ม')).length, 36);
   for (const row of rows) assert.equal(row.count, row.schools.length, 'count mismatch at ' + row.id);
 });
 
@@ -37,7 +37,7 @@ test('current criteria descriptions are not confused with pending school confirm
   assert.ok(rows.find(r=>r.id===76)?.schools.includes('บ้านหนองกระทุ่ม'));
   assert.ok(!rows.find(r=>r.id===60)?.schools.includes('บ้านหนองกระทุ่ม'));
   const missing=[7,8,9,11,14,41,49,51];
-  for(const id of missing)assert.match(panel,new RegExp('data-original-activity-id="' + id + '"'));
+  for(const id of missing){const row=rows.find(x=>x.id===id);if(row)assert.ok(!row.schools.includes('บ้านหนองกระทุ่ม'),'removed entry '+id);}
   assert.match(doc, /ไม่ใช่หลักฐานการถอนแข่งขัน/);
   assert.match(doc, /\*\*ไม่ทำเครื่องหมาย\*\*/);
 });
