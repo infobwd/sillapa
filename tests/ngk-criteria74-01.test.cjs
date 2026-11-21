@@ -27,10 +27,10 @@ test('source module preserves 17 direct Round-74 PDFs and confirmed folder/catal
   assert.equal(data.documents['16'].fileId,'12ZunpZ9xRJTHAOfbuPUYPYKt-tY0HeMM');
 });
 
-test('audited 67 preparation rows: 66 criteria links matched and one inclusive-school subtype pending',()=>{
-  assert.equal(rows.length,67);
+test('audited 68 preparation rows: 67 criteria links matched and one inclusive-school subtype pending',()=>{
+  assert.equal(rows.length,68);
   const status=rows.map(r=>({...r,...data.lookup(r.id,r.name,r.level)}));
-  assert.equal(status.filter(x=>x.status==='matched').length,66);
+  assert.equal(status.filter(x=>x.status==='matched').length,67);
   assert.equal(status.filter(x=>x.status==='review').length,1);
   assert.deepEqual(status.filter(x=>x.status==='review').map(x=>x.id).sort((a,b)=>a-b),
     [76]);
@@ -111,7 +111,7 @@ test('criteria UI filters 74 matches and review cases with correct links',()=>{
   assert.match(results.children[0].textContent,/ไม่พบรายการตามชื่อ/);
 });
 
-test('all live table slots render 66 verified PDF74 links and one subtype-confirmation notice',()=>{
+test('all live table slots render 67 verified PDF74 links and one subtype-confirmation notice',()=>{
   const begin=html.indexOf("rows.forEach(row=>{\nconst cells=");
   const end=html.indexOf("const school=document.getElementById('audit-school')",begin);
   assert.ok(begin>0&&end>begin,'source-to-slot integration code exists');
@@ -132,7 +132,7 @@ test('all live table slots render 66 verified PDF74 links and one subtype-confir
   const window={SILLAPA74_CRITERIA_SOURCES:data,SILLAPA70_CATALOG:{source:'https://example.org/70',families:{}}};
   const document={createElement:element};
   new Function('rows','window','document',loop)(domRows,window,document);
-  assert.equal(slots.filter(x=>x.slot.dataset.criteria74Status==='matched').length,66);
+  assert.equal(slots.filter(x=>x.slot.dataset.criteria74Status==='matched').length,67);
   assert.equal(slots.filter(x=>x.slot.dataset.criteria74Status==='review').length,1);
   const links=slots.flatMap(x=>x.slot.children.filter(n=>n.dataset?.criteria74Link==='true'));
   assert.equal(links.length,66);
@@ -173,8 +173,8 @@ test('Nongkum male music items share the approved Round-74 PDF without publishin
 
 test('Inclusive-art PDF and category are correct; withdrawn Sao Hong garden rows are absent',()=>{
   const ids=new Set(rows.map(r=>r.id));
-  assert.equal(rows.length,67);
-  assert.equal(ids.size,67);
+  assert.equal(rows.length,68);
+  assert.equal(ids.size,68);
   assert.equal(ids.has(58),false);
   assert.equal(ids.has(59),false);
   assert.equal(html.includes('การแข่งขันจัดสวนถาดแบบแห้ง'),false);
