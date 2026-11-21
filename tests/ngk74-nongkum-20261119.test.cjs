@@ -19,9 +19,9 @@ const school = 'บ้านหนองกุ่ม';
 const expected = [2,3,4,6,10,17,18,25,28,29,31,32,52,56,60,68,69].sort((a,b) => a-b);
 const find = id => rows.find(r => r.id === id);
 
-test('preserve 67 distinct school activity/level rows', () => {
-  assert.equal(rows.length, 67);
-  assert.equal(new Set(rows.map(r => r.id)).size, 67);
+test('preserve 68 distinct school activity/level rows', () => {
+  assert.equal(rows.length, 68);
+  assert.equal(new Set(rows.map(r => r.id)).size, 68);
 });
 test('all visible row totals match unique school pills', () => {
   rows.forEach(r => {
